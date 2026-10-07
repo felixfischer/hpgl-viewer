@@ -342,6 +342,22 @@ describe("parseHpgl", () => {
 		expect(texts("LBA;PD1,1;")).toEqual(["A;PD1,1;"]);
 	});
 
+	test("control characters in a label move within the label frame: CR LF BS HT VT", () => {
+		const placed = (hpgl: string) =>
+			parseHpgl(hpgl).pages[0]?.primitives.map((p) => p.type === "label" && [p.text, p.at]);
+		// One cell is 171 wide (1.5 × 114); one line is 300 tall (2 × 150).
+		expect(placed("PU1000,1000;LBA\r\nB\x03")).toEqual([
+			["A", [1000, 1000]],
+			["B", [1000, 700]],
+		]);
+		expect(placed("LBAB\b\bC\tD\vE\x03")).toEqual([
+			["AB", [0, 0]],
+			["C", [0, 0]],
+			["D", [85.5, 0]],
+			["E", [256.5, 300]],
+		]);
+	});
+
 });
 
 describe.each([

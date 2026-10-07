@@ -1,3 +1,4 @@
+import type { Point } from "../geometry.ts";
 import { breakStroke, emit, type State, strokeOf } from "../state.ts";
 import type { Handler } from "./index.ts";
 
@@ -23,12 +24,17 @@ function charSize(state: State): [number, number] {
 	];
 }
 
+const add = (p: Point, v: Point, k = 1): Point => [p[0] + k * v[0], p[1] + k * v[1]];
+
 /** Lays out `label` from the pen position, emitting one Label per run of printable characters. */
 function draw(state: State, label: string): void {
 	breakStroke(state);
 	const [width, height] = charSize(state);
-	const advance = 1.5 * width;
-	let at = state.at;
+	// Character advance and line feed vectors (notes §Labels: cell = 1.5w × 2h).
+	const a: Point = [1.5 * width, 0];
+	const b: Point = [0, -2 * height];
+	const start = state.at;
+	let at = start;
 	let run = "";
 	let runAt = at;
 	const flush = () => {
@@ -46,13 +52,30 @@ function draw(state: State, label: string): void {
 		run = "";
 	};
 	for (const c of label) {
-		if (c < " ") continue; // other control characters are ignored
-		if (!run) runAt = at;
-		run += c;
-		at = [at[0] + advance, at[1]];
+		if (c >= " ") {
+			if (!run) runAt = at;
+			run += c;
+			at = add(at, a);
+			continue;
+		}
+		if (!"\b\t\n\v\r".includes(c)) continue; // other control characters are ignored
+		flush();
+		if (c === "\b") at = add(at, a, -1);
+		else if (c === "\t") at = add(at, a, -0.5);
+		else if (c === "\n") at = add(at, b);
+		else if (c === "\v") at = add(at, b, -1);
+		else at = carriageReturn(at, start, a);
 	}
 	flush();
 	state.at = at;
+}
+
+/** Moves `at` back to the column of `start`, staying on its line. */
+function carriageReturn(at: Point, start: Point, a: Point): Point {
+	const len2 = a[0] ** 2 + a[1] ** 2;
+	if (!len2) return at;
+	const k = ((at[0] - start[0]) * a[0] + (at[1] - start[1]) * a[1]) / len2;
+	return add(at, a, -k);
 }
 
 export const labelText: Record<string, TextHandler> = {
