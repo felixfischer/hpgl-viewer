@@ -1,0 +1,7 @@
+# page 1
+{"type":"polyline","pen":1,"lineType":null,"points":[[0,0],[4000,0],[4000,4000],[0,4000],[0,0]]}
+{"type":"polyline","pen":2,"lineType":null,"points":[[1000,1000],[3000,3000]]}
+# warnings
+{"kind":"skipped","mnemonic":"ZZ","offset":22,"message":"Unsupported command ZZ skipped"}
+{"kind":"skipped","mnemonic":"QX","offset":40,"message":"Unsupported command QX skipped"}
+{"kind":"skipped","mnemonic":"KK","offset":52,"message":"Unsupported command KK skipped"}

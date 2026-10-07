@@ -186,14 +186,17 @@ describe("parseHpgl", () => {
 	});
 });
 
-describe.each(["space-shuttle", "starry-night"])("fixture %s.hpgl", (name) => {
-	test("parses to its golden geometry stream", async () => {
-		const text = readFileSync(
-			new URL(`../../../hpgl/${name}.hpgl`, import.meta.url),
-			"utf8",
-		);
-		await expect(golden(parseHpgl(text))).toMatchFileSnapshot(
-			`../goldens/${name}.golden`,
-		);
-	});
-});
+describe.each(["space-shuttle", "starry-night", "unsupported", "hpgl2-sample"])(
+	"fixture %s.hpgl",
+	(name) => {
+		test("parses to its golden geometry stream", async () => {
+			const text = readFileSync(
+				new URL(`../../../hpgl/${name}.hpgl`, import.meta.url),
+				"utf8",
+			);
+			await expect(golden(parseHpgl(text))).toMatchFileSnapshot(
+				`../goldens/${name}.golden`,
+			);
+		});
+	},
+);
