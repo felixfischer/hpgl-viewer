@@ -290,6 +290,17 @@ describe("parseHpgl", () => {
 		expect(result.pages.map((p) => p.primitives.length)).toEqual([1, 1]);
 	});
 
+	test("the scaling points in force at the end are reported, defaulting to the A3 page", () => {
+		expect(parseHpgl("PD1,1;").scalingPoints).toEqual({
+			p1: [170, 602],
+			p2: [15370, 10602],
+		});
+		expect(parseHpgl("IP100,200,3000,4000;PD1,1;").scalingPoints).toEqual({
+			p1: [100, 200],
+			p2: [3000, 4000],
+		});
+	});
+
 	test("PS sets the page size in plotter units; following pages keep it", () => {
 		const size = (hpgl: string) => parseHpgl(hpgl).pages.map((p) => p.size);
 		expect(size("PD1,1;")).toEqual([undefined]);

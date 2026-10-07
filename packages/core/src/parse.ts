@@ -85,5 +85,9 @@ export function parseHpgl(text: string): ParseResult {
 	if (state.pages.length > 1 && !state.pages.at(-1)?.primitives.length) {
 		state.pages.pop();
 	}
-	return { pages: state.pages, warnings: state.warnings };
+	return {
+		pages: state.pages,
+		warnings: state.warnings,
+		scalingPoints: { p1: state.p1, p2: state.p2 },
+	};
 }

@@ -122,4 +122,9 @@ export interface Warning {
 export interface ParseResult {
 	pages: Page[];
 	warnings: Warning[];
+	/**
+	 * Scaling points P1/P2 (plotter units) in force at the end of the file.
+	 * ponytail: one pair per file, not per page; move onto `Page` if a file re-IPs between pages.
+	 */
+	scalingPoints: { p1: Point; p2: Point };
 }
