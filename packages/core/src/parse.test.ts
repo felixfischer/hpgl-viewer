@@ -384,6 +384,27 @@ describe("parseHpgl", () => {
 			[200, 400],
 		]);
 	});
+	test("DI/DR/DU turn the baseline and the label frame; SL slants; RO90 turns labels too", () => {
+		const labels = (hpgl: string) =>
+			parseHpgl(hpgl).pages[0]?.primitives.map((p) =>
+				p.type === "label" ? [p.text, p.at, p.direction, p.slant] : null,
+			);
+		expect(labels("DI0,1;SL0.5;LBAB\r\nC\x03")).toEqual([
+			["AB", [0, 0], 90, 0.5],
+			["C", [300, 0], 90, 0.5],
+		]);
+		// DI; restores 1,0; DI0,0 and one-parameter DI are ignored; SL; is upright.
+		expect(labels("DI0,1;DI0,0;DI5;LBA\x03DI;SL;LBB\x03")).toEqual([
+			["A", [0, 0], 90, 0],
+			["B", [0, 171], 0, 0],
+		]);
+		// DR runs against the P1–P2 orientation, DU against the user axes.
+		expect(labels("IP2000,0,0,1000;DR1,0;LBA\x03")?.[0]?.[2]).toBe(180);
+		expect(labels("IP0,0,100,100;SC100,0,0,100;DU1,0;LBA\x03")?.[0]?.[2]).toBe(
+			180,
+		);
+		expect(labels("RO90;LBA\x03")?.[0]?.[2]).toBe(90);
+	});
 });
 
 describe.each([

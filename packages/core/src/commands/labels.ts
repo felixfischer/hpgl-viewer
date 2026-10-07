@@ -3,6 +3,7 @@ import {
 	breakStroke,
 	defaultLabelState,
 	emit,
+	rotate,
 	type State,
 	scaled,
 	strokeOf,
@@ -34,6 +35,18 @@ function charSize(state: State): [number, number] {
 	];
 }
 
+/** Baseline direction as a plotter-unit vector. */
+function baseline(state: State): Point {
+	const { unit, run } = state.direction;
+	const [run1, rise] = run;
+	if (unit === "DR")
+		return rotate(state, [
+			run1 * (state.p2[0] - state.p1[0]),
+			rise * (state.p2[1] - state.p1[1]),
+		]);
+	return rotate(state, unit === "DU" ? scaled(state, run1, rise) : run);
+}
+
 const add = (p: Point, v: Point, k = 1): Point => [
 	p[0] + k * v[0],
 	p[1] + k * v[1],
@@ -43,9 +56,13 @@ const add = (p: Point, v: Point, k = 1): Point => [
 function draw(state: State, label: string): void {
 	breakStroke(state);
 	const [width, height] = charSize(state);
+	const [dx, dy] = baseline(state);
+	const direction = (Math.atan2(dy, dx) * 180) / Math.PI;
+	const len = Math.hypot(dx, dy) || 1;
+	const [ux, uy] = [dx / len, dy / len];
 	// Character advance and line feed vectors (notes §Labels: cell = 1.5w × 2h).
-	const a: Point = [1.5 * width, 0];
-	const b: Point = [0, -2 * height];
+	const a: Point = [1.5 * width * ux, 1.5 * width * uy];
+	const b: Point = [2 * height * uy, -2 * height * ux];
 	const start = state.at;
 	let at = start;
 	let run = "";
@@ -59,8 +76,8 @@ function draw(state: State, label: string): void {
 				at: runAt,
 				width,
 				height,
-				direction: 0,
-				slant: 0,
+				direction,
+				slant: state.slant,
 			});
 		run = "";
 	};
@@ -123,7 +140,23 @@ const sizing =
 		else if (!params.length) state.charSize = defaultLabelState().charSize;
 	};
 
+/** A direction command: 2 params (not both 0) set it, none restores 1,0, any other count is ignored. */
+const directing =
+	(unit: "DI" | "DR" | "DU"): Handler =>
+	(state, params) => {
+		const [run = 0, rise = 0] = params;
+		if (params.length === 2 && (run || rise))
+			state.direction = { unit, run: [run, rise] };
+		else if (!params.length) state.direction = defaultLabelState().direction;
+	};
+
 export const labels: Record<string, Handler> = {
+	DI: directing("DI"),
+	DR: directing("DR"),
+	DU: directing("DU"),
+	SL(state, [tan = 0]) {
+		state.slant = tan;
+	},
 	SI: sizing("SI"),
 	SR: sizing("SR"),
 	SU: sizing("SU"),

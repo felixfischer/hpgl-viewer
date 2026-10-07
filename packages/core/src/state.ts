@@ -35,6 +35,10 @@ export interface State {
 	terminator: { char: string; print: boolean };
 	/** `SI` (cm), `SR` (% of the P1–P2 span) or `SU` (user units); resolved when a label is drawn. */
 	charSize: { unit: "SI" | "SR" | "SU"; size: Point };
+	/** `DI` (absolute), `DR` (% of the P1–P2 span) or `DU` (user units) run/rise of the baseline. */
+	direction: { unit: "DI" | "DR" | "DU"; run: Point };
+	/** `SL` slant as tan(angle). */
+	slant: number;
 }
 
 export function createState(): State {
@@ -60,6 +64,8 @@ export function createState(): State {
 export const defaultLabelState = () => ({
 	terminator: { char: "\x03", print: false },
 	charSize: { unit: "SR" as const, size: [0.75, 1.5] as Point },
+	direction: { unit: "DI" as const, run: [1, 0] as Point },
+	slant: 0,
 });
 
 /** A3 landscape P1/P2 (HP 7475A); the viewer's default page. */
