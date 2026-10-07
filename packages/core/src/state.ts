@@ -90,7 +90,11 @@ export function toPlotter(state: State, x: number, y: number): Point {
 
 /** Resolves a PA/PR coordinate pair (per the current mode) to a plotter-unit target. */
 export function target(state: State, x: number, y: number): Point {
-	if (!state.relative) return toPlotter(state, x, y);
+	return state.relative ? offset(state, x, y) : toPlotter(state, x, y);
+}
+
+/** The point a user-unit offset away from the pen position, in plotter units. */
+export function offset(state: State, x: number, y: number): Point {
 	const [dx, dy] = rotate(state, scaled(state, x, y));
 	return [state.at[0] + dx, state.at[1] + dy];
 }

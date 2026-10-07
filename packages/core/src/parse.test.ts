@@ -352,6 +352,19 @@ describe("parseHpgl", () => {
 			false,
 		]);
 	});
+
+	test("RA/EA fill/edge to an absolute corner, RR/ER to a relative one; the pen stays put", () => {
+		const [page] = parseHpgl(
+			"PA10,10;RA30,40;PR;EA50,60;RR-5,-5;ER20,-20;RA;PD1,1;",
+		).pages;
+		expect(page?.primitives).toEqual([
+			{ type: "rectangle", pen: 1, lineType: null, from: [10, 10], to: [30, 40], filled: true },
+			{ type: "rectangle", pen: 1, lineType: null, from: [10, 10], to: [50, 60], filled: false },
+			{ type: "rectangle", pen: 1, lineType: null, from: [10, 10], to: [5, 5], filled: true },
+			{ type: "rectangle", pen: 1, lineType: null, from: [10, 10], to: [30, -10], filled: false },
+			{ type: "polyline", pen: 1, lineType: null, points: [[10, 10], [11, 11]] },
+		]);
+	});
 });
 
 describe.each([
