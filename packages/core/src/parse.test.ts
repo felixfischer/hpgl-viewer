@@ -128,6 +128,19 @@ describe("parseHpgl", () => {
 		expect(result.pages[0]?.primitives).toHaveLength(1);
 	});
 
+	test("binary bytes between commands flag HP-GL/2", () => {
+		const result = parseHpgl("IN;PD10,0;\u0000\u00ff\ufffd;");
+		expect(result.warnings).toEqual([
+			{
+				kind: "dialect",
+				mnemonic: "",
+				offset: 10,
+				message:
+					"HP-GL/2 is not supported; only classic HP-GL commands are drawn",
+			},
+		]);
+	});
+
 	test("terminators may be omitted and whitespace separates parameters", () => {
 		const [page] = parseHpgl("pu 0 0 pd 10 -5\r\nPD20,0").pages;
 		expect(

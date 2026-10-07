@@ -13,8 +13,10 @@ const HPGL2_ONLY = new Set(
 );
 
 // Classic device-control: ESC . letter, optional numeric params up to ':'.
+// biome-ignore lint/suspicious/noControlCharactersInRegex: matching ESC is the point.
 const DEVICE_CONTROL = /\x1b\.[@-~](?:[\d;]*:)?/y;
 // PCL/PJL/RTL: ESC, then anything up to the first terminating capital, e.g. ESC%-1B.
+// biome-ignore lint/suspicious/noControlCharactersInRegex: matching ESC is the point.
 const PCL_ESCAPE = /\x1b[^@-^\x1b]{0,32}[@-^]/y;
 
 /** Records, once per file, that the input looks like HP-GL/2. */
@@ -51,6 +53,9 @@ export function parseHpgl(text: string): ParseResult {
 			continue;
 		}
 		if (!isLetter(text.charAt(i))) {
+			// NUL or non-ASCII outside a command: raster or encoded data (reference §4).
+			const code = text.charCodeAt(i);
+			if (code === 0 || code >= 0x80) flagHpgl2(state, "", i);
 			i++; // separators, terminators, whitespace, stray bytes
 			continue;
 		}
