@@ -311,6 +311,37 @@ describe("parseHpgl", () => {
 		expect(result.warnings).toEqual([]);
 		expect(result.pages).toHaveLength(1);
 	});
+	test("LB draws its text up to ETX at the pen, in the default relative size; ';' is literal", () => {
+		// SR 0.75,1.5 of the default P1–P2 span (15200 × 10000) = 114 × 150.
+		const [page] = parseHpgl("PU100,200;LBA;B\x03PD;").pages;
+		expect(page?.primitives).toEqual([
+			{
+				type: "label",
+				pen: 1,
+				lineType: null,
+				text: "A;B",
+				at: [100, 200],
+				width: 114,
+				height: 150,
+				direction: 0,
+				slant: 0,
+			},
+		]);
+	});
+
+	test("after LB the pen sits at the next character origin, 1.5 × width per character", () => {
+		const [, line] = parseHpgl("PU100,200;LBAB\x03PD100,0;").pages[0]?.primitives ?? [];
+		expect(line?.type === "polyline" && line.points[0]).toEqual([442, 200]);
+	});
+
+	test("DT sets the terminator (not printed); DT; restores ETX; a label without one runs to EOF", () => {
+		const texts = (hpgl: string) =>
+			parseHpgl(hpgl).pages[0]?.primitives.map((p) => p.type === "label" && p.text);
+		expect(texts("DT$;LBA\x03B$DT;LBC\x03")).toEqual(["AB", "C"]);
+		expect(texts("DT$,0;LBA$\x03")).toEqual(["A$"]);
+		expect(texts("LBA;PD1,1;")).toEqual(["A;PD1,1;"]);
+	});
+
 });
 
 describe.each([

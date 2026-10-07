@@ -1,4 +1,5 @@
 import type { State } from "../state.ts";
+import { labels, labelText, type TextHandler } from "./labels.ts";
 import { page } from "./page.ts";
 import { pen } from "./pen.ts";
 import { setup } from "./setup.ts";
@@ -13,4 +14,8 @@ export const registry: Record<string, Handler> = {
 	...pen,
 	...vectors,
 	...page,
+	...labels,
 };
+
+/** Commands that read raw text (labels) rather than numeric parameters. */
+export const textRegistry: Record<string, TextHandler> = labelText;

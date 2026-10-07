@@ -31,6 +31,10 @@ export interface State {
 	/** The polyline pen-down moves are currently extending, if any. */
 	stroke: Polyline | null;
 	warnings: Warning[];
+	/** Label terminator set by `DT`; `print` when `DT c,0` asks for it to be drawn. */
+	terminator: { char: string; print: boolean };
+	/** `SI` (cm), `SR` (% of the P1–P2 span) or `SU` (user units); resolved when a label is drawn. */
+	charSize: { unit: "SI" | "SR" | "SU"; size: Point };
 }
 
 export function createState(): State {
@@ -48,8 +52,15 @@ export function createState(): State {
 		pages: [{ primitives: [] }],
 		stroke: null,
 		warnings: [],
+		...defaultLabelState(),
 	};
 }
+
+/** Label settings `IN` restores. */
+export const defaultLabelState = () => ({
+	terminator: { char: "\x03", print: false },
+	charSize: { unit: "SR" as const, size: [0.75, 1.5] as Point },
+});
 
 /** A3 landscape P1/P2 (HP 7475A); the viewer's default page. */
 export const defaultScalingPoints = (): { p1: Point; p2: Point } => ({
