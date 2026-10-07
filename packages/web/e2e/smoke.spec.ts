@@ -1,0 +1,23 @@
+import { expect, test } from "@playwright/test";
+
+const fixture = new URL("../../../hpgl/space-shuttle.hpgl", import.meta.url)
+	.pathname;
+
+test("a picked fixture is parsed and painted onto the canvas", async ({
+	page,
+}) => {
+	await page.goto("/");
+	await page.locator("#file").setInputFiles(fixture);
+	const canvas = page.locator("#plot");
+	await expect(canvas).toHaveAttribute("data-rendered", "space-shuttle.hpgl");
+
+	const inked = await canvas.evaluate((el: HTMLCanvasElement) => {
+		const ctx = el.getContext("2d");
+		if (!ctx) return 0;
+		const { data } = ctx.getImageData(0, 0, el.width, el.height);
+		let count = 0;
+		for (let i = 3; i < data.length; i += 4) if ((data[i] ?? 0) > 0) count++;
+		return count;
+	});
+	expect(inked).toBeGreaterThan(1000);
+});

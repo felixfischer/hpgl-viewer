@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>HP-GL Viewer</title>
+		<link rel="stylesheet" href="/src/style.css" />
+	</head>
+	<body>
+		<header>
+			<label>Open HP-GL file <input id="file" type="file" accept=".hpgl,.hpg,.plt,.hgl,text/plain" /></label>
+			<output id="status" aria-live="polite">Drop an HP-GL file anywhere, or pick one.</output>
+		</header>
+		<canvas id="plot" aria-label="Plot"></canvas>
+		<script type="module" src="/src/main.ts"></script>
+	</body>
+</html>
