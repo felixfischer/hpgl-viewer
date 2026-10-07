@@ -21,3 +21,21 @@ test("a picked fixture is parsed and painted onto the canvas", async ({
 	});
 	expect(inked).toBeGreaterThan(1000);
 });
+
+test("a multi-page file offers a page selector and renders each page", async ({
+	page,
+}) => {
+	await page.goto("/");
+	await page
+		.locator("#file")
+		.setInputFiles(
+			new URL("../../../hpgl/multi-page.hpgl", import.meta.url).pathname,
+		);
+	const canvas = page.locator("#plot");
+	await expect(canvas).toHaveAttribute("data-rendered", "multi-page.hpgl");
+	const select = page.getByLabel("Page", { exact: true });
+	await expect(select.locator("option")).toHaveCount(3);
+	await select.selectOption({ label: "Page 3" });
+	await expect(canvas).toHaveAttribute("data-page", "3");
+	await expect(page.locator("#status")).toContainText("page 3 of 3");
+});

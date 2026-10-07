@@ -32,5 +32,9 @@ export function parseHpgl(text: string): ParseResult {
 		while (i < text.length && text[i] !== ";" && !isLetter(text.charAt(i))) i++;
 		handler(state, text.slice(start, i).match(NUMBER)?.map(Number) ?? []);
 	}
+	// A trailing PG leaves an empty page behind; drop it.
+	if (state.pages.length > 1 && !state.pages.at(-1)?.primitives.length) {
+		state.pages.pop();
+	}
 	return { pages: state.pages, warnings: state.warnings };
 }
