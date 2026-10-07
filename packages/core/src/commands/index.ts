@@ -1,4 +1,5 @@
 import type { State } from "../state.ts";
+import { arcs } from "./arcs.ts";
 import { page } from "./page.ts";
 import { pen } from "./pen.ts";
 import { setup } from "./setup.ts";
@@ -13,4 +14,5 @@ export const registry: Record<string, Handler> = {
 	...pen,
 	...vectors,
 	...page,
+	...arcs,
 };
