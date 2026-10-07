@@ -1,22 +1,13 @@
 import type { Page, Point } from "@hpgl-viewer/core";
 
-// ADR-0004 default palette; ponytail: cycles past pen 8, golden-angle hues come with the pen UI.
-const PALETTE = [
-	"#1a1a1a",
-	"#e6194b",
-	"#4363d8",
-	"#3cb44b",
-	"#f58231",
-	"#911eb4",
-	"#0aa2c0",
-	"#9a6324",
-];
-const penColour = (pen: number) =>
-	PALETTE[(pen - 1) % PALETTE.length] ?? "#000";
 const MARGIN = 16; // CSS px
 
 /** Draws the page fitted to the canvas, flipping HP-GL's Y-up plotter units once. */
-export function renderPage(canvas: HTMLCanvasElement, page: Page): void {
+export function renderPage(
+	canvas: HTMLCanvasElement,
+	page: Page,
+	colourOf: (pen: number) => string,
+): void {
 	const dpr = window.devicePixelRatio || 1;
 	canvas.width = Math.round(canvas.clientWidth * dpr);
 	canvas.height = Math.round(canvas.clientHeight * dpr);
@@ -53,7 +44,7 @@ export function renderPage(canvas: HTMLCanvasElement, page: Page): void {
 	ctx.lineWidth = dpr;
 	ctx.lineJoin = ctx.lineCap = "round";
 	for (const { pen, points } of polylines) {
-		ctx.strokeStyle = penColour(pen);
+		ctx.strokeStyle = colourOf(pen);
 		ctx.beginPath();
 		for (const [i, point] of points.entries()) {
 			const [x, y] = toView(point);
