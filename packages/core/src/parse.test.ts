@@ -141,6 +141,37 @@ describe("parseHpgl", () => {
 		]);
 	});
 
+	test("numbers too large to represent are dropped rather than drawn at infinity", () => {
+		const [page] = parseHpgl(`PD10,0,${"9".repeat(400)},5,20,0;`).pages;
+		expect(
+			page?.primitives.map((p) => p.type === "polyline" && p.points),
+		).toEqual([
+			[
+				[0, 0],
+				[10, 0],
+				[5, 20],
+			],
+		]);
+	});
+
+	test("pathological input never hangs the parser", () => {
+		let seed = 1;
+		const noise = Array.from({ length: 1_000_000 }, () => {
+			seed = (seed * 48271) % 2147483647;
+			return String.fromCharCode(seed % 128);
+		}).join("");
+		const huge = [
+			"PD" + "1,".repeat(1_000_000), // one command, enormous parameter list
+			"ZZ".repeat(500_000), // unknown and unterminated
+			";".repeat(1_000_000),
+			"\x1b".repeat(100_000) + "\x1b*b99999999W",
+			noise,
+		];
+		const started = performance.now();
+		for (const text of huge) parseHpgl(text);
+		expect(performance.now() - started).toBeLessThan(3000);
+	});
+
 	test("terminators may be omitted and whitespace separates parameters", () => {
 		const [page] = parseHpgl("pu 0 0 pd 10 -5\r\nPD20,0").pages;
 		expect(

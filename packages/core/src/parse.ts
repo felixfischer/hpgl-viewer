@@ -78,7 +78,8 @@ export function parseHpgl(text: string): ParseResult {
 		// Parameters run to the terminator or the next mnemonic.
 		const start = i;
 		while (i < text.length && text[i] !== ";" && !isLetter(text.charAt(i))) i++;
-		handler(state, text.slice(start, i).match(NUMBER)?.map(Number) ?? []);
+		const params = text.slice(start, i).match(NUMBER)?.map(Number) ?? [];
+		handler(state, params.filter(Number.isFinite));
 	}
 	return { pages: state.pages, warnings: state.warnings };
 }
