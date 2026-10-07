@@ -365,4 +365,3 @@
 {"type":"polyline","pen":1,"lineType":null,"points":[[240,40],[40,40],[40,240]]}
 {"type":"polyline","pen":1,"lineType":null,"points":[[40,10800],[40,11000],[240,11000]]}
 # warnings
-{"mnemonic":"VS","offset":9,"message":"Unsupported command VS skipped"}

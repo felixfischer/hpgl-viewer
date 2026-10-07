@@ -74,12 +74,104 @@ describe("parseHpgl", () => {
 	});
 
 	test("unknown commands are skipped to the next terminator and reported", () => {
-		const result = parseHpgl("IN;VS15;ZZ1,2,3;PD10,0;");
+		const result = parseHpgl("IN;XX15;ZZ1,2,3;PD10,0;");
 		expect(result.warnings).toEqual([
-			{ mnemonic: "VS", offset: 3, message: "Unsupported command VS skipped" },
-			{ mnemonic: "ZZ", offset: 8, message: "Unsupported command ZZ skipped" },
+			{
+				kind: "skipped",
+				mnemonic: "XX",
+				offset: 3,
+				message: "Unsupported command XX skipped",
+			},
+			{
+				kind: "skipped",
+				mnemonic: "ZZ",
+				offset: 8,
+				message: "Unsupported command ZZ skipped",
+			},
 		]);
 		expect(result.pages[0]?.primitives).toHaveLength(1);
+	});
+
+	test("VS (pen speed) has no visual effect and is accepted without a warning", () => {
+		expect(parseHpgl("VS15;VS;").warnings).toEqual([]);
+	});
+
+	test("an HP-GL/2-only command raises one 'not supported' warning; the rest still renders", () => {
+		const result = parseHpgl("BP;IN;PC1,255,0,0;PD10,0;PW0.5;");
+		expect(result.warnings.filter((w) => w.kind === "dialect")).toEqual([
+			{
+				kind: "dialect",
+				mnemonic: "BP",
+				offset: 0,
+				message:
+					"HP-GL/2 is not supported; only classic HP-GL commands are drawn",
+			},
+		]);
+		expect(result.pages[0]?.primitives).toHaveLength(1);
+	});
+
+	test("PCL/RTL escape sequences flag HP-GL/2 and are consumed whole", () => {
+		const result = parseHpgl("\x1b%-12345X\x1bE\x1b%1BIN;PD10,0;\x1b%0A");
+		expect(result.warnings).toEqual([
+			{
+				kind: "dialect",
+				mnemonic: "ESC",
+				offset: 0,
+				message:
+					"HP-GL/2 is not supported; only classic HP-GL commands are drawn",
+			},
+		]);
+		expect(result.pages[0]?.primitives).toHaveLength(1);
+	});
+
+	test("classic ESC. device-control sequences are ignored silently", () => {
+		const result = parseHpgl("\x1b.N;19:\x1b.B\x1b.@4000;0:IN;PD10,0;");
+		expect(result.warnings).toEqual([]);
+		expect(result.pages[0]?.primitives).toHaveLength(1);
+	});
+
+	test("binary bytes between commands flag HP-GL/2", () => {
+		const result = parseHpgl("IN;PD10,0;\u0000\u00ff\ufffd;");
+		expect(result.warnings).toEqual([
+			{
+				kind: "dialect",
+				mnemonic: "",
+				offset: 10,
+				message:
+					"HP-GL/2 is not supported; only classic HP-GL commands are drawn",
+			},
+		]);
+	});
+
+	test("numbers too large to represent are dropped rather than drawn at infinity", () => {
+		const [page] = parseHpgl(`PD10,0,${"9".repeat(400)},5,20,0;`).pages;
+		expect(
+			page?.primitives.map((p) => p.type === "polyline" && p.points),
+		).toEqual([
+			[
+				[0, 0],
+				[10, 0],
+				[5, 20],
+			],
+		]);
+	});
+
+	test("pathological input never hangs the parser", () => {
+		let seed = 1;
+		const noise = Array.from({ length: 1_000_000 }, () => {
+			seed = (seed * 48271) % 2147483647;
+			return String.fromCharCode(seed % 128);
+		}).join("");
+		const huge = [
+			`PD${"1,".repeat(1_000_000)}`, // one command, enormous parameter list
+			"ZZ".repeat(500_000), // unknown and unterminated
+			";".repeat(1_000_000),
+			`${"\x1b".repeat(100_000)}\x1b*b99999999W`,
+			noise,
+		];
+		const started = performance.now();
+		for (const text of huge) parseHpgl(text);
+		expect(performance.now() - started).toBeLessThan(3000);
 	});
 
 	test("terminators may be omitted and whitespace separates parameters", () => {
@@ -229,6 +321,8 @@ describe.each([
 	"rotate",
 	"line-types",
 	"multi-page",
+	"unsupported",
+	"hpgl2-sample",
 ])("fixture %s.hpgl", (name) => {
 	test("parses to its golden geometry stream", async () => {
 		const text = readFileSync(

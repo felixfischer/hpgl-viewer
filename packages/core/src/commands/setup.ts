@@ -49,4 +49,6 @@ export const setup: Record<string, Handler> = {
 		else if (xmin !== xmax && ymin !== ymax)
 			state.scale = [xmin, xmax, ymin, ymax];
 	},
+	// Pen speed: no visual effect.
+	VS() {},
 };

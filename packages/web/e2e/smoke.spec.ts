@@ -39,3 +39,24 @@ test("a multi-page file offers a page selector and renders each page", async ({
 	await expect(canvas).toHaveAttribute("data-page", "3");
 	await expect(page.locator("#status")).toContainText("page 3 of 3");
 });
+
+test("skipped commands show in a dismissable banner while the plot still renders", async ({
+	page,
+}) => {
+	await page.goto("/");
+	await page
+		.locator("#file")
+		.setInputFiles(
+			new URL("../../../hpgl/unsupported.hpgl", import.meta.url).pathname,
+		);
+	await expect(page.locator("#plot")).toHaveAttribute(
+		"data-rendered",
+		"unsupported.hpgl",
+	);
+	const banner = page.locator("#warnings");
+	await expect(banner.locator("summary")).toHaveText("3 commands skipped");
+	await banner.locator("summary").click();
+	await expect(banner.locator("li")).toHaveText(["ZZ", "QX", "KK"]);
+	await banner.getByRole("button", { name: "Dismiss warnings" }).click();
+	await expect(banner).toBeHidden();
+});

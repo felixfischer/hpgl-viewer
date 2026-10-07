@@ -12,6 +12,14 @@
 			<select id="page" aria-label="Page" hidden></select>
 			<output id="status" aria-live="polite">Drop an HP-GL file anywhere, or pick one.</output>
 		</header>
+		<div id="warnings" role="status" hidden>
+			<p id="dialect" hidden></p>
+			<details>
+				<summary></summary>
+				<ul></ul>
+			</details>
+			<button type="button" aria-label="Dismiss warnings">×</button>
+		</div>
 		<canvas id="plot" aria-label="Plot"></canvas>
 		<script type="module" src="/src/main.ts"></script>
 	</body>
