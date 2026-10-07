@@ -1,0 +1,8 @@
+# page 1
+{"type":"polyline","pen":1,"lineType":null,"points":[[0,0],[4000,0],[4000,4000],[0,4000],[0,0]]}
+{"type":"polyline","pen":2,"lineType":null,"points":[[1000,1000],[3000,3000]]}
+# warnings
+{"kind":"dialect","mnemonic":"ESC","offset":0,"message":"HP-GL/2 is not supported; only classic HP-GL commands are drawn"}
+{"kind":"skipped","mnemonic":"BP","offset":15,"message":"Unsupported command BP skipped"}
+{"kind":"skipped","mnemonic":"PC","offset":25,"message":"Unsupported command PC skipped"}
+{"kind":"skipped","mnemonic":"PW","offset":37,"message":"Unsupported command PW skipped"}

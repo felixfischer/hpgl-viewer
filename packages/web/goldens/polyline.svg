@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-6 -1406 4012 1412" width="100.3mm" height="35.3mm">
+<g transform="scale(1,-1)" fill="none" stroke-width="12" stroke-linecap="round" stroke-linejoin="round">
+<polyline stroke="#1a1a1a" points="0,0 4000,0"/>
+<path stroke="#1a1a1a" d="M0,200h0 M4000,200h0"/>
+<polyline stroke="#1a1a1a" stroke-dasharray="0 226.27" points="0,400 4000,400"/>
+<polyline stroke="#1a1a1a" stroke-dasharray="113.14 113.14" points="0,600 4000,600"/>
+<polyline stroke="#1a1a1a" stroke-dasharray="158.39 67.88" points="0,800 4000,800"/>
+<polyline stroke="#1a1a1a" stroke-dasharray="181.02 22.63 0 22.63" points="0,1000 4000,1000"/>
+<polyline stroke="#1a1a1a" stroke-dasharray="158.39 22.63 22.63 22.63" points="0,1200 4000,1200"/>
+<polyline stroke="#1a1a1a" stroke-dasharray="141.42 28.28 28.28 28.28 28.28 28.28" points="0,1400 4000,1400"/>
+</g>
+</svg>

@@ -1,0 +1,242 @@
+import type {
+	Fill,
+	LineType,
+	Page,
+	Point,
+	Polyline,
+	Primitive,
+	Warning,
+	Window,
+} from "./geometry.ts";
+
+/** The one mutable plotter state every command handler reads and writes. */
+export interface State {
+	/** Current pen position in plotter units. */
+	at: Point;
+	pen: number;
+	penDown: boolean;
+	/** `PR` mode: PU/PD/PA/PR coordinates are offsets from the pen position. */
+	relative: boolean;
+	/** `LT` setting; `percent` is resolved against the P1–P2 diagonal when a primitive is drawn. */
+	lineType: { pattern: number; percent: number } | null;
+	/** Scaling points P1 and P2, in plotter units. */
+	p1: Point;
+	p2: Point;
+	/** `SC` user rectangle `[xmin, xmax, ymin, ymax]` mapped onto P1..P2; `null` = plotter units. */
+	scale: [number, number, number, number] | null;
+	/** `RO` angle; 90 turns the coordinate system counter-clockwise about the plotter origin (ADR-0006). */
+	rotation: 0 | 90;
+	/** `CT1`: curve resolutions are chord heights in current units, not chord angles. */
+	chordHeight: boolean;
+	/** `FT` type (1–4), spacing in user units (`null` = 1 % of the P1–P2 diagonal, 0 = `PT`) and angle. */
+	fill: { type: number; spacing: number | null; angle: number };
+	/** `PT` pen thickness in mm: the line spacing of solid fills, and of `FT` 3/4 with spacing 0. */
+	penThickness: number;
+	/** `IW` clip window in plotter units; `null` = whole page. */
+	window: Window | null;
+	pages: Page[];
+	/**
+	 * `PM` polygon buffer: closed rings, the last one still being defined (empty = none
+	 * started). Kept after `PM2` for repeated `FP`/`EP` until the next `PM0` (ADR-0007).
+	 */
+	polygon: Point[][];
+	/** Inside `PM0`…`PM2`: moves add vertices to `polygon` and draw nothing. */
+	polygonMode: boolean;
+	/** The polyline pen-down moves are currently extending, if any. */
+	stroke: Polyline | null;
+	warnings: Warning[];
+	/** Label terminator set by `DT`; `print` when `DT c,0` asks for it to be drawn. */
+	terminator: { char: string; print: boolean };
+	/** `SI` (cm), `SR` (% of the P1–P2 span) or `SU` (user units); resolved when a label is drawn. */
+	charSize: { unit: "SI" | "SR" | "SU"; size: Point };
+	/** `DI` (absolute), `DR` (% of the P1–P2 span) or `DU` (user units) run/rise of the baseline. */
+	direction: { unit: "DI" | "DR" | "DU"; run: Point };
+	/** `SL` slant as tan(angle). */
+	slant: number;
+	/** `LO` label origin: 1–9 (3×3 grid), 11–19 the same pushed out by half a character. */
+	origin: number;
+	/** `ES` extra space between characters and lines, as fractions of the character cell. */
+	extraSpace: Point;
+	/** `DV1`: characters stack downwards. */
+	vertical: boolean;
+	/** Where the last label or `CP` left the pen, and the start column CR returns to. */
+	carriage: { from: Point; at: Point } | null;
+	/** Text stored by `BL` for `PB`. */
+	labelBuffer: string;
+	/** `CS`/`CA` designated sets; `shifted` when the alternate one is selected (`SA`, SO). */
+	charsets: { standard: number; alternate: number; shifted: boolean };
+	/** Character sets already reported as drawn in ASCII. */
+	warnedSets: Set<number>;
+	/** Mnemonic and input offset of the command being executed. */
+	command: { mnemonic: string; offset: number };
+}
+
+export function createState(): State {
+	return {
+		at: [0, 0],
+		// ponytail: pen 1 until SP, so files that never select a pen still draw.
+		pen: 1,
+		penDown: false,
+		relative: false,
+		lineType: null,
+		...defaultScalingPoints(),
+		scale: null,
+		rotation: 0,
+		chordHeight: false,
+		...defaultFill(),
+		window: null,
+		pages: [{ primitives: [] }],
+		polygon: [],
+		polygonMode: false,
+		stroke: null,
+		warnings: [],
+		...defaultLabelState(),
+		carriage: null,
+		labelBuffer: "",
+		warnedSets: new Set(),
+		command: { mnemonic: "", offset: 0 },
+	};
+}
+
+/** Label settings `IN` restores. */
+export const defaultLabelState = () => ({
+	terminator: { char: "\x03", print: false },
+	charSize: { unit: "SR" as const, size: [0.75, 1.5] as Point },
+	direction: { unit: "DI" as const, run: [1, 0] as Point },
+	slant: 0,
+	origin: 1,
+	extraSpace: [0, 0] as Point,
+	vertical: false,
+	charsets: { standard: 0, alternate: 0, shifted: false },
+});
+
+/** A3 landscape P1/P2 (HP 7475A); the viewer's default page. */
+export const defaultScalingPoints = (): { p1: Point; p2: Point } => ({
+	p1: [170, 602],
+	p2: [15370, 10602],
+});
+
+export const defaultFill = (): Pick<State, "fill" | "penThickness"> => ({
+	fill: { type: 1, spacing: null, angle: 0 },
+	penThickness: 0.3,
+});
+
+/** Scales a user-unit offset to plotter units. */
+export function scaled(state: State, dx: number, dy: number): Point {
+	if (!state.scale) return [dx, dy];
+	const [xmin, xmax, ymin, ymax] = state.scale;
+	return [
+		(dx * (state.p2[0] - state.p1[0])) / (xmax - xmin),
+		(dy * (state.p2[1] - state.p1[1])) / (ymax - ymin),
+	];
+}
+
+// `0 - y` rather than `-y` so a zero stays +0 in the stream.
+export const rotate = (state: State, [x, y]: Point): Point =>
+	state.rotation ? [0 - y, x] : [x, y];
+
+/** Converts an absolute user-space coordinate pair to plotter units. */
+export function toPlotter(state: State, x: number, y: number): Point {
+	if (!state.scale) return rotate(state, [x, y]);
+	const [xmin, , ymin] = state.scale;
+	const [dx, dy] = scaled(state, x - xmin, y - ymin);
+	return rotate(state, [state.p1[0] + dx, state.p1[1] + dy]);
+}
+
+/** Converts a user-unit offset (a vector, not a position) to plotter units. */
+export const toPlotterOffset = (state: State, dx: number, dy: number): Point =>
+	rotate(state, scaled(state, dx, dy));
+
+/** Converts a plotter-unit offset back to user units; inverse of `toPlotterOffset`. */
+export function toUserOffset(state: State, [x, y]: Point): Point {
+	const [sx, sy] = scaled(state, 1, 1);
+	const [ux, uy] = state.rotation ? [y, 0 - x] : [x, y];
+	return [ux / sx, uy / sy];
+}
+
+/** Resolves a PA/PR coordinate pair (per the current mode) to a plotter-unit target. */
+export function target(state: State, x: number, y: number): Point {
+	return state.relative ? offset(state, x, y) : toPlotter(state, x, y);
+}
+
+/** The point a user-unit offset away from the pen position, in plotter units. */
+export function offset(state: State, x: number, y: number): Point {
+	const [dx, dy] = toPlotterOffset(state, x, y);
+	return [state.at[0] + dx, state.at[1] + dy];
+}
+
+/** The pen, line type and window every new primitive is tagged with. */
+export function strokeOf(state: State): {
+	pen: number;
+	lineType: LineType;
+	window?: Window;
+} {
+	return {
+		pen: state.pen,
+		lineType: state.lineType && {
+			pattern: state.lineType.pattern,
+			length:
+				(state.lineType.percent / 100) *
+				Math.hypot(state.p2[0] - state.p1[0], state.p2[1] - state.p1[1]),
+		},
+		...(state.window && { window: state.window }),
+	};
+}
+
+/** The `FT` fill a filled shape carries, resolved to plotter units. */
+export function fillOf(state: State, filled: boolean): Fill {
+	const { type, spacing, angle } = state.fill;
+	if (!filled || type < 3) return { filled };
+	const diagonal = Math.hypot(
+		state.p2[0] - state.p1[0],
+		state.p2[1] - state.p1[1],
+	);
+	return {
+		filled,
+		hatch: {
+			spacing:
+				spacing === null
+					? diagonal / 100
+					: spacing === 0
+						? state.penThickness * 40
+						: Math.abs(scaled(state, spacing, 0)[0]),
+			angle: angle + state.rotation,
+			cross: type === 4,
+		},
+	};
+}
+
+export function emit(state: State, primitive: Primitive): void {
+	state.pages[state.pages.length - 1]?.primitives.push(primitive);
+}
+
+/** Ends the polyline in progress; the next pen-down move starts a new one. */
+export function breakStroke(state: State): void {
+	state.stroke = null;
+}
+
+/** Moves the pen to `to`, drawing a segment when the pen is down. */
+export function moveTo(state: State, to: Point): void {
+	if (state.polygonMode) {
+		const ring = state.polygon.at(-1);
+		if (!state.penDown) closeRing(state);
+		else if (ring && !ring.length) ring.push(state.at, to);
+		else ring?.push(to);
+	} else if (state.penDown && state.pen !== 0) {
+		if (!state.stroke) {
+			state.stroke = {
+				type: "polyline",
+				...strokeOf(state),
+				points: [state.at],
+			};
+			emit(state, state.stroke);
+		}
+		state.stroke.points.push(to);
+	}
+	state.at = to;
+}
+
+/** Ends the ring being defined in `PM`; the next pen-down vertex starts another. */
+export function closeRing(state: State): void {
+	if (state.polygon.at(-1)?.length) state.polygon.push([]);
+}

@@ -1,0 +1,148 @@
+// The renderer-neutral geometry stream (ADR-0005). All coordinates are in
+// plotter units (0.025 mm), bottom-left origin, Y up — renderers flip once.
+
+export type Point = [x: number, y: number];
+
+/** `LT` pattern number and length of one pattern repeat in plotter units; `null` = solid. */
+export type LineType = { pattern: number; length: number } | null;
+
+/**
+ * Pen-down/pen-up fractions of one pattern repeat for `LT` 1–6, pen-down first.
+ * Zero-length dashes are dots. Pattern 0 has no dashes: a dot at each vertex.
+ */
+export const LINE_PATTERNS: Readonly<Record<number, readonly number[]>> = {
+	1: [0, 1],
+	2: [0.5, 0.5],
+	3: [0.7, 0.3],
+	4: [0.8, 0.1, 0, 0.1],
+	5: [0.7, 0.1, 0.1, 0.1],
+	6: [0.5, 0.1, 0.1, 0.1, 0.1, 0.1],
+};
+
+/** Axis-aligned rectangle in plotter units, `from` ≤ `to` on both axes. */
+export interface Window {
+	from: Point;
+	to: Point;
+}
+
+interface Stroke {
+	pen: number;
+	lineType: LineType;
+	/** `IW` input window in force when drawn; renderers clip to it. Absent = unclipped. */
+	window?: Window;
+}
+
+export interface Polyline extends Stroke {
+	type: "polyline";
+	points: Point[];
+}
+
+export interface Circle extends Stroke {
+	type: "circle";
+	center: Point;
+	radius: number;
+	/** Chord angle in degrees (`CT`/`CI` tolerance) renderers tessellate with. */
+	chordAngle: number;
+}
+
+export interface Arc extends Stroke {
+	type: "arc";
+	center: Point;
+	radius: number;
+	/** Degrees, counter-clockwise from +X. */
+	startAngle: number;
+	/** Degrees; positive is counter-clockwise. */
+	sweepAngle: number;
+	chordAngle: number;
+}
+
+/** `FT` 3/4 hatching of a filled shape, in plotter units; hatch lines are solid. */
+export interface Hatch {
+	spacing: number;
+	/** Degrees, counter-clockwise from +X. */
+	angle: number;
+	/** `FT4`: a second set of lines at angle + 90°. */
+	cross: boolean;
+}
+
+/** A shape `FT` fills when `filled`; without `hatch` the fill is solid. */
+export interface Fill {
+	filled: boolean;
+	hatch?: Hatch;
+}
+
+export interface Wedge extends Stroke, Fill {
+	type: "wedge";
+	center: Point;
+	radius: number;
+	startAngle: number;
+	sweepAngle: number;
+	chordAngle: number;
+}
+
+export interface Rectangle extends Stroke, Fill {
+	type: "rectangle";
+	from: Point;
+	to: Point;
+}
+
+export interface Polygon extends Stroke, Fill {
+	type: "polygon";
+	/** Closed rings; even-odd fill. */
+	rings: Point[][];
+}
+
+/**
+ * A run of text drawn with the platform font. `at` is the lower-left (baseline
+ * start) of the first character; each character advances 1.5 × `width` along
+ * `direction`, as on a plotter. Layout (LO, CR/LF, CP, ES, DV) is resolved in core.
+ */
+export interface Label extends Stroke {
+	type: "label";
+	text: string;
+	at: Point;
+	/** Character width and cap height in plotter units; negative mirrors. */
+	width: number;
+	height: number;
+	/** Baseline direction in degrees, counter-clockwise from +X. */
+	direction: number;
+	/** Slant as tan(angle). */
+	slant: number;
+}
+
+export type Primitive =
+	| Polyline
+	| Circle
+	| Arc
+	| Wedge
+	| Rectangle
+	| Polygon
+	| Label;
+
+export interface Page {
+	primitives: Primitive[];
+	/** Paper size set by `PS`, in plotter units; absent when the file never sets one. */
+	size?: { width: number; height: number };
+}
+
+/**
+ * A non-fatal problem found while parsing; `offset` is the index into the input.
+ * `skipped`: a command was not executed. `dialect`: the file looks like HP-GL/2.
+ * `charset`: a label was drawn in ASCII instead of its character set.
+ */
+export interface Warning {
+	kind: "skipped" | "dialect" | "charset";
+	mnemonic: string;
+	offset: number;
+	message: string;
+}
+
+export interface ParseResult {
+	pages: Page[];
+	warnings: Warning[];
+	/**
+	 * Scaling points P1/P2 (plotter units) in force at the end of the file.
+	 * ponytail: one pair per file, not per page; move onto `Page` if a file re-IPs between pages.
+	 */
+	scalingPoints: { p1: Point; p2: Point };
+}

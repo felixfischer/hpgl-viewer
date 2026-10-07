@@ -1,0 +1,82 @@
+html,
+body {
+	margin: 0;
+	height: 100%;
+	font:
+		14px system-ui,
+		sans-serif;
+}
+body {
+	display: flex;
+	flex-direction: column;
+}
+header {
+	display: flex;
+	gap: 1em;
+	align-items: center;
+	padding: 0.5em 1em;
+	border-bottom: 1px solid #ddd;
+}
+aside {
+	display: flex;
+	gap: 1em;
+	align-items: center;
+	padding: 0.25em 1em;
+	border-bottom: 1px solid #ddd;
+}
+aside[hidden] {
+	display: none;
+}
+#legend {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.25em 1em;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+#legend label {
+	display: flex;
+	gap: 0.25em;
+	align-items: center;
+}
+canvas {
+	flex: 1;
+	min-height: 0;
+	width: 100%;
+	background: #fff;
+	cursor: grab;
+	touch-action: none;
+}
+canvas:active {
+	cursor: grabbing;
+}
+body.dragging canvas {
+	outline: 3px dashed #4363d8;
+	outline-offset: -6px;
+}
+#warnings:not([hidden]) {
+	display: flex;
+	gap: 1em;
+	align-items: start;
+	padding: 0.4em 1em;
+	background: #fff4d6;
+	border-bottom: 1px solid #e8c66a;
+}
+#warnings p {
+	margin: 0;
+}
+#warnings details {
+	flex: 1;
+}
+#warnings ul {
+	margin: 0.3em 0;
+	columns: 12em;
+}
+#warnings button {
+	margin-left: auto;
+	border: 0;
+	background: none;
+	font-size: 1.2em;
+	cursor: pointer;
+}

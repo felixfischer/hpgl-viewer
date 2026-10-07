@@ -1,0 +1,3 @@
+# RO90 rotates the coordinate system about the plotter origin
+
+Devices disagree on `RO90`: the Roland manual rotates the page (counter-clockwise for A3/B, clockwise for A4/A) and resets P1/P2 and the input window to rotated defaults, while the reference guide's PloView sample turns the axes 90° counter-clockwise about the plotter origin with no translation. The viewer has no physical page to rotate, so it follows the guide: `RO90` maps a plotter point (x, y) to (−y, x), applied as the last step of the user-to-plotter transform. P1/P2 and the input window are not reset; `IN` restores `RO0`. Files written for a rotating device will appear turned and offset relative to the paper, which fit-to-content hides.

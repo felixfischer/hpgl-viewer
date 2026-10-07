@@ -1,0 +1,8 @@
+# page 1
+{"type":"rectangle","pen":1,"lineType":null,"from":[1000,5000],"to":[4000,8000],"filled":true}
+{"type":"rectangle","pen":2,"lineType":null,"from":[1000,5000],"to":[4000,8000],"filled":false}
+{"type":"rectangle","pen":3,"lineType":null,"from":[5000,5000],"to":[8000,8000],"filled":true,"hatch":{"spacing":150,"angle":45,"cross":false}}
+{"type":"rectangle","pen":3,"lineType":null,"from":[5000,5000],"to":[8000,8000],"filled":false}
+{"type":"rectangle","pen":4,"lineType":null,"from":[9000,8000],"to":[12000,5000],"filled":true,"hatch":{"spacing":200,"angle":0,"cross":true}}
+{"type":"rectangle","pen":4,"lineType":{"pattern":2,"length":727.7801865948261},"from":[9000,8000],"to":[12000,5000],"filled":false}
+# warnings

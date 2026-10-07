@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="994 -10156 13562 10155.97" width="339.05mm" height="253.9mm">
+<g transform="scale(1,-1)" fill="none" stroke-width="12" stroke-linecap="round" stroke-linejoin="round">
+<text fill="#1a1a1a" font-family="monospace" font-size="208.33" xml:space="preserve" transform="translate(1000,10000) rotate(0) matrix(1,0,0,1,0,0) scale(0.91,-1)" x="0 187.5 375 562.5 750 937.5 1125 1312.5 1500 1687.5 1875 2062.5 2250 2437.5 2625 2812.5 3000 3187.5 3375 3562.5 3750 3937.5 4125 4312.5 4500 4687.5">Default size (SR 0.75,1.5)</text>
+<text fill="#1a1a1a" font-family="monospace" font-size="388.89" xml:space="preserve" transform="translate(1000,9200) rotate(0) matrix(1,0,0,1,0,0) scale(0.86,-1)" x="0 350 700 1050 1400 1750 2100 2450 2800 3150 3500 3850 4200">SI 0.5,0.7 cm</text>
+<text fill="#1a1a1a" font-family="monospace" font-size="416.67" xml:space="preserve" transform="translate(1000,8200) rotate(0) matrix(1,0,0,1,0,0) scale(0.91,-1)" x="0 375 750 1125 1500 1875 2250 2625 3000 3375">SR 1.5,3 %</text>
+<text fill="#1a1a1a" font-family="monospace" font-size="208.33" xml:space="preserve" transform="translate(1000,7400) rotate(0) matrix(1,0,0.5,1,0,0) scale(0.91,-1)" x="0 187.5 375 562.5 750 937.5 1125 1312.5 1500 1687.5 1875 2062.5">SL 0.5 slant</text>
+<text fill="#1a1a1a" font-family="monospace" font-size="208.33" xml:space="preserve" transform="translate(1000,6800) rotate(0) matrix(1,0,-0.5,1,0,0) scale(0.91,-1)" x="0 187.5 375 562.5 750 937.5 1125 1312.5 1500 1687.5 1875 2062.5 2250">SL -0.5 slant</text>
+<text fill="#1a1a1a" font-family="monospace" font-size="208.33" xml:space="preserve" transform="translate(9000,8000) rotate(45) matrix(1,0,0,1,0,0) scale(0.91,-1)" x="0 187.5 375 562.5 750 937.5">DI 1,1</text>
+<text fill="#1a1a1a" font-family="monospace" font-size="208.33" xml:space="preserve" transform="translate(9000,8000) rotate(90) matrix(1,0,0,1,0,0) scale(0.91,-1)" x="0 187.5 375 562.5 750 937.5">DI 0,1</text>
+<text fill="#1a1a1a" font-family="monospace" font-size="208.33" xml:space="preserve" transform="translate(9000,8000) rotate(180) matrix(1,0,0,1,0,0) scale(0.91,-1)" x="0 187.5 375 562.5 750 937.5 1125">DI -1,0</text>
+<text fill="#1a1a1a" font-family="monospace" font-size="208.33" xml:space="preserve" transform="translate(9000,8000) rotate(-90) matrix(1,0,0,1,0,0) scale(0.91,-1)" x="0 187.5 375 562.5 750 937.5 1125">DI 0,-1</text>
+<text fill="#1a1a1a" font-family="monospace" font-size="208.33" xml:space="preserve" transform="translate(13000,10000) rotate(0) matrix(1,0,0,1,0,0) scale(0.91,-1)" x="0">D</text>
+<text fill="#1a1a1a" font-family="monospace" font-size="208.33" xml:space="preserve" transform="translate(13000,9700) rotate(0) matrix(1,0,0,1,0,0) scale(0.91,-1)" x="0">V</text>
+<text fill="#1a1a1a" font-family="monospace" font-size="208.33" xml:space="preserve" transform="translate(13000,9400) rotate(0) matrix(1,0,0,1,0,0) scale(0.91,-1)" x="0">1</text>
+<text fill="#1a1a1a" font-family="monospace" font-size="208.33" xml:space="preserve" transform="translate(1000,5800) rotate(0) matrix(1,0,0,1,0,0) scale(0.91,-1)" x="0">E</text>
+<text fill="#1a1a1a" font-family="monospace" font-size="208.33" xml:space="preserve" transform="translate(1256.5,5800) rotate(0) matrix(1,0,0,1,0,0) scale(0.91,-1)" x="0">S</text>
+<text fill="#1a1a1a" font-family="monospace" font-size="208.33" xml:space="preserve" transform="translate(1769.5,5800) rotate(0) matrix(1,0,0,1,0,0) scale(0.91,-1)" x="0">0</text>
+<text fill="#1a1a1a" font-family="monospace" font-size="208.33" xml:space="preserve" transform="translate(2026,5800) rotate(0) matrix(1,0,0,1,0,0) scale(0.91,-1)" x="0">.</text>
+<text fill="#1a1a1a" font-family="monospace" font-size="208.33" xml:space="preserve" transform="translate(2282.5,5800) rotate(0) matrix(1,0,0,1,0,0) scale(0.91,-1)" x="0">5</text>
+<text fill="#1a1a1a" font-family="monospace" font-size="208.33" xml:space="preserve" transform="translate(2539,5800) rotate(0) matrix(1,0,0,1,0,0) scale(0.91,-1)" x="0">,</text>
+<text fill="#1a1a1a" font-family="monospace" font-size="208.33" xml:space="preserve" transform="translate(2795.5,5800) rotate(0) matrix(1,0,0,1,0,0) scale(0.91,-1)" x="0">1</text>
+<text fill="#1a1a1a" font-family="monospace" font-size="208.33" xml:space="preserve" transform="translate(1000,5200) rotate(0) matrix(1,0,0,1,0,0) scale(0.91,-1)" x="0">n</text>
+<text fill="#1a1a1a" font-family="monospace" font-size="208.33" xml:space="preserve" transform="translate(1256.5,5200) rotate(0) matrix(1,0,0,1,0,0) scale(0.91,-1)" x="0">e</text>
+<text fill="#1a1a1a" font-family="monospace" font-size="208.33" xml:space="preserve" transform="translate(1513,5200) rotate(0) matrix(1,0,0,1,0,0) scale(0.91,-1)" x="0">x</text>
+<text fill="#1a1a1a" font-family="monospace" font-size="208.33" xml:space="preserve" transform="translate(1769.5,5200) rotate(0) matrix(1,0,0,1,0,0) scale(0.91,-1)" x="0">t</text>
+<text fill="#1a1a1a" font-family="monospace" font-size="208.33" xml:space="preserve" transform="translate(2282.5,5200) rotate(0) matrix(1,0,0,1,0,0) scale(0.91,-1)" x="0">l</text>
+<text fill="#1a1a1a" font-family="monospace" font-size="208.33" xml:space="preserve" transform="translate(2539,5200) rotate(0) matrix(1,0,0,1,0,0) scale(0.91,-1)" x="0">i</text>
+<text fill="#1a1a1a" font-family="monospace" font-size="208.33" xml:space="preserve" transform="translate(2795.5,5200) rotate(0) matrix(1,0,0,1,0,0) scale(0.91,-1)" x="0">n</text>
+<text fill="#1a1a1a" font-family="monospace" font-size="208.33" xml:space="preserve" transform="translate(3052,5200) rotate(0) matrix(1,0,0,1,0,0) scale(0.91,-1)" x="0">e</text>
+<text fill="#1a1a1a" font-family="monospace" font-size="208.33" xml:space="preserve" transform="translate(1000,4600) rotate(0) matrix(1,0,0,1,0,0) scale(0.91,-1)" x="0 187.5 375">CP:</text>
+<text fill="#1a1a1a" font-family="monospace" font-size="208.33" xml:space="preserve" transform="translate(1855,4750) rotate(0) matrix(1,0,0,1,0,0) scale(0.91,-1)" x="0 187.5">up</text>
+<text fill="#1a1a1a" font-family="monospace" font-size="208.33" xml:space="preserve" transform="translate(1000,4450) rotate(0) matrix(1,0,0,1,0,0) scale(0.91,-1)" x="0 187.5 375 562.5 750 937.5 1125 1312.5 1500">next line</text>
+<text fill="#1a1a1a" font-family="monospace" font-size="208.33" xml:space="preserve" transform="translate(1000,3000) rotate(0) matrix(1,0,0,1,0,0) scale(0.91,-1)" x="0 187.5 375 562.5 750 937.5">line 1</text>
+<text fill="#1a1a1a" font-family="monospace" font-size="208.33" xml:space="preserve" transform="translate(1000,2700) rotate(0) matrix(1,0,0,1,0,0) scale(0.91,-1)" x="0 187.5 375 562.5 750 937.5">line 2</text>
+<text fill="#1a1a1a" font-family="monospace" font-size="208.33" xml:space="preserve" transform="translate(1855,2700) rotate(0) matrix(1,0,0,1,0,0) scale(0.91,-1)" x="0">X</text>
+<text fill="#1a1a1a" font-family="monospace" font-size="208.33" xml:space="preserve" transform="translate(1940.5,2700) rotate(0) matrix(1,0,0,1,0,0) scale(0.91,-1)" x="0">Y</text>
+<text fill="#1a1a1a" font-family="monospace" font-size="208.33" xml:space="preserve" transform="translate(2111.5,3000) rotate(0) matrix(1,0,0,1,0,0) scale(0.91,-1)" x="0">Z</text>
+<polyline stroke="#1a1a1a" points="5950,2400 6050,2400"/>
+<polyline stroke="#1a1a1a" points="6000,2350 6000,2450"/>
+<text fill="#1a1a1a" font-family="monospace" font-size="208.33" xml:space="preserve" transform="translate(6000,2400) rotate(0) matrix(1,0,0,1,0,0) scale(0.91,-1)" x="0 187.5 375">LO1</text>
+<polyline stroke="#1a1a1a" points="5950,1700 6050,1700"/>
+<polyline stroke="#1a1a1a" points="6000,1650 6000,1750"/>
+<text fill="#1a1a1a" font-family="monospace" font-size="208.33" xml:space="preserve" transform="translate(6000,1625) rotate(0) matrix(1,0,0,1,0,0) scale(0.91,-1)" x="0 187.5 375">LO2</text>
+<polyline stroke="#1a1a1a" points="5950,1000 6050,1000"/>
+<polyline stroke="#1a1a1a" points="6000,950 6000,1050"/>
+<text fill="#1a1a1a" font-family="monospace" font-size="208.33" xml:space="preserve" transform="translate(6000,850) rotate(0) matrix(1,0,0,1,0,0) scale(0.91,-1)" x="0 187.5 375">LO3</text>
+<polyline stroke="#1a1a1a" points="7650,2400 7750,2400"/>
+<polyline stroke="#1a1a1a" points="7700,2350 7700,2450"/>
+<text fill="#1a1a1a" font-family="monospace" font-size="208.33" xml:space="preserve" transform="translate(7472,2400) rotate(0) matrix(1,0,0,1,0,0) scale(0.91,-1)" x="0 187.5 375">LO4</text>
+<polyline stroke="#1a1a1a" points="7650,1700 7750,1700"/>
+<polyline stroke="#1a1a1a" points="7700,1650 7700,1750"/>
+<text fill="#1a1a1a" font-family="monospace" font-size="208.33" xml:space="preserve" transform="translate(7472,1625) rotate(0) matrix(1,0,0,1,0,0) scale(0.91,-1)" x="0 187.5 375">LO5</text>
+<polyline stroke="#1a1a1a" points="7650,1000 7750,1000"/>
+<polyline stroke="#1a1a1a" points="7700,950 7700,1050"/>
+<text fill="#1a1a1a" font-family="monospace" font-size="208.33" xml:space="preserve" transform="translate(7472,850) rotate(0) matrix(1,0,0,1,0,0) scale(0.91,-1)" x="0 187.5 375">LO6</text>
+<polyline stroke="#1a1a1a" points="9350,2400 9450,2400"/>
+<polyline stroke="#1a1a1a" points="9400,2350 9400,2450"/>
+<text fill="#1a1a1a" font-family="monospace" font-size="208.33" xml:space="preserve" transform="translate(8944,2400) rotate(0) matrix(1,0,0,1,0,0) scale(0.91,-1)" x="0 187.5 375">LO7</text>
+<polyline stroke="#1a1a1a" points="9350,1700 9450,1700"/>
+<polyline stroke="#1a1a1a" points="9400,1650 9400,1750"/>
+<text fill="#1a1a1a" font-family="monospace" font-size="208.33" xml:space="preserve" transform="translate(8944,1625) rotate(0) matrix(1,0,0,1,0,0) scale(0.91,-1)" x="0 187.5 375">LO8</text>
+<polyline stroke="#1a1a1a" points="9350,1000 9450,1000"/>
+<polyline stroke="#1a1a1a" points="9400,950 9400,1050"/>
+<text fill="#1a1a1a" font-family="monospace" font-size="208.33" xml:space="preserve" transform="translate(8944,850) rotate(0) matrix(1,0,0,1,0,0) scale(0.91,-1)" x="0 187.5 375">LO9</text>
+<polyline stroke="#1a1a1a" points="11050,2400 11150,2400"/>
+<polyline stroke="#1a1a1a" points="11100,2350 11100,2450"/>
+<text fill="#1a1a1a" font-family="monospace" font-size="208.33" xml:space="preserve" transform="translate(11157,2475) rotate(0) matrix(1,0,0,1,0,0) scale(0.91,-1)" x="0 187.5 375 562.5">LO11</text>
+<polyline stroke="#1a1a1a" points="11050,1700 11150,1700"/>
+<polyline stroke="#1a1a1a" points="11100,1650 11100,1750"/>
+<text fill="#1a1a1a" font-family="monospace" font-size="208.33" xml:space="preserve" transform="translate(11157,1625) rotate(0) matrix(1,0,0,1,0,0) scale(0.91,-1)" x="0 187.5 375 562.5">LO12</text>
+<polyline stroke="#1a1a1a" points="11050,1000 11150,1000"/>
+<polyline stroke="#1a1a1a" points="11100,950 11100,1050"/>
+<text fill="#1a1a1a" font-family="monospace" font-size="208.33" xml:space="preserve" transform="translate(11157,775) rotate(0) matrix(1,0,0,1,0,0) scale(0.91,-1)" x="0 187.5 375 562.5">LO13</text>
+<polyline stroke="#1a1a1a" points="12750,2400 12850,2400"/>
+<polyline stroke="#1a1a1a" points="12800,2350 12800,2450"/>
+<text fill="#1a1a1a" font-family="monospace" font-size="208.33" xml:space="preserve" transform="translate(12486.5,2475) rotate(0) matrix(1,0,0,1,0,0) scale(0.91,-1)" x="0 187.5 375 562.5">LO14</text>
+<polyline stroke="#1a1a1a" points="12750,1700 12850,1700"/>
+<polyline stroke="#1a1a1a" points="12800,1650 12800,1750"/>
+<text fill="#1a1a1a" font-family="monospace" font-size="208.33" xml:space="preserve" transform="translate(12486.5,1475) rotate(0) matrix(1,0,0,1,0,0) scale(0.91,-1)" x="0 187.5 375 562.5">LO16</text>
+<polyline stroke="#1a1a1a" points="12750,1000 12850,1000"/>
+<polyline stroke="#1a1a1a" points="12800,950 12800,1050"/>
+<text fill="#1a1a1a" font-family="monospace" font-size="208.33" xml:space="preserve" transform="translate(12116,1075) rotate(0) matrix(1,0,0,1,0,0) scale(0.91,-1)" x="0 187.5 375 562.5">LO17</text>
+<polyline stroke="#1a1a1a" points="14450,2400 14550,2400"/>
+<polyline stroke="#1a1a1a" points="14500,2350 14500,2450"/>
+<text fill="#1a1a1a" font-family="monospace" font-size="208.33" xml:space="preserve" transform="translate(13816,2325) rotate(0) matrix(1,0,0,1,0,0) scale(0.91,-1)" x="0 187.5 375 562.5">LO18</text>
+<polyline stroke="#1a1a1a" points="14450,1700 14550,1700"/>
+<polyline stroke="#1a1a1a" points="14500,1650 14500,1750"/>
+<text fill="#1a1a1a" font-family="monospace" font-size="208.33" xml:space="preserve" transform="translate(13816,1475) rotate(0) matrix(1,0,0,1,0,0) scale(0.91,-1)" x="0 187.5 375 562.5">LO19</text>
+<text fill="#1a1a1a" font-family="monospace" font-size="222.22" xml:space="preserve" transform="translate(1000,1000) rotate(0) matrix(1,0,0,1,0,0) scale(0.6,-1)" x="0 200 400 600 800 1000">SU 2,4</text>
+<text fill="#1a1a1a" font-family="monospace" font-size="222.22" xml:space="preserve" transform="translate(1000,600) rotate(-45) matrix(1,0,0,1,0,0) scale(0.6,-1)" x="0 200 400 600 800 1000 1200">DU 1,-1</text>
+</g>
+</svg>

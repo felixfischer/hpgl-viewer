@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-2006 -1006 4012 2012" width="100.3mm" height="50.3mm">
+<g transform="scale(1,-1)" fill="none" stroke-width="12" stroke-linecap="round" stroke-linejoin="round">
+<polyline stroke="#1a1a1a" points="-2000,-1000 2000,1000"/>
+<polyline stroke="#1a1a1a" points="-2000,1000 2000,-1000"/>
+<polyline stroke="#1a1a1a" points="-2000,0 2000,0"/>
+<polyline stroke="#1a1a1a" points="0,-1000 0,1000"/>
+<clipPath id="c0"><rect x="-1000" y="-500" width="2000" height="1000"/></clipPath>
+<g clip-path="url(#c0)"><polyline stroke="#e6194b" points="-2100,-1000 2100,1000"/></g>
+<g clip-path="url(#c0)"><polyline stroke="#e6194b" points="-2100,1000 2100,-1000"/></g>
+<g clip-path="url(#c0)"><polyline stroke="#e6194b" points="-2000,0 2000,0"/></g>
+<g clip-path="url(#c0)"><polyline stroke="#e6194b" points="0,-1000 0,1000"/></g>
+</g>
+</svg>
