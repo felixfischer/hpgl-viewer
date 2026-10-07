@@ -11,6 +11,7 @@ import {
 	strokeOf,
 	toPlotter,
 } from "../state.ts";
+import { chordAngle } from "../tessellate.ts";
 import type { Handler } from "./index.ts";
 
 /** Draws the polygon buffer: `FP` fills it, `EP` edges it. */
@@ -46,9 +47,10 @@ function rectangle(
 
 /** `WG`/`EW r,start,sweep[,res]`: a pie slice centred on the pen; the pen stays put. */
 function wedge(filled: boolean): Handler {
-	return (state, [r = 0, start = 0, sweep, res = 5]) => {
+	return (state, [r = 0, start = 0, sweep, res]) => {
 		if (sweep === undefined || state.pen === 0) return;
 		breakStroke(state);
+		const angle = chordAngle(res, r, state.chordHeight);
 		emit(state, {
 			type: "wedge",
 			...strokeOf(state),
@@ -57,7 +59,7 @@ function wedge(filled: boolean): Handler {
 			startAngle: start + (r < 0 ? 180 : 0) + state.rotation,
 			sweepAngle: Math.min(Math.max(sweep, -360), 360),
 			// [R]: at most 90 chords per arc.
-			chordAngle: Math.min(Math.max(res, Math.abs(sweep) / 90), 180),
+			chordAngle: Math.min(Math.max(angle, Math.abs(sweep) / 90), 180),
 			...fillOf(state, filled),
 		});
 	};

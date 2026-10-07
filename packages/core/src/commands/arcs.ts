@@ -1,6 +1,7 @@
 import type { Point } from "../geometry.ts";
 import {
 	breakStroke,
+	closeRing,
 	emit,
 	type State,
 	scaled,
@@ -9,17 +10,8 @@ import {
 	toPlotterOffset,
 	toUserOffset,
 } from "../state.ts";
-import { arcPoints } from "../tessellate.ts";
+import { arcPoints, chordAngle } from "../tessellate.ts";
 import type { Handler } from "./index.ts";
-
-/** Resolves a CI/AA/AR resolution parameter to a chord angle in degrees. */
-function chordAngle(state: State, res: number | undefined, radius: number) {
-	if (res === undefined) return 5;
-	if (!state.chordHeight) return res;
-	// Chord height h → angle θ = 2·acos(1 − h/r); h ≥ 2r is a single chord.
-	const ratio = Math.min(Math.max(res / Math.abs(radius) || 0, 0), 2);
-	return (2 * Math.acos(1 - ratio) * 180) / Math.PI;
-}
 
 const DEG = 180 / Math.PI;
 
@@ -34,7 +26,7 @@ function arc(state: State, center: Point, sweep: number, res?: number): void {
 	const [ux, uy] = toUserOffset(state, [px, py]);
 	const r = Math.hypot(ux, uy);
 	const start = Math.atan2(uy, ux) * DEG;
-	const angle = chordAngle(state, res, r);
+	const angle = chordAngle(res, r, state.chordHeight);
 	const toPlot = ([x, y]: Point): Point => {
 		const [dx, dy] = toPlotterOffset(state, x, y);
 		return [cx + dx, cy + dy];
@@ -73,12 +65,21 @@ export const arcs: Record<string, Handler> = {
 		if (state.pen === 0) return;
 		breakStroke(state);
 		const [dx, dy] = toPlotterOffset(state, r, 0);
+		const radius = Math.hypot(dx, dy);
+		const angle = chordAngle(res, r, state.chordHeight);
+		if (state.polygonMode) {
+			// Inside PM a circle is its own closed subpolygon (reference notes §PM).
+			if (state.polygon.at(-1)?.length) state.polygon.push([]);
+			state.polygon.at(-1)?.push(...arcPoints(state.at, radius, 0, 360, angle));
+			closeRing(state);
+			return;
+		}
 		emit(state, {
 			type: "circle",
 			...strokeOf(state),
 			center: state.at,
-			radius: Math.hypot(dx, dy),
-			chordAngle: chordAngle(state, res, r),
+			radius,
+			chordAngle: angle,
 		});
 	},
 	AA(state, [xc = 0, yc = 0, sweep = 0, res]) {

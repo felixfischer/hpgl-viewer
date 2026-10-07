@@ -5,6 +5,22 @@ const RAD = Math.PI / 180;
 /** Finest chord angle, used for `0`: bounds a full circle to 3600 chords. */
 const MIN_CHORD_ANGLE = 0.1;
 
+/**
+ * Resolves a `CI`/`AA`/`AR`/`WG`/`EW` resolution parameter to a chord angle in degrees.
+ * `asHeight` is `CT1`: the parameter is the chord height (max deviation, current units),
+ * converted with θ = 2·acos(1 − h/r); `h ≥ 2r` is a single chord.
+ */
+export function chordAngle(
+	res: number | undefined,
+	radius: number,
+	asHeight: boolean,
+): number {
+	if (res === undefined) return 5;
+	if (!asHeight) return res;
+	const ratio = Math.min(Math.max(res / Math.abs(radius) || 0, 0), 2);
+	return (2 * Math.acos(1 - ratio) * 180) / Math.PI;
+}
+
 /** Points along an arc, angles in degrees (counter-clockwise from +X). */
 export function arcPoints(
 	[cx, cy]: Point,

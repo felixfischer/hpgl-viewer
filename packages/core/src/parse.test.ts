@@ -490,6 +490,15 @@ describe("parseHpgl", () => {
 		]);
 	});
 
+	test("a CI inside polygon mode adds a closed subpolygon ring", () => {
+		const [page] = parseHpgl("PM0;PD0,0,100,0,100,100;PM1;CI50;PM2;EP;").pages;
+		const poly = page?.primitives[0];
+		expect(poly?.type).toBe("polygon");
+		if (poly?.type !== "polygon") return;
+		expect(poly.rings).toHaveLength(2);
+		expect(poly.rings[1]?.length).toBeGreaterThan(8);
+	});
+
 	test("RA/EA fill/edge to an absolute corner, RR/ER to a relative one; the pen stays put", () => {
 		const [page] = parseHpgl(
 			"PA10,10;RA30,40;PR;EA50,60;RR-5,-5;ER20,-20;RA;PD1,1;",
