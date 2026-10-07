@@ -5,6 +5,7 @@ import type {
 	Polyline,
 	Primitive,
 	Warning,
+	Window,
 } from "./geometry.ts";
 
 /** The one mutable plotter state every command handler reads and writes. */
@@ -13,7 +14,18 @@ export interface State {
 	at: Point;
 	pen: number;
 	penDown: boolean;
+	/** `PR` mode: PU/PD/PA/PR coordinates are offsets from the pen position. */
+	relative: boolean;
 	lineType: LineType;
+	/** Scaling points P1 and P2, in plotter units. */
+	p1: Point;
+	p2: Point;
+	/** `SC` user rectangle `[xmin, xmax, ymin, ymax]` mapped onto P1..P2; `null` = plotter units. */
+	scale: [number, number, number, number] | null;
+	/** `RO` angle; 90 turns the coordinate system counter-clockwise about the plotter origin (ADR-0006). */
+	rotation: 0 | 90;
+	/** `IW` clip window in plotter units; `null` = whole page. */
+	window: Window | null;
 	pages: Page[];
 	/** The polyline pen-down moves are currently extending, if any. */
 	stroke: Polyline | null;
@@ -26,10 +38,63 @@ export function createState(): State {
 		// ponytail: pen 1 until SP, so files that never select a pen still draw.
 		pen: 1,
 		penDown: false,
+		relative: false,
 		lineType: null,
+		...defaultScalingPoints(),
+		scale: null,
+		rotation: 0,
+		window: null,
 		pages: [{ primitives: [] }],
 		stroke: null,
 		warnings: [],
+	};
+}
+
+/** A3 landscape P1/P2 (HP 7475A); the viewer's default page. */
+export const defaultScalingPoints = (): { p1: Point; p2: Point } => ({
+	p1: [170, 602],
+	p2: [15370, 10602],
+});
+
+/** Scales a user-unit offset to plotter units. */
+function scaled(state: State, dx: number, dy: number): Point {
+	if (!state.scale) return [dx, dy];
+	const [xmin, xmax, ymin, ymax] = state.scale;
+	return [
+		(dx * (state.p2[0] - state.p1[0])) / (xmax - xmin),
+		(dy * (state.p2[1] - state.p1[1])) / (ymax - ymin),
+	];
+}
+
+// `0 - y` rather than `-y` so a zero stays +0 in the stream.
+export const rotate = (state: State, [x, y]: Point): Point =>
+	state.rotation ? [0 - y, x] : [x, y];
+
+/** Converts an absolute user-space coordinate pair to plotter units. */
+export function toPlotter(state: State, x: number, y: number): Point {
+	if (!state.scale) return rotate(state, [x, y]);
+	const [xmin, , ymin] = state.scale;
+	const [dx, dy] = scaled(state, x - xmin, y - ymin);
+	return rotate(state, [state.p1[0] + dx, state.p1[1] + dy]);
+}
+
+/** Resolves a PA/PR coordinate pair (per the current mode) to a plotter-unit target. */
+export function target(state: State, x: number, y: number): Point {
+	if (!state.relative) return toPlotter(state, x, y);
+	const [dx, dy] = rotate(state, scaled(state, x, y));
+	return [state.at[0] + dx, state.at[1] + dy];
+}
+
+/** The pen, line type and window every new primitive is tagged with. */
+export function strokeOf(state: State): {
+	pen: number;
+	lineType: LineType;
+	window?: Window;
+} {
+	return {
+		pen: state.pen,
+		lineType: state.lineType,
+		...(state.window && { window: state.window }),
 	};
 }
 
@@ -48,8 +113,7 @@ export function moveTo(state: State, to: Point): void {
 		if (!state.stroke) {
 			state.stroke = {
 				type: "polyline",
-				pen: state.pen,
-				lineType: state.lineType,
+				...strokeOf(state),
 				points: [state.at],
 			};
 			emit(state, state.stroke);

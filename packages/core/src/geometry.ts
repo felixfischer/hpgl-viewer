@@ -6,9 +6,17 @@ export type Point = [x: number, y: number];
 /** `LT` pattern number and length (percent of P1–P2 diagonal); `null` = solid. */
 export type LineType = { pattern: number; length: number } | null;
 
+/** Axis-aligned rectangle in plotter units, `from` ≤ `to` on both axes. */
+export interface Window {
+	from: Point;
+	to: Point;
+}
+
 interface Stroke {
 	pen: number;
 	lineType: LineType;
+	/** `IW` input window in force when drawn; renderers clip to it. Absent = unclipped. */
+	window?: Window;
 }
 
 export interface Polyline extends Stroke {
