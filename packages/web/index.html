@@ -10,6 +10,8 @@
 		<header>
 			<label>Open HP-GL file <input id="file" type="file" accept=".hpgl,.hpg,.plt,.hgl,text/plain" /></label>
 			<select id="page" aria-label="Page" hidden></select>
+			<label><input id="actual-size" type="checkbox" /> Actual page size</label>
+			<button id="reset-view" type="button">Reset view</button>
 			<output id="status" aria-live="polite">Drop an HP-GL file anywhere, or pick one.</output>
 		</header>
 		<div id="warnings" role="status" hidden>
