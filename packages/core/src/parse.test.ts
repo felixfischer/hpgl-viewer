@@ -72,10 +72,38 @@ describe("parseHpgl", () => {
 	});
 
 	test("unknown commands are skipped to the next terminator and reported", () => {
-		const result = parseHpgl("IN;VS15;ZZ1,2,3;PD10,0;");
+		const result = parseHpgl("IN;XX15;ZZ1,2,3;PD10,0;");
 		expect(result.warnings).toEqual([
-			{ mnemonic: "VS", offset: 3, message: "Unsupported command VS skipped" },
-			{ mnemonic: "ZZ", offset: 8, message: "Unsupported command ZZ skipped" },
+			{
+				kind: "skipped",
+				mnemonic: "XX",
+				offset: 3,
+				message: "Unsupported command XX skipped",
+			},
+			{
+				kind: "skipped",
+				mnemonic: "ZZ",
+				offset: 8,
+				message: "Unsupported command ZZ skipped",
+			},
+		]);
+		expect(result.pages[0]?.primitives).toHaveLength(1);
+	});
+
+	test("VS (pen speed) has no visual effect and is accepted without a warning", () => {
+		expect(parseHpgl("VS15;VS;").warnings).toEqual([]);
+	});
+
+	test("an HP-GL/2-only command raises one 'not supported' warning; the rest still renders", () => {
+		const result = parseHpgl("BP;IN;PC1,255,0,0;PD10,0;PW0.5;");
+		expect(result.warnings.filter((w) => w.kind === "dialect")).toEqual([
+			{
+				kind: "dialect",
+				mnemonic: "BP",
+				offset: 0,
+				message:
+					"HP-GL/2 is not supported; only classic HP-GL commands are drawn",
+			},
 		]);
 		expect(result.pages[0]?.primitives).toHaveLength(1);
 	});

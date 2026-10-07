@@ -85,8 +85,12 @@ export interface Page {
 	primitives: Primitive[];
 }
 
-/** A non-fatal problem found while parsing; `offset` is the index into the input. */
+/**
+ * A non-fatal problem found while parsing; `offset` is the index into the input.
+ * `skipped`: a command was not executed. `dialect`: the file looks like HP-GL/2.
+ */
 export interface Warning {
+	kind: "skipped" | "dialect";
 	mnemonic: string;
 	offset: number;
 	message: string;

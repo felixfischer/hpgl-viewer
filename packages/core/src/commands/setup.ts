@@ -7,4 +7,6 @@ export const setup: Record<string, Handler> = {
 		state.lineType = null;
 		breakStroke(state);
 	},
+	// Pen speed: no visual effect.
+	VS() {},
 };
