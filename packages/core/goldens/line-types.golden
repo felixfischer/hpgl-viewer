@@ -1,0 +1,10 @@
+# page 1
+{"type":"polyline","pen":1,"lineType":null,"points":[[0,0],[4000,0]]}
+{"type":"polyline","pen":1,"lineType":{"pattern":0,"length":226.27416997969522},"points":[[0,200],[4000,200]]}
+{"type":"polyline","pen":1,"lineType":{"pattern":1,"length":226.27416997969522},"points":[[0,400],[4000,400]]}
+{"type":"polyline","pen":1,"lineType":{"pattern":2,"length":226.27416997969522},"points":[[0,600],[4000,600]]}
+{"type":"polyline","pen":1,"lineType":{"pattern":3,"length":226.27416997969522},"points":[[0,800],[4000,800]]}
+{"type":"polyline","pen":1,"lineType":{"pattern":4,"length":226.27416997969522},"points":[[0,1000],[4000,1000]]}
+{"type":"polyline","pen":1,"lineType":{"pattern":5,"length":226.27416997969522},"points":[[0,1200],[4000,1200]]}
+{"type":"polyline","pen":1,"lineType":{"pattern":6,"length":282.842712474619},"points":[[0,1400],[4000,1400]]}
+# warnings

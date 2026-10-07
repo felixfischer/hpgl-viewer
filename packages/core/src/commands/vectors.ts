@@ -1,10 +1,9 @@
-import type { Point } from "../geometry.ts";
-import { breakStroke, moveTo, type State } from "../state.ts";
+import { breakStroke, moveTo, type State, target } from "../state.ts";
 import type { Handler } from "./index.ts";
 
 function plot(state: State, params: number[]): void {
 	for (let i = 0; i + 1 < params.length; i += 2) {
-		moveTo(state, [params[i], params[i + 1]] as Point);
+		moveTo(state, target(state, params[i] ?? 0, params[i + 1] ?? 0));
 	}
 }
 
@@ -16,6 +15,25 @@ export const vectors: Record<string, Handler> = {
 	},
 	PD(state, params) {
 		state.penDown = true;
+		plot(state, params);
+	},
+	LT(state, params) {
+		const [pattern = -1, percent = 4] = params.map((n, i) =>
+			i ? n : Math.trunc(n),
+		);
+		if (pattern > 6) return; // undefined patterns keep the previous line type
+		breakStroke(state);
+		state.lineType =
+			pattern < 0
+				? null
+				: { pattern, percent: Math.min(Math.max(percent, 0), 127.9999) };
+	},
+	PA(state, params) {
+		state.relative = false;
+		plot(state, params);
+	},
+	PR(state, params) {
+		state.relative = true;
 		plot(state, params);
 	},
 };

@@ -31,6 +31,14 @@ _Avoid_: logical unit, scaled unit
 **Scaling points**:
 The two points, P1 and P2, that anchor user units to the plotter-unit coordinate system.
 
+**Input window**:
+The rectangle, in plotter units, that `IW` clips drawing to. Each primitive carries the window in force when it was drawn.
+_Avoid_: clip rect, viewport
+
+**Line type**:
+The dash pattern set by `LT`: a pattern number (0–6) and a pattern length, given as a percentage of the P1–P2 diagonal and carried on each primitive in plotter units.
+_Avoid_: dash style, stroke style
+
 ### Pen
 
 **Pen**:

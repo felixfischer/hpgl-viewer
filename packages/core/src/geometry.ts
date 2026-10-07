@@ -3,12 +3,33 @@
 
 export type Point = [x: number, y: number];
 
-/** `LT` pattern number and length (percent of P1–P2 diagonal); `null` = solid. */
+/** `LT` pattern number and length of one pattern repeat in plotter units; `null` = solid. */
 export type LineType = { pattern: number; length: number } | null;
+
+/**
+ * Pen-down/pen-up fractions of one pattern repeat for `LT` 1–6, pen-down first.
+ * Zero-length dashes are dots. Pattern 0 has no dashes: a dot at each vertex.
+ */
+export const LINE_PATTERNS: Readonly<Record<number, readonly number[]>> = {
+	1: [0, 1],
+	2: [0.5, 0.5],
+	3: [0.7, 0.3],
+	4: [0.8, 0.1, 0, 0.1],
+	5: [0.7, 0.1, 0.1, 0.1],
+	6: [0.5, 0.1, 0.1, 0.1, 0.1, 0.1],
+};
+
+/** Axis-aligned rectangle in plotter units, `from` ≤ `to` on both axes. */
+export interface Window {
+	from: Point;
+	to: Point;
+}
 
 interface Stroke {
 	pen: number;
 	lineType: LineType;
+	/** `IW` input window in force when drawn; renderers clip to it. Absent = unclipped. */
+	window?: Window;
 }
 
 export interface Polyline extends Stroke {

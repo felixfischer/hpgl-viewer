@@ -92,9 +92,92 @@ describe("parseHpgl", () => {
 			],
 		]);
 	});
+
+	test("IP/SC map user units onto P1..P2: 0..100 over 0..4000 plu is millimetres", () => {
+		const [page] = parseHpgl(
+			"IN;IP0,0,4000,4000;SC0,100,0,100;SP1;PA0,0;PD;PA100,0;PA100,100;PU;",
+		).pages;
+		expect(
+			page?.primitives.map((p) => p.type === "polyline" && p.points),
+		).toEqual([
+			[
+				[0, 0],
+				[4000, 0],
+				[4000, 4000],
+			],
+		]);
+	});
+
+	test("PR mode persists into PU/PD and offsets in user units; IN restores PA", () => {
+		const [page] = parseHpgl(
+			"IP0,0,4000,4000;SC0,100,0,100;PA10,10;PR;PD5,0;PU0,5;PD-5,0;IN;PD7,7;",
+		).pages;
+		expect(
+			page?.primitives.map((p) => p.type === "polyline" && p.points),
+		).toEqual([
+			[
+				[400, 400],
+				[600, 400],
+			],
+			[
+				[600, 600],
+				[400, 600],
+			],
+			[
+				[400, 600],
+				[7, 7],
+			],
+		]);
+	});
+
+	test("RO90 rotates the coordinate system 90° counter-clockwise about the origin", () => {
+		const [page] = parseHpgl(
+			"RO90;PD4000,1000;PR;PD0,-1000;RO;PA4000,0;",
+		).pages;
+		expect(
+			page?.primitives.map((p) => p.type === "polyline" && p.points),
+		).toEqual([
+			[
+				[0, 0],
+				[-1000, 4000],
+				[0, 4000],
+				[4000, 0],
+			],
+		]);
+	});
+
+	test("IW tags later primitives with the clip window in plotter units; IW; clears it", () => {
+		const [page] = parseHpgl(
+			"PD10,10;IW1000,500,-1000,-500;PD20,20;IW;PD30,30;",
+		).pages;
+		expect(page?.primitives.map((p) => p.window)).toEqual([
+			undefined,
+			{ from: [-1000, -500], to: [1000, 500] },
+			undefined,
+		]);
+	});
+
+	test("LT sets pattern and length (% of the P1–P2 diagonal, default 4); 7+ is ignored, negative or LT; is solid", () => {
+		const [page] = parseHpgl(
+			"IP0,0,3000,4000;LT2,10;PD1,1;LT;PD2,2;LT2;PD3,3;LT7;PD4,4;LT-1;PD5,5;",
+		).pages;
+		expect(page?.primitives.map((p) => p.lineType)).toEqual([
+			{ pattern: 2, length: 500 },
+			null,
+			{ pattern: 2, length: 200 },
+			null,
+		]);
+	});
 });
 
-describe.each(["space-shuttle", "starry-night"])("fixture %s.hpgl", (name) => {
+describe.each([
+	"space-shuttle",
+	"starry-night",
+	"millimetres",
+	"input-window",
+	"rotate",
+	"line-types",
+])("fixture %s.hpgl", (name) => {
 	test("parses to its golden geometry stream", async () => {
 		const text = readFileSync(
 			new URL(`../../../hpgl/${name}.hpgl`, import.meta.url),
