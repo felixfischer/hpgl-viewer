@@ -17,6 +17,29 @@ header {
 	padding: 0.5em 1em;
 	border-bottom: 1px solid #ddd;
 }
+aside {
+	display: flex;
+	gap: 1em;
+	align-items: center;
+	padding: 0.25em 1em;
+	border-bottom: 1px solid #ddd;
+}
+aside[hidden] {
+	display: none;
+}
+#legend {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.25em 1em;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+#legend label {
+	display: flex;
+	gap: 0.25em;
+	align-items: center;
+}
 canvas {
 	flex: 1;
 	min-height: 0;
