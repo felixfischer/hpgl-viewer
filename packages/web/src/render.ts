@@ -1,4 +1,4 @@
-import type { Page, Point } from "@hpgl-viewer/core";
+import { LINE_PATTERNS, type Page, type Point } from "@hpgl-viewer/core";
 
 // ADR-0004 default palette; ponytail: cycles past pen 8, golden-angle hues come with the pen UI.
 const PALETTE = [
@@ -28,8 +28,13 @@ export function renderPage(canvas: HTMLCanvasElement, page: Page): void {
 		p.type === "polyline" ? [p] : [],
 	);
 	let [minX, minY, maxX, maxY] = [Infinity, Infinity, -Infinity, -Infinity];
-	for (const { points } of polylines) {
-		for (const [x, y] of points) {
+	for (const { points, window } of polylines) {
+		for (let [x, y] of points) {
+			// Only what survives the input window counts towards the fit.
+			if (window) {
+				x = Math.min(Math.max(x, window.from[0]), window.to[0]);
+				y = Math.min(Math.max(y, window.from[1]), window.to[1]);
+			}
 			minX = Math.min(minX, x);
 			minY = Math.min(minY, y);
 			maxX = Math.max(maxX, x);
@@ -52,14 +57,32 @@ export function renderPage(canvas: HTMLCanvasElement, page: Page): void {
 
 	ctx.lineWidth = dpr;
 	ctx.lineJoin = ctx.lineCap = "round";
-	for (const { pen, points } of polylines) {
+	for (const { pen, points, lineType, window } of polylines) {
+		ctx.save();
+		if (window) {
+			const [x1, y1] = toView(window.from);
+			const [x2, y2] = toView(window.to);
+			ctx.beginPath();
+			ctx.rect(x1, y2, x2 - x1, y1 - y2);
+			ctx.clip();
+		}
 		ctx.strokeStyle = penColour(pen);
+		ctx.setLineDash(
+			LINE_PATTERNS[lineType?.pattern ?? -1]?.map(
+				(f) => f * (lineType?.length ?? 0) * scale,
+			) ?? [],
+		);
 		ctx.beginPath();
 		for (const [i, point] of points.entries()) {
 			const [x, y] = toView(point);
-			if (i === 0) ctx.moveTo(x, y);
+			if (lineType?.pattern === 0) {
+				// LT0: a dot at each vertex, no line.
+				ctx.moveTo(x, y);
+				ctx.lineTo(x, y);
+			} else if (i === 0) ctx.moveTo(x, y);
 			else ctx.lineTo(x, y);
 		}
 		ctx.stroke();
+		ctx.restore();
 	}
 }

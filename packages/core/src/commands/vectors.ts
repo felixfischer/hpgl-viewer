@@ -17,6 +17,17 @@ export const vectors: Record<string, Handler> = {
 		state.penDown = true;
 		plot(state, params);
 	},
+	LT(state, params) {
+		const [pattern = -1, percent = 4] = params.map((n, i) =>
+			i ? n : Math.trunc(n),
+		);
+		if (pattern > 6) return; // undefined patterns keep the previous line type
+		breakStroke(state);
+		state.lineType =
+			pattern < 0
+				? null
+				: { pattern, percent: Math.min(Math.max(percent, 0), 127.9999) };
+	},
 	PA(state, params) {
 		state.relative = false;
 		plot(state, params);

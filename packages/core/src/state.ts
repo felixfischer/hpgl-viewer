@@ -16,7 +16,8 @@ export interface State {
 	penDown: boolean;
 	/** `PR` mode: PU/PD/PA/PR coordinates are offsets from the pen position. */
 	relative: boolean;
-	lineType: LineType;
+	/** `LT` setting; `percent` is resolved against the P1–P2 diagonal when a primitive is drawn. */
+	lineType: { pattern: number; percent: number } | null;
 	/** Scaling points P1 and P2, in plotter units. */
 	p1: Point;
 	p2: Point;
@@ -93,7 +94,12 @@ export function strokeOf(state: State): {
 } {
 	return {
 		pen: state.pen,
-		lineType: state.lineType,
+		lineType: state.lineType && {
+			pattern: state.lineType.pattern,
+			length:
+				(state.lineType.percent / 100) *
+				Math.hypot(state.p2[0] - state.p1[0], state.p2[1] - state.p1[1]),
+		},
 		...(state.window && { window: state.window }),
 	};
 }

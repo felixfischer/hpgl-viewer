@@ -46,6 +46,7 @@ export const setup: Record<string, Handler> = {
 	SC(state, params) {
 		const [xmin = 0, xmax = 0, ymin = 0, ymax = 0] = params;
 		if (params.length < 4) state.scale = null;
-		else if (xmin !== xmax && ymin !== ymax) state.scale = [xmin, xmax, ymin, ymax];
+		else if (xmin !== xmax && ymin !== ymax)
+			state.scale = [xmin, xmax, ymin, ymax];
 	},
 };

@@ -1,0 +1,5 @@
+# page 1
+{"type":"polyline","pen":1,"lineType":null,"points":[[0,0],[4000,0],[4000,4000],[0,4000],[0,0]]}
+{"type":"polyline","pen":2,"lineType":null,"points":[[1000,1000],[3000,1000],[3000,3000],[1000,3000],[1000,1000]]}
+{"type":"polyline","pen":3,"lineType":null,"points":[[0,0],[4000,0]]}
+# warnings
