@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { expect, test } from "@playwright/test";
 
 const fixture = new URL("../../../hpgl/space-shuttle.hpgl", import.meta.url)
@@ -173,4 +174,32 @@ test("pan, zoom and the actual-page-size toggle change the view; reset fits agai
 	await reset.click();
 	await expect(actual).not.toBeChecked();
 	await expect.poll(pixels).toBe(fitted);
+});
+
+test("the plot downloads as SVG (vector, from the geometry) and PNG (from the canvas)", async ({
+	page,
+}) => {
+	await page.goto("/");
+	await page.locator("#file").setInputFiles(fixture);
+	await expect(page.locator("#plot")).toHaveAttribute(
+		"data-rendered",
+		"space-shuttle.hpgl",
+	);
+
+	const [svg] = await Promise.all([
+		page.waitForEvent("download"),
+		page.getByRole("button", { name: "Export SVG" }).click(),
+	]);
+	expect(svg.suggestedFilename()).toBe("space-shuttle.svg");
+	const text = readFileSync(await svg.path(), "utf8");
+	expect(text).toMatch(/^<svg xmlns="http:\/\/www.w3.org\/2000\/svg"/);
+	expect(text).toContain("<polyline");
+
+	const [png] = await Promise.all([
+		page.waitForEvent("download"),
+		page.getByRole("button", { name: "Export PNG" }).click(),
+	]);
+	expect(png.suggestedFilename()).toBe("space-shuttle.png");
+	const bytes = readFileSync(await png.path());
+	expect(bytes.subarray(1, 4).toString()).toBe("PNG");
 });
