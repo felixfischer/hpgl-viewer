@@ -5,23 +5,37 @@ import { renderPage } from "./render.ts";
 const canvas = document.querySelector("#plot") as HTMLCanvasElement;
 const picker = document.querySelector("#file") as HTMLInputElement;
 const status = document.querySelector("#status") as HTMLOutputElement;
+const pageSelect = document.querySelector("#page") as HTMLSelectElement;
 
 const worker = new Worker(new URL("./parse.worker.ts", import.meta.url), {
 	type: "module",
 });
+let pages: Page[] = [];
 let page: Page | undefined;
 let fileName = "";
+let warnings = "";
 
-worker.onmessage = ({ data }: MessageEvent<ParseResult>) => {
-	page = data.pages[0];
+function show(index: number) {
+	page = pages[index];
 	if (page) renderPage(canvas, page);
 	const count = page?.primitives.length ?? 0;
-	const skipped = data.warnings.length
-		? `, ${data.warnings.length} warning(s)`
-		: "";
-	status.value = `${fileName}: ${count} primitive(s)${skipped}`;
+	const of = pages.length > 1 ? `page ${index + 1} of ${pages.length}, ` : "";
+	status.value = `${fileName}: ${of}${count} primitive(s)${warnings}`;
 	canvas.dataset.rendered = fileName;
+	canvas.dataset.page = String(index + 1);
+}
+
+worker.onmessage = ({ data }: MessageEvent<ParseResult>) => {
+	pages = data.pages;
+	warnings = data.warnings.length ? `, ${data.warnings.length} warning(s)` : "";
+	pageSelect.replaceChildren(
+		...pages.map((_, i) => new Option(`Page ${i + 1}`, String(i))),
+	);
+	pageSelect.hidden = pages.length < 2;
+	show(0);
 };
+
+pageSelect.addEventListener("change", () => show(Number(pageSelect.value)));
 
 async function open(file: File) {
 	fileName = file.name;

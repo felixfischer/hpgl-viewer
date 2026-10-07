@@ -9,6 +9,7 @@
 	<body>
 		<header>
 			<label>Open HP-GL file <input id="file" type="file" accept=".hpgl,.hpg,.plt,.hgl,text/plain" /></label>
+			<select id="page" aria-label="Page" hidden></select>
 			<output id="status" aria-live="polite">Drop an HP-GL file anywhere, or pick one.</output>
 		</header>
 		<canvas id="plot" aria-label="Plot"></canvas>
