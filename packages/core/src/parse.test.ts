@@ -161,10 +161,10 @@ describe("parseHpgl", () => {
 			return String.fromCharCode(seed % 128);
 		}).join("");
 		const huge = [
-			"PD" + "1,".repeat(1_000_000), // one command, enormous parameter list
+			`PD${"1,".repeat(1_000_000)}`, // one command, enormous parameter list
 			"ZZ".repeat(500_000), // unknown and unterminated
 			";".repeat(1_000_000),
-			"\x1b".repeat(100_000) + "\x1b*b99999999W",
+			`${"\x1b".repeat(100_000)}\x1b*b99999999W`,
 			noise,
 		];
 		const started = performance.now();
