@@ -83,6 +83,8 @@ export type Primitive =
 
 export interface Page {
 	primitives: Primitive[];
+	/** Paper size set by `PS`, in plotter units; absent when the file never sets one. */
+	size?: { width: number; height: number };
 }
 
 /** A non-fatal problem found while parsing; `offset` is the index into the input. */

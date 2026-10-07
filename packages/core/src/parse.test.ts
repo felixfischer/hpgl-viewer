@@ -5,7 +5,9 @@ import { type ParseResult, parseHpgl } from "./index.ts";
 /** One primitive or warning per line, so golden diffs stay reviewable. */
 function golden({ pages, warnings }: ParseResult): string {
 	const lines = pages.flatMap((page, i) => [
-		`# page ${i + 1}`,
+		page.size
+			? `# page ${i + 1} size ${page.size.width}x${page.size.height}`
+			: `# page ${i + 1}`,
 		...page.primitives.map((p) => JSON.stringify(p)),
 	]);
 	lines.push("# warnings", ...warnings.map((w) => JSON.stringify(w)));
@@ -92,16 +94,68 @@ describe("parseHpgl", () => {
 			],
 		]);
 	});
-});
 
-describe.each(["space-shuttle", "starry-night"])("fixture %s.hpgl", (name) => {
-	test("parses to its golden geometry stream", async () => {
-		const text = readFileSync(
-			new URL(`../../../hpgl/${name}.hpgl`, import.meta.url),
-			"utf8",
-		);
-		await expect(golden(parseHpgl(text))).toMatchFileSnapshot(
-			`../goldens/${name}.golden`,
-		);
+	test("PG ends a page; drawing continues on the next one from the same pen position", () => {
+		const { pages } = parseHpgl("PU0,0;PD10,0;PG;PD10,10;");
+		expect(
+			pages.map((p) =>
+				p.primitives.map((q) => q.type === "polyline" && q.points),
+			),
+		).toEqual([
+			[
+				[
+					[0, 0],
+					[10, 0],
+				],
+			],
+			[
+				[
+					[10, 0],
+					[10, 10],
+				],
+			],
+		]);
+	});
+
+	test("AF advances the page like PG; page ends with nothing drawn add no blank pages", () => {
+		const result = parseHpgl("PG;PD1,1;AF;PG;PD2,2;PG;");
+		expect(result.pages.map((p) => p.primitives.length)).toEqual([1, 1]);
+	});
+
+	test("PS sets the page size in plotter units; following pages keep it", () => {
+		const size = (hpgl: string) => parseHpgl(hpgl).pages.map((p) => p.size);
+		expect(size("PD1,1;")).toEqual([undefined]);
+		// Paper codes: 0–3 = A3, 4–127 = A4, landscape (420 × 297 mm, 297 × 210 mm).
+		expect(size("PS0;PD1,1;")).toEqual([{ width: 16800, height: 11880 }]);
+		expect(size("PS4;PD1,1;PG;PD2,2;")).toEqual([
+			{ width: 11880, height: 8400 },
+			{ width: 11880, height: 8400 },
+		]);
+		// Explicit length (X) and width (Y) in plotter units.
+		expect(size("PS20000,10000;PD1,1;PG;PS0;PD2,2;")).toEqual([
+			{ width: 20000, height: 10000 },
+			{ width: 16800, height: 11880 },
+		]);
+	});
+
+	test("NR is accepted without effect", () => {
+		const result = parseHpgl("PD1,1;NR;PD2,2;");
+		expect(result.warnings).toEqual([]);
+		expect(result.pages).toHaveLength(1);
 	});
 });
+
+describe.each(["space-shuttle", "starry-night", "multi-page"])(
+	"fixture %s.hpgl",
+	(name) => {
+		test("parses to its golden geometry stream", async () => {
+			const text = readFileSync(
+				new URL(`../../../hpgl/${name}.hpgl`, import.meta.url),
+				"utf8",
+			);
+			await expect(golden(parseHpgl(text))).toMatchFileSnapshot(
+				`../goldens/${name}.golden`,
+			);
+		});
+	},
+);
