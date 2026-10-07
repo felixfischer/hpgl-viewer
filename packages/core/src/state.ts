@@ -1,4 +1,5 @@
 import type {
+	Fill,
 	LineType,
 	Page,
 	Point,
@@ -25,6 +26,10 @@ export interface State {
 	scale: [number, number, number, number] | null;
 	/** `RO` angle; 90 turns the coordinate system counter-clockwise about the plotter origin (ADR-0006). */
 	rotation: 0 | 90;
+	/** `FT` type (1–4), spacing in user units (`null` = 1 % of the P1–P2 diagonal, 0 = `PT`) and angle. */
+	fill: { type: number; spacing: number | null; angle: number };
+	/** `PT` pen thickness in mm: the line spacing of solid fills, and of `FT` 3/4 with spacing 0. */
+	penThickness: number;
 	/** `IW` clip window in plotter units; `null` = whole page. */
 	window: Window | null;
 	pages: Page[];
@@ -51,6 +56,7 @@ export function createState(): State {
 		...defaultScalingPoints(),
 		scale: null,
 		rotation: 0,
+		...defaultFill(),
 		window: null,
 		pages: [{ primitives: [] }],
 		polygon: [],
@@ -64,6 +70,11 @@ export function createState(): State {
 export const defaultScalingPoints = (): { p1: Point; p2: Point } => ({
 	p1: [170, 602],
 	p2: [15370, 10602],
+});
+
+export const defaultFill = (): Pick<State, "fill" | "penThickness"> => ({
+	fill: { type: 1, spacing: null, angle: 0 },
+	penThickness: 0.3,
 });
 
 /** Scales a user-unit offset to plotter units. */
@@ -114,6 +125,29 @@ export function strokeOf(state: State): {
 				Math.hypot(state.p2[0] - state.p1[0], state.p2[1] - state.p1[1]),
 		},
 		...(state.window && { window: state.window }),
+	};
+}
+
+/** The `FT` fill a filled shape carries, resolved to plotter units. */
+export function fillOf(state: State, filled: boolean): Fill {
+	const { type, spacing, angle } = state.fill;
+	if (!filled || type < 3) return { filled };
+	const diagonal = Math.hypot(
+		state.p2[0] - state.p1[0],
+		state.p2[1] - state.p1[1],
+	);
+	return {
+		filled,
+		hatch: {
+			spacing:
+				spacing === null
+					? diagonal / 100
+					: spacing === 0
+						? state.penThickness * 40
+						: Math.abs(scaled(state, spacing, 0)[0]),
+			angle: angle + state.rotation,
+			cross: type === 4,
+		},
 	};
 }
 

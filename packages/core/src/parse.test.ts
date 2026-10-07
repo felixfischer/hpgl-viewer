@@ -313,9 +313,7 @@ describe("parseHpgl", () => {
 	});
 
 	test("PM0…PM2 buffers vertices without drawing; FP fills and EP edges the buffer", () => {
-		const [page] = parseHpgl(
-			"SP2;PA0,0;PM0;PD100,0,100,100;PM2;FP;EP;",
-		).pages;
+		const [page] = parseHpgl("SP2;PA0,0;PM0;PD100,0,100,100;PM2;FP;EP;").pages;
 		const ring = [
 			[0, 0],
 			[100, 0],
@@ -333,18 +331,44 @@ describe("parseHpgl", () => {
 				(p) => p.type === "polygon" && p.rings,
 			);
 		expect(
-			rings("PM0;PD10,0,10,10;PM1;PU20,20;PD30,20,30,30;PU50,50;PD60,50,60,60;PM2;FP;PD5,5;EP;"),
+			rings(
+				"PM0;PD10,0,10,10;PM1;PU20,20;PD30,20,30,30;PU50,50;PD60,50,60,60;PM2;FP;PD5,5;EP;",
+			),
 		).toEqual([
 			[
-				[[0, 0], [10, 0], [10, 10]],
-				[[20, 20], [30, 20], [30, 30]],
-				[[50, 50], [60, 50], [60, 60]],
+				[
+					[0, 0],
+					[10, 0],
+					[10, 10],
+				],
+				[
+					[20, 20],
+					[30, 20],
+					[30, 30],
+				],
+				[
+					[50, 50],
+					[60, 50],
+					[60, 60],
+				],
 			],
 			false, // the PD between is an ordinary polyline
 			[
-				[[0, 0], [10, 0], [10, 10]],
-				[[20, 20], [30, 20], [30, 30]],
-				[[50, 50], [60, 50], [60, 60]],
+				[
+					[0, 0],
+					[10, 0],
+					[10, 10],
+				],
+				[
+					[20, 20],
+					[30, 20],
+					[30, 30],
+				],
+				[
+					[50, 50],
+					[60, 50],
+					[60, 60],
+				],
 			],
 		]);
 		// PM1/PM2 outside polygon mode are ignored; IN clears the buffer.
@@ -358,11 +382,47 @@ describe("parseHpgl", () => {
 			"PA10,10;RA30,40;PR;EA50,60;RR-5,-5;ER20,-20;RA;PD1,1;",
 		).pages;
 		expect(page?.primitives).toEqual([
-			{ type: "rectangle", pen: 1, lineType: null, from: [10, 10], to: [30, 40], filled: true },
-			{ type: "rectangle", pen: 1, lineType: null, from: [10, 10], to: [50, 60], filled: false },
-			{ type: "rectangle", pen: 1, lineType: null, from: [10, 10], to: [5, 5], filled: true },
-			{ type: "rectangle", pen: 1, lineType: null, from: [10, 10], to: [30, -10], filled: false },
-			{ type: "polyline", pen: 1, lineType: null, points: [[10, 10], [11, 11]] },
+			{
+				type: "rectangle",
+				pen: 1,
+				lineType: null,
+				from: [10, 10],
+				to: [30, 40],
+				filled: true,
+			},
+			{
+				type: "rectangle",
+				pen: 1,
+				lineType: null,
+				from: [10, 10],
+				to: [50, 60],
+				filled: false,
+			},
+			{
+				type: "rectangle",
+				pen: 1,
+				lineType: null,
+				from: [10, 10],
+				to: [5, 5],
+				filled: true,
+			},
+			{
+				type: "rectangle",
+				pen: 1,
+				lineType: null,
+				from: [10, 10],
+				to: [30, -10],
+				filled: false,
+			},
+			{
+				type: "polyline",
+				pen: 1,
+				lineType: null,
+				points: [
+					[10, 10],
+					[11, 11],
+				],
+			},
 		]);
 	});
 
@@ -393,7 +453,36 @@ describe("parseHpgl", () => {
 				chordAngle: 10,
 				filled: false,
 			},
-			{ type: "polyline", pen: 1, lineType: null, points: [[2000, 2000], [2000, 2400]] },
+			{
+				type: "polyline",
+				pen: 1,
+				lineType: null,
+				points: [
+					[2000, 2000],
+					[2000, 2400],
+				],
+			},
+		]);
+	});
+
+	test("FT3/FT4 hatch fills at spacing (user units) and angle; FT1/2 are solid; FT3,0 spaces by PT", () => {
+		const hatches = (hpgl: string) =>
+			parseHpgl(
+				`IP0,0,3000,4000;SC0,300,0,400;${hpgl}`,
+			).pages[0]?.primitives.map(
+				(p) => "filled" in p && p.filled && (p.hatch ?? "solid"),
+			);
+		expect(
+			hatches(
+				"FT3,10,45;RA10,10;EA20,20;FT4;WG5,0,90;FT2;RR1,1;FT3,0;PT1;PM0;PD1,1,1,0;PM2;FP;FT;FT3;RA1,1;",
+			),
+		).toEqual([
+			{ spacing: 100, angle: 45, cross: false },
+			false, // edges never hatch
+			{ spacing: 100, angle: 45, cross: true }, // FT4 keeps the previous spacing and angle
+			"solid",
+			{ spacing: 40, angle: 45, cross: false }, // PT1 = 1 mm = 40 plu
+			{ spacing: 50, angle: 0, cross: false }, // default: 1% of the 5000 plu P1–P2 diagonal
 		]);
 	});
 });

@@ -2,10 +2,12 @@ import type { Point } from "../geometry.ts";
 import {
 	breakStroke,
 	closeRing,
+	defaultFill,
 	emit,
+	fillOf,
 	offset,
-	scaled,
 	type State,
+	scaled,
 	strokeOf,
 	toPlotter,
 } from "../state.ts";
@@ -16,7 +18,12 @@ function drawPolygon(state: State, filled: boolean): void {
 	const rings = state.polygon.filter((r) => r.length > 1).map((r) => [...r]);
 	if (!rings.length || state.pen === 0) return;
 	breakStroke(state);
-	emit(state, { type: "polygon", ...strokeOf(state), rings, filled });
+	emit(state, {
+		type: "polygon",
+		...strokeOf(state),
+		rings,
+		...fillOf(state, filled),
+	});
 }
 
 /** `RA`/`RR`/`EA`/`ER`: a rectangle from the pen position to `corner`; the pen stays put. */
@@ -32,7 +39,7 @@ function rectangle(
 			...strokeOf(state),
 			from: state.at,
 			to: corner(state, x, y),
-			filled,
+			...fillOf(state, filled),
 		});
 	};
 }
@@ -51,7 +58,7 @@ function wedge(filled: boolean): Handler {
 			sweepAngle: Math.min(Math.max(sweep, -360), 360),
 			// [R]: at most 90 chords per arc.
 			chordAngle: Math.min(Math.max(res, Math.abs(sweep) / 90), 180),
-			filled,
+			...fillOf(state, filled),
 		});
 	};
 }
@@ -69,6 +76,18 @@ export const polygons: Record<string, Handler> = {
 	},
 	FP: (state) => drawPolygon(state, true),
 	EP: (state) => drawPolygon(state, false),
+	FT(state, [type, spacing, angle]) {
+		if (type === undefined) state.fill = defaultFill().fill;
+		else if (type >= 1 && type <= 4)
+			state.fill = {
+				type: Math.trunc(type),
+				spacing: spacing ?? state.fill.spacing,
+				angle: angle ?? state.fill.angle,
+			};
+	},
+	PT(state, [mm = 0.3]) {
+		state.penThickness = Math.min(Math.max(mm, 0.1), 5);
+	},
 	RA: rectangle(toPlotter, true),
 	RR: rectangle(offset, true),
 	EA: rectangle(toPlotter, false),
