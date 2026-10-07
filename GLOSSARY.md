@@ -56,3 +56,17 @@ _Avoid_: tool, head
 **Pen colour**:
 The colour a pen's strokes are drawn in. Since classic HP-GL carries no colour, the viewer assigns each pen a distinct colour from a default palette, overridable by the user.
 _Avoid_: pen style, pen shade
+
+### Shapes and fills
+
+**Polygon buffer**:
+The rings collected between `PM0` and `PM2`, drawn by `FP` (fill) and `EP` (edge). Nothing draws while it is being defined.
+_Avoid_: path, shape buffer
+
+**Ring**:
+One closed outline in the polygon buffer (HP-GL's subpolygon). Rings fill by the even-odd rule, so nested rings make holes.
+_Avoid_: contour, loop
+
+**Fill type**:
+How `FT` fills a shape: solid (types 1 and 2, drawn as an area) or hatched with parallel lines (3) or crossed lines (4) at a spacing and angle.
+_Avoid_: pattern, fill style

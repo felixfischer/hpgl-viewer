@@ -1,4 +1,5 @@
 import type {
+	Fill,
 	LineType,
 	Page,
 	Point,
@@ -27,9 +28,20 @@ export interface State {
 	rotation: 0 | 90;
 	/** `CT1`: curve resolutions are chord heights in current units, not chord angles. */
 	chordHeight: boolean;
+	/** `FT` type (1–4), spacing in user units (`null` = 1 % of the P1–P2 diagonal, 0 = `PT`) and angle. */
+	fill: { type: number; spacing: number | null; angle: number };
+	/** `PT` pen thickness in mm: the line spacing of solid fills, and of `FT` 3/4 with spacing 0. */
+	penThickness: number;
 	/** `IW` clip window in plotter units; `null` = whole page. */
 	window: Window | null;
 	pages: Page[];
+	/**
+	 * `PM` polygon buffer: closed rings, the last one still being defined (empty = none
+	 * started). Kept after `PM2` for repeated `FP`/`EP` until the next `PM0` (ADR-0007).
+	 */
+	polygon: Point[][];
+	/** Inside `PM0`…`PM2`: moves add vertices to `polygon` and draw nothing. */
+	polygonMode: boolean;
 	/** The polyline pen-down moves are currently extending, if any. */
 	stroke: Polyline | null;
 	warnings: Warning[];
@@ -47,8 +59,11 @@ export function createState(): State {
 		scale: null,
 		rotation: 0,
 		chordHeight: false,
+		...defaultFill(),
 		window: null,
 		pages: [{ primitives: [] }],
+		polygon: [],
+		polygonMode: false,
 		stroke: null,
 		warnings: [],
 	};
@@ -58,6 +73,11 @@ export function createState(): State {
 export const defaultScalingPoints = (): { p1: Point; p2: Point } => ({
 	p1: [170, 602],
 	p2: [15370, 10602],
+});
+
+export const defaultFill = (): Pick<State, "fill" | "penThickness"> => ({
+	fill: { type: 1, spacing: null, angle: 0 },
+	penThickness: 0.3,
 });
 
 /** Scales a user-unit offset to plotter units. */
@@ -95,7 +115,11 @@ export function toUserOffset(state: State, [x, y]: Point): Point {
 
 /** Resolves a PA/PR coordinate pair (per the current mode) to a plotter-unit target. */
 export function target(state: State, x: number, y: number): Point {
-	if (!state.relative) return toPlotter(state, x, y);
+	return state.relative ? offset(state, x, y) : toPlotter(state, x, y);
+}
+
+/** The point a user-unit offset away from the pen position, in plotter units. */
+export function offset(state: State, x: number, y: number): Point {
 	const [dx, dy] = toPlotterOffset(state, x, y);
 	return [state.at[0] + dx, state.at[1] + dy];
 }
@@ -118,6 +142,29 @@ export function strokeOf(state: State): {
 	};
 }
 
+/** The `FT` fill a filled shape carries, resolved to plotter units. */
+export function fillOf(state: State, filled: boolean): Fill {
+	const { type, spacing, angle } = state.fill;
+	if (!filled || type < 3) return { filled };
+	const diagonal = Math.hypot(
+		state.p2[0] - state.p1[0],
+		state.p2[1] - state.p1[1],
+	);
+	return {
+		filled,
+		hatch: {
+			spacing:
+				spacing === null
+					? diagonal / 100
+					: spacing === 0
+						? state.penThickness * 40
+						: Math.abs(scaled(state, spacing, 0)[0]),
+			angle: angle + state.rotation,
+			cross: type === 4,
+		},
+	};
+}
+
 export function emit(state: State, primitive: Primitive): void {
 	state.pages[state.pages.length - 1]?.primitives.push(primitive);
 }
@@ -129,7 +176,12 @@ export function breakStroke(state: State): void {
 
 /** Moves the pen to `to`, drawing a segment when the pen is down. */
 export function moveTo(state: State, to: Point): void {
-	if (state.penDown && state.pen !== 0) {
+	if (state.polygonMode) {
+		const ring = state.polygon.at(-1);
+		if (!state.penDown) closeRing(state);
+		else if (ring && !ring.length) ring.push(state.at, to);
+		else ring?.push(to);
+	} else if (state.penDown && state.pen !== 0) {
 		if (!state.stroke) {
 			state.stroke = {
 				type: "polyline",
@@ -141,4 +193,9 @@ export function moveTo(state: State, to: Point): void {
 		state.stroke.points.push(to);
 	}
 	state.at = to;
+}
+
+/** Ends the ring being defined in `PM`; the next pen-down vertex starts another. */
+export function closeRing(state: State): void {
+	if (state.polygon.at(-1)?.length) state.polygon.push([]);
 }

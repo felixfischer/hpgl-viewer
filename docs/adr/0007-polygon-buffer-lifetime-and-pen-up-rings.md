@@ -1,0 +1,5 @@
+# The polygon buffer persists until PM0/IN; pen-up moves start a new ring
+
+Classic HP-GL sources say little about `PM`; we follow the HP-GL/2 manual where it doesn't conflict with keeping the geometry stream simple. The buffer starts at the pen position before `PM0` and is kept after `PM2`, so `FP;EP;` (and any later `FP`/`EP`) redraw it, until the next `PM0` or `IN` clears it; `RA`/`RR`/`EA`/`ER`/`WG`/`EW` leave it alone (HP-GL/2 overwrites it). `PM1`/`PM2` without `PM0` are ignored. After `PM2` the pen stays at the last vertex with its up/down state unchanged — files usually `PU` next.
+
+HP-GL/2 stores pen-up moves inside a subpolygon as edges that `FP` fills across but `EP` doesn't stroke. We instead close the ring on a pen-up move and start a new ring at its target, so a `Polygon` is only `rings` + `filled` and every ring edge is both filled and stroked. This matches HP-GL/2 for the usual `PM1; PU …; PD …` hole idiom and differs only for files that pen-up mid-ring. Rings with fewer than two points are dropped.

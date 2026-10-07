@@ -56,28 +56,40 @@ export interface Arc extends Stroke {
 	chordAngle: number;
 }
 
-export interface Wedge extends Stroke {
+/** `FT` 3/4 hatching of a filled shape, in plotter units; hatch lines are solid. */
+export interface Hatch {
+	spacing: number;
+	/** Degrees, counter-clockwise from +X. */
+	angle: number;
+	/** `FT4`: a second set of lines at angle + 90°. */
+	cross: boolean;
+}
+
+/** A shape `FT` fills when `filled`; without `hatch` the fill is solid. */
+export interface Fill {
+	filled: boolean;
+	hatch?: Hatch;
+}
+
+export interface Wedge extends Stroke, Fill {
 	type: "wedge";
 	center: Point;
 	radius: number;
 	startAngle: number;
 	sweepAngle: number;
 	chordAngle: number;
-	filled: boolean;
 }
 
-export interface Rectangle extends Stroke {
+export interface Rectangle extends Stroke, Fill {
 	type: "rectangle";
 	from: Point;
 	to: Point;
-	filled: boolean;
 }
 
-export interface Polygon extends Stroke {
+export interface Polygon extends Stroke, Fill {
 	type: "polygon";
 	/** Closed rings; even-odd fill. */
 	rings: Point[][];
-	filled: boolean;
 }
 
 export interface Label extends Stroke {
