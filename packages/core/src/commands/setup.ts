@@ -10,6 +10,7 @@ export const setup: Record<string, Handler> = {
 		state.scale = null;
 		state.rotation = 0;
 		state.window = null;
+		state.chordHeight = false;
 		breakStroke(state);
 	},
 	IP(state, params) {

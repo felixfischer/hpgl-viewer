@@ -1,4 +1,10 @@
-import { LINE_PATTERNS, type Page, type Point } from "@hpgl-viewer/core";
+import {
+	LINE_PATTERNS,
+	type Page,
+	type Point,
+	type Polyline,
+	tessellate,
+} from "@hpgl-viewer/core";
 
 const MARGIN = 16; // CSS px
 
@@ -15,9 +21,13 @@ export function renderPage(
 	if (!ctx) return;
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-	const polylines = page.primitives.flatMap((p) =>
-		p.type === "polyline" ? [p] : [],
-	);
+	// Curves are stroked as the shared tessellation, exactly like polylines.
+	const polylines = page.primitives.flatMap((p): Polyline[] => {
+		if (p.type === "polyline") return [p];
+		if (p.type === "circle" || p.type === "arc" || p.type === "wedge")
+			return [{ ...p, type: "polyline", points: tessellate(p) }];
+		return [];
+	});
 	let [minX, minY, maxX, maxY] = [Infinity, Infinity, -Infinity, -Infinity];
 	for (const { points, window } of polylines) {
 		for (let [x, y] of points) {

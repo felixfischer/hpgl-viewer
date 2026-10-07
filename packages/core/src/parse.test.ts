@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, test } from "vitest";
-import { type ParseResult, parseHpgl } from "./index.ts";
+import { type ParseResult, parseHpgl, tessellate } from "./index.ts";
 
 /** One primitive or warning per line, so golden diffs stay reviewable. */
 function golden({ pages, warnings }: ParseResult): string {
@@ -8,7 +8,14 @@ function golden({ pages, warnings }: ParseResult): string {
 		page.size
 			? `# page ${i + 1} size ${page.size.width}x${page.size.height}`
 			: `# page ${i + 1}`,
-		...page.primitives.map((p) => JSON.stringify(p)),
+		...page.primitives.flatMap((p) =>
+			p.type === "circle" || p.type === "arc" || p.type === "wedge"
+				? [
+						JSON.stringify(p),
+						`  tessellated ${JSON.stringify(tessellate(p).map(([x, y]) => [+x.toFixed(2), +y.toFixed(2)]))}`,
+					]
+				: [JSON.stringify(p)],
+		),
 	]);
 	lines.push("# warnings", ...warnings.map((w) => JSON.stringify(w)));
 	return `${lines.join("\n")}\n`;
@@ -306,6 +313,112 @@ describe("parseHpgl", () => {
 		]);
 	});
 
+	test("CI draws a circle about the pen position even with the pen up, leaving the pen untouched", () => {
+		const [page] = parseHpgl("PU100,200;CI50;PR;PD10,0;").pages;
+		expect(page?.primitives).toEqual([
+			{
+				type: "circle",
+				pen: 1,
+				lineType: null,
+				center: [100, 200],
+				radius: 50,
+				chordAngle: 5,
+			},
+			{
+				type: "polyline",
+				pen: 1,
+				lineType: null,
+				points: [
+					[100, 200],
+					[110, 200],
+				],
+			},
+		]);
+	});
+
+	test("CT1 makes the CI resolution a chord height, CT0 (and IN) an angle again", () => {
+		const angles = parseHpgl(
+			"CT1;CI1000,500;CI1000;CT;CI1000,20;CT1;IN;CI1000,30;",
+		).pages[0]?.primitives.map((p) => p.type === "circle" && p.chordAngle);
+		// θ = 2·acos(1 − h/r): a chord height of half the radius gives 120° chords.
+		expect(angles?.[0]).toBeCloseTo(120);
+		expect(angles?.slice(1)).toEqual([5, 20, 30]);
+	});
+
+	test("AA draws an arc about an absolute center from the pen position, leaving the pen at its end", () => {
+		const [page] = parseHpgl("PU1100,0;PD;AA1000,0,90;PD1000,200;").pages;
+		expect(page?.primitives).toEqual([
+			{
+				type: "arc",
+				pen: 1,
+				lineType: null,
+				center: [1000, 0],
+				radius: 100,
+				startAngle: 0,
+				sweepAngle: 90,
+				chordAngle: 5,
+			},
+			{
+				type: "polyline",
+				pen: 1,
+				lineType: null,
+				points: [
+					[expect.closeTo(1000), expect.closeTo(100)],
+					[1000, 200],
+				],
+			},
+		]);
+	});
+
+	test("AA with the pen up only moves the pen to the arc end", () => {
+		const [page] = parseHpgl("PU1100,0;AA1000,0,-90,30;PD1000,-200;").pages;
+		expect(
+			page?.primitives.map((p) => p.type === "polyline" && p.points),
+		).toEqual([
+			[
+				[expect.closeTo(1000), expect.closeTo(-100)],
+				[1000, -200],
+			],
+		]);
+	});
+
+	test("AR centers the arc at an offset from the pen position", () => {
+		const [arc] =
+			parseHpgl("PU100,100;PD;AR-100,0,-180,30;").pages[0]?.primitives ?? [];
+		expect(arc).toMatchObject({
+			type: "arc",
+			center: [0, 100],
+			radius: 100,
+			startAngle: 0,
+			sweepAngle: -180,
+			chordAngle: 30,
+		});
+	});
+
+	test("arcs follow RO90 and mirrored scaling; the pen ends at the transformed arc end", () => {
+		const [page] = parseHpgl(
+			"RO90;PU1100,0;PD;AA1000,0,90;PU;IN;IP0,0,1000,1000;SC100,0,0,100;PU0,0;PD;AR10,0,90;PR;PD0,0;",
+		).pages;
+		expect(page?.primitives).toMatchObject([
+			{ center: [0, 1000], radius: 100, startAngle: 90, sweepAngle: 90 },
+			{ center: [900, 0], radius: 100, startAngle: 0, sweepAngle: -90 },
+			{ points: Array(2).fill([expect.closeTo(900), expect.closeTo(-100)]) },
+		]);
+	});
+
+	test("under non-uniform scaling an arc is drawn as the elliptical polyline it plots as", () => {
+		const [arc] =
+			parseHpgl("IP0,0,2000,1000;SC0,10,0,10;PU10,0;PD;AA0,0,90,90;").pages[0]
+				?.primitives ?? [];
+		expect(arc).toMatchObject({
+			type: "polyline",
+			points: [
+				[2000, 0],
+				[expect.closeTo(0), 1000],
+			],
+		});
+	});
+
 	test("NR is accepted without effect", () => {
 		const result = parseHpgl("PD1,1;NR;PD2,2;");
 		expect(result.warnings).toEqual([]);
@@ -323,6 +436,8 @@ describe.each([
 	"multi-page",
 	"unsupported",
 	"hpgl2-sample",
+	"circles",
+	"arcs",
 ])("fixture %s.hpgl", (name) => {
 	test("parses to its golden geometry stream", async () => {
 		const text = readFileSync(

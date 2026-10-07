@@ -25,6 +25,8 @@ export interface State {
 	scale: [number, number, number, number] | null;
 	/** `RO` angle; 90 turns the coordinate system counter-clockwise about the plotter origin (ADR-0006). */
 	rotation: 0 | 90;
+	/** `CT1`: curve resolutions are chord heights in current units, not chord angles. */
+	chordHeight: boolean;
 	/** `IW` clip window in plotter units; `null` = whole page. */
 	window: Window | null;
 	pages: Page[];
@@ -44,6 +46,7 @@ export function createState(): State {
 		...defaultScalingPoints(),
 		scale: null,
 		rotation: 0,
+		chordHeight: false,
 		window: null,
 		pages: [{ primitives: [] }],
 		stroke: null,
@@ -58,7 +61,7 @@ export const defaultScalingPoints = (): { p1: Point; p2: Point } => ({
 });
 
 /** Scales a user-unit offset to plotter units. */
-function scaled(state: State, dx: number, dy: number): Point {
+export function scaled(state: State, dx: number, dy: number): Point {
 	if (!state.scale) return [dx, dy];
 	const [xmin, xmax, ymin, ymax] = state.scale;
 	return [
@@ -79,10 +82,21 @@ export function toPlotter(state: State, x: number, y: number): Point {
 	return rotate(state, [state.p1[0] + dx, state.p1[1] + dy]);
 }
 
+/** Converts a user-unit offset (a vector, not a position) to plotter units. */
+export const toPlotterOffset = (state: State, dx: number, dy: number): Point =>
+	rotate(state, scaled(state, dx, dy));
+
+/** Converts a plotter-unit offset back to user units; inverse of `toPlotterOffset`. */
+export function toUserOffset(state: State, [x, y]: Point): Point {
+	const [sx, sy] = scaled(state, 1, 1);
+	const [ux, uy] = state.rotation ? [y, 0 - x] : [x, y];
+	return [ux / sx, uy / sy];
+}
+
 /** Resolves a PA/PR coordinate pair (per the current mode) to a plotter-unit target. */
 export function target(state: State, x: number, y: number): Point {
 	if (!state.relative) return toPlotter(state, x, y);
-	const [dx, dy] = rotate(state, scaled(state, x, y));
+	const [dx, dy] = toPlotterOffset(state, x, y);
 	return [state.at[0] + dx, state.at[1] + dy];
 }
 

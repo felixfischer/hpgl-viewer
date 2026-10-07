@@ -39,6 +39,14 @@ _Avoid_: clip rect, viewport
 The dash pattern set by `LT`: a pattern number (0–6) and a pattern length, given as a percentage of the P1–P2 diagonal and carried on each primitive in plotter units.
 _Avoid_: dash style, stroke style
 
+**Chord angle**:
+The angle, in degrees, each straight chord of a tessellated circle or arc spans; rounded so a whole number of chords covers the sweep. Set per command, or derived from a chord height under `CT1`.
+_Avoid_: resolution, segment angle
+
+**Chord tolerance**:
+The `CT` mode deciding whether a curve's resolution parameter is a chord angle (`CT0`, default) or a chord height, the maximum deviation from the true curve in current units (`CT1`).
+_Avoid_: flatness, precision
+
 ### Pen
 
 **Pen**:

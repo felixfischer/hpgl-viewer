@@ -107,3 +107,15 @@ test("each used pen is listed with its colour, recolourable and resettable", asy
 	expect(await canvas.evaluate(inkedIn, "#00ff00")).toBe(0);
 	expect(await canvas.evaluate(inkedIn, "#e6194b")).toBeGreaterThan(50);
 });
+
+test("circles and arcs are painted as curves", async ({ page }) => {
+	await page.goto("/");
+	await page
+		.locator("#file")
+		.setInputFiles(
+			new URL("../../../hpgl/circles.hpgl", import.meta.url).pathname,
+		);
+	const canvas = page.locator("#plot");
+	await expect(canvas).toHaveAttribute("data-rendered", "circles.hpgl");
+	expect(await canvas.evaluate(inkedIn, "#1a1a1a")).toBeGreaterThan(500);
+});
