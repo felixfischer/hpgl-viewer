@@ -497,6 +497,9 @@ describe.each([
 	"multi-page",
 	"unsupported",
 	"hpgl2-sample",
+	"polygons",
+	"rectangles",
+	"wedges",
 ])("fixture %s.hpgl", (name) => {
 	test("parses to its golden geometry stream", async () => {
 		const text = readFileSync(

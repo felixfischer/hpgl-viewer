@@ -1,0 +1,10 @@
+# page 1
+{"type":"wedge","pen":1,"lineType":null,"center":[3000,3000],"radius":2000,"startAngle":0,"sweepAngle":90,"chordAngle":5,"filled":true}
+{"type":"wedge","pen":2,"lineType":null,"center":[3000,3000],"radius":2000,"startAngle":0,"sweepAngle":90,"chordAngle":5,"filled":false}
+{"type":"wedge","pen":3,"lineType":null,"center":[3000,3000],"radius":2000,"startAngle":180,"sweepAngle":120,"chordAngle":10,"filled":true,"hatch":{"spacing":150,"angle":45,"cross":false}}
+{"type":"wedge","pen":3,"lineType":null,"center":[3000,3000],"radius":2000,"startAngle":180,"sweepAngle":120,"chordAngle":10,"filled":false}
+{"type":"wedge","pen":4,"lineType":null,"center":[9000,3000],"radius":2000,"startAngle":225,"sweepAngle":-270,"chordAngle":5,"filled":true,"hatch":{"spacing":200,"angle":0,"cross":true}}
+{"type":"wedge","pen":4,"lineType":null,"center":[9000,3000],"radius":2000,"startAngle":225,"sweepAngle":-270,"chordAngle":5,"filled":false}
+{"type":"wedge","pen":5,"lineType":null,"center":[13000,3000],"radius":1500,"startAngle":0,"sweepAngle":360,"chordAngle":5,"filled":true}
+{"type":"wedge","pen":5,"lineType":null,"center":[13000,3000],"radius":1500,"startAngle":0,"sweepAngle":360,"chordAngle":5,"filled":false}
+# warnings

@@ -1,0 +1,8 @@
+# page 1
+{"type":"polygon","pen":1,"lineType":null,"rings":[[[1000,1000],[5000,1000],[5000,4000],[1000,4000]],[[2000,2000],[4000,2000],[4000,3000],[2000,3000]]],"filled":true}
+{"type":"polygon","pen":2,"lineType":null,"rings":[[[1000,1000],[5000,1000],[5000,4000],[1000,4000]],[[2000,2000],[4000,2000],[4000,3000],[2000,3000]]],"filled":false}
+{"type":"polygon","pen":3,"lineType":null,"rings":[[[6000,1000],[9000,1000],[7500,4000]]],"filled":true,"hatch":{"spacing":200,"angle":45,"cross":false}}
+{"type":"polygon","pen":3,"lineType":null,"rings":[[[6000,1000],[9000,1000],[7500,4000]]],"filled":false}
+{"type":"polygon","pen":4,"lineType":null,"rings":[[[10000,1000],[13000,1000],[13000,4000],[10000,4000]],[[11000,2000],[12000,2000],[12000,3000],[11000,3000]]],"filled":true,"hatch":{"spacing":300,"angle":0,"cross":true}}
+{"type":"polygon","pen":4,"lineType":{"pattern":2,"length":727.7801865948261},"rings":[[[10000,1000],[13000,1000],[13000,4000],[10000,4000]],[[11000,2000],[12000,2000],[12000,3000],[11000,3000]]],"filled":false}
+# warnings
