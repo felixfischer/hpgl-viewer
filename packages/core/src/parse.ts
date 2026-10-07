@@ -62,6 +62,7 @@ export function parseHpgl(text: string): ParseResult {
 		const offset = i;
 		const mnemonic = text.slice(i, i + 2).toUpperCase();
 		i += 2;
+		state.command = { mnemonic, offset };
 		const textHandler = textRegistry[mnemonic];
 		if (textHandler) {
 			i = textHandler(state, text, i);

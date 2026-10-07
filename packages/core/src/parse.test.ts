@@ -508,6 +508,35 @@ describe("parseHpgl", () => {
 		expect(placed("BLA\x03BL\x03PB;")).toEqual([]);
 		expect(placed(`BL${"x".repeat(200)}\x03PB;`)?.[0]?.[0]).toHaveLength(150);
 	});
+	test("CS/CA designate the standard and alternate sets; SS/SA and SI/SO in a label select them", () => {
+		const result = (hpgl: string) => parseHpgl(hpgl);
+		const texts = (hpgl: string) =>
+			result(hpgl).pages[0]?.primitives.map(
+				(p) => p.type === "label" && p.text,
+			);
+		// Set 8: JIS X 0201 katakana; set 101: two-byte JIS kanji.
+		expect(texts("CS8;LB12\x03")).toEqual(["ｱｲ"]);
+		expect(texts("CS0;CA101;SA;LBJ8;z\x03SS;LBJ8\x03")).toEqual(["文字", "J8"]);
+		expect(texts("CA8;LBA\x0e1\x0fB\x03")).toEqual(["AｱB"]);
+		expect(texts("CA8;SA;IN;LB1\x03")).toEqual(["1"]);
+	});
+
+	test("labels in a character set the viewer can't draw fall back to ASCII with one warning per set", () => {
+		const { pages, warnings } = parseHpgl(
+			"CS3;LBA\x03LBB\x03CA4;SA;PB;CS;SS;LBC\x03",
+		);
+		expect(
+			pages[0]?.primitives.map((p) => p.type === "label" && p.text),
+		).toEqual(["A", "B", "C"]);
+		expect(warnings).toEqual([
+			{
+				kind: "charset",
+				mnemonic: "LB",
+				offset: 4,
+				message: "Character set 3 is drawn as ASCII",
+			},
+		]);
+	});
 });
 
 describe.each([

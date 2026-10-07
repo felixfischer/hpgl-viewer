@@ -80,11 +80,16 @@ export interface Polygon extends Stroke {
 	filled: boolean;
 }
 
+/**
+ * A run of text drawn with the platform font. `at` is the lower-left (baseline
+ * start) of the first character; each character advances 1.5 × `width` along
+ * `direction`, as on a plotter. Layout (LO, CR/LF, CP, ES, DV) is resolved in core.
+ */
 export interface Label extends Stroke {
 	type: "label";
 	text: string;
 	at: Point;
-	/** Character cell size in plotter units. */
+	/** Character width and cap height in plotter units; negative mirrors. */
 	width: number;
 	height: number;
 	/** Baseline direction in degrees, counter-clockwise from +X. */
@@ -111,9 +116,10 @@ export interface Page {
 /**
  * A non-fatal problem found while parsing; `offset` is the index into the input.
  * `skipped`: a command was not executed. `dialect`: the file looks like HP-GL/2.
+ * `charset`: a label was drawn in ASCII instead of its character set.
  */
 export interface Warning {
-	kind: "skipped" | "dialect";
+	kind: "skipped" | "dialect" | "charset";
 	mnemonic: string;
 	offset: number;
 	message: string;

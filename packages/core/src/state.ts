@@ -49,6 +49,12 @@ export interface State {
 	carriage: { from: Point; at: Point } | null;
 	/** Text stored by `BL` for `PB`. */
 	labelBuffer: string;
+	/** `CS`/`CA` designated sets; `shifted` when the alternate one is selected (`SA`, SO). */
+	charsets: { standard: number; alternate: number; shifted: boolean };
+	/** Character sets already reported as drawn in ASCII. */
+	warnedSets: Set<number>;
+	/** Mnemonic and input offset of the command being executed. */
+	command: { mnemonic: string; offset: number };
 }
 
 export function createState(): State {
@@ -69,6 +75,8 @@ export function createState(): State {
 		...defaultLabelState(),
 		carriage: null,
 		labelBuffer: "",
+		warnedSets: new Set(),
+		command: { mnemonic: "", offset: 0 },
 	};
 }
 
@@ -81,6 +89,7 @@ export const defaultLabelState = () => ({
 	origin: 1,
 	extraSpace: [0, 0] as Point,
 	vertical: false,
+	charsets: { standard: 0, alternate: 0, shifted: false },
 });
 
 /** A3 landscape P1/P2 (HP 7475A); the viewer's default page. */

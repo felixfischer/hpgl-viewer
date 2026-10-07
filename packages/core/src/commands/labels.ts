@@ -108,6 +108,34 @@ function carriagePoint(state: State): Point {
 		: state.at;
 }
 
+const EUC_JP = new TextDecoder("euc-jp");
+/** Sets drawn exactly; any other is drawn as ASCII (notes §6). */
+const EXACT_SETS = new Set([0, 8, 101]);
+
+/** The glyph(s) for the printable character at `chars[i]` in the active set, and how many characters it used. */
+function glyph(state: State, chars: string[], i: number): [string, number] {
+	const { standard, alternate, shifted } = state.charsets;
+	const set = shifted ? alternate : standard;
+	const c = chars[i] ?? "";
+	const code = c.charCodeAt(0);
+	if (!EXACT_SETS.has(set) && !state.warnedSets.has(set)) {
+		state.warnedSets.add(set);
+		state.warnings.push({
+			kind: "charset",
+			...state.command,
+			message: `Character set ${set} is drawn as ASCII`,
+		});
+	}
+	// Set 8: JIS X 0201 katakana, 0x21–0x5F → U+FF61–U+FF9F.
+	if (set === 8 && code >= 0x21 && code <= 0x5f)
+		return [String.fromCharCode(code + 0xff40), 1];
+	// Set 101: two-byte JIS X 0208 kanji; EUC-JP is the same bytes with the high bit set.
+	const next = chars[i + 1]?.charCodeAt(0) ?? 0;
+	if (set === 101 && code > 0x20 && code < 0x7f && next > 0x20 && next < 0x7f)
+		return [EUC_JP.decode(new Uint8Array([code | 0x80, next | 0x80])), 2];
+	return [c, 1];
+}
+
 /** Lays out `label` from the pen position, emitting one Label per run of printable characters. */
 function draw(state: State, label: string, lo = state.origin): void {
 	breakStroke(state);
@@ -136,14 +164,18 @@ function draw(state: State, label: string, lo = state.origin): void {
 			});
 		run = "";
 	};
-	for (const [i, c] of chars.entries()) {
+	for (let i = 0; i < chars.length; i++) {
+		const c = chars[i] ?? "";
 		if (c >= " ") {
 			if (!run) runAt = add(at, offset);
-			run += c;
+			const [g, used] = glyph(state, chars, i);
+			run += g;
+			i += used - 1;
 			at = add(at, a);
 			if (single) flush();
 			continue;
 		}
+		if (c === "\x0e" || c === "\x0f") state.charsets.shifted = c === "\x0e";
 		if (!"\b\t\n\v\r".includes(c)) continue; // other control characters are ignored
 		flush();
 		if (c === "\b") at = add(at, a, -1);
@@ -230,6 +262,18 @@ export const labels: Record<string, Handler> = {
 				? add(carriageReturn(state.at, from, a), b)
 				: add(add(state.at, a, cells), b, -lines);
 		state.carriage = { from, at: state.at };
+	},
+	CS(state, [n = 0]) {
+		state.charsets.standard = Math.trunc(n);
+	},
+	CA(state, [n = 0]) {
+		state.charsets.alternate = Math.trunc(n);
+	},
+	SS(state) {
+		state.charsets.shifted = false;
+	},
+	SA(state) {
+		state.charsets.shifted = true;
 	},
 	PB(state) {
 		draw(state, state.labelBuffer, 1);
