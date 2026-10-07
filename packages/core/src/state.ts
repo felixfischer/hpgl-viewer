@@ -47,6 +47,8 @@ export interface State {
 	vertical: boolean;
 	/** Where the last label or `CP` left the pen, and the start column CR returns to. */
 	carriage: { from: Point; at: Point } | null;
+	/** Text stored by `BL` for `PB`. */
+	labelBuffer: string;
 }
 
 export function createState(): State {
@@ -66,6 +68,7 @@ export function createState(): State {
 		warnings: [],
 		...defaultLabelState(),
 		carriage: null,
+		labelBuffer: "",
 	};
 }
 

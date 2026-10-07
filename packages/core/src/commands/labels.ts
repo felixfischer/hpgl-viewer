@@ -174,6 +174,11 @@ export const labelText: Record<string, TextHandler> = {
 		draw(state, label);
 		return next;
 	},
+	BL(state, text, i) {
+		const [label, next] = readLabel(state, text, i);
+		state.labelBuffer = [...label].slice(0, 150).join("");
+		return next;
+	},
 	DT(state, text, i) {
 		const char = text.charAt(i);
 		if (!char || char === ";") {
@@ -225,6 +230,9 @@ export const labels: Record<string, Handler> = {
 				? add(carriageReturn(state.at, from, a), b)
 				: add(add(state.at, a, cells), b, -lines);
 		state.carriage = { from, at: state.at };
+	},
+	PB(state) {
+		draw(state, state.labelBuffer, 1);
 	},
 	DV(state, [n = 0]) {
 		state.vertical = n === 1;

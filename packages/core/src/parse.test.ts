@@ -494,6 +494,20 @@ describe("parseHpgl", () => {
 			["C", [500, 200]],
 		]);
 	});
+	test("BL buffers a label (up to 150 characters) without drawing; PB draws it from the pen as lower-left, ignoring LO", () => {
+		const placed = (hpgl: string) =>
+			parseHpgl(hpgl).pages[0]?.primitives.map(
+				(p) => p.type === "label" && [p.text, p.at],
+			);
+		expect(placed("LO5;BLAB\r\nC\x03PU100,0;PB;PB;")).toEqual([
+			["AB", [100, 0]],
+			["C", [100, -300]],
+			["AB", [271, -300]],
+			["C", [100, -600]],
+		]);
+		expect(placed("BLA\x03BL\x03PB;")).toEqual([]);
+		expect(placed(`BL${"x".repeat(200)}\x03PB;`)?.[0]?.[0]).toHaveLength(150);
+	});
 });
 
 describe.each([
