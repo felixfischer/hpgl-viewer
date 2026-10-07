@@ -19,9 +19,10 @@ const MAX_LISTED = 50;
 
 /** Shows the non-fatal warnings banner; rendering never waits on it. */
 function showWarnings(warnings: Warning[]) {
-	const notice = warnings.find((w) => w.kind === "dialect");
-	dialect.hidden = !notice;
-	dialect.textContent = notice?.message ?? "";
+	// Dialect and character-set notices, one sentence each.
+	const notices = warnings.filter((w) => w.kind !== "skipped");
+	dialect.hidden = !notices.length;
+	dialect.textContent = notices.map((w) => w.message).join(". ");
 
 	const skipped = warnings.filter((w) => w.kind === "skipped");
 	const counts = new Map<string, number>();

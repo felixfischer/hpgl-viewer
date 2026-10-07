@@ -107,3 +107,20 @@ test("each used pen is listed with its colour, recolourable and resettable", asy
 	expect(await canvas.evaluate(inkedIn, "#00ff00")).toBe(0);
 	expect(await canvas.evaluate(inkedIn, "#e6194b")).toBeGreaterThan(50);
 });
+
+test("labels are painted as text; an unsupported character set is noted in the banner", async ({
+	page,
+}) => {
+	await page.goto("/");
+	await page.locator("#file").setInputFiles({
+		name: "label.hpgl",
+		mimeType: "text/plain",
+		buffer: Buffer.from("IN;SP2;CS3;SI1,1.5;DI1,1;SL0.3;LBHello;\x03"),
+	});
+	const canvas = page.locator("#plot");
+	await expect(canvas).toHaveAttribute("data-rendered", "label.hpgl");
+	expect(await canvas.evaluate(inkedIn, "#e6194b")).toBeGreaterThan(500);
+	await expect(page.locator("#warnings p")).toHaveText(
+		"Character set 3 is drawn as ASCII",
+	);
+});

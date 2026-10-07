@@ -442,7 +442,11 @@ describe("parseHpgl", () => {
 	test("with LO, every line is aligned on its own; non-left origins leave the pen where it was", () => {
 		const prims = parseHpgl("PU1000,0;LO7;LBAB\r\nA\x03PD1000,10;").pages[0]
 			?.primitives;
-		expect(prims?.map((p) => (p.type === "label" ? p.at : p.points))).toEqual([
+		expect(
+			prims?.map((p) =>
+				p.type === "label" ? p.at : p.type === "polyline" && p.points,
+			),
+		).toEqual([
 			[715, 0],
 			[886, -300],
 			[
@@ -506,8 +510,11 @@ describe("parseHpgl", () => {
 			["C", [100, -600]],
 		]);
 		expect(placed("BLA\x03BL\x03PB;")).toEqual([]);
-		expect(placed(`BL${"x".repeat(200)}\x03PB;`)?.[0]?.[0]).toHaveLength(150);
+		const [long] =
+			parseHpgl(`BL${"x".repeat(200)}\x03PB;`).pages[0]?.primitives ?? [];
+		expect(long?.type === "label" && long.text).toHaveLength(150);
 	});
+
 	test("CS/CA designate the standard and alternate sets; SS/SA and SI/SO in a label select them", () => {
 		const result = (hpgl: string) => parseHpgl(hpgl);
 		const texts = (hpgl: string) =>
