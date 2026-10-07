@@ -45,6 +45,30 @@ export interface State {
 	/** The polyline pen-down moves are currently extending, if any. */
 	stroke: Polyline | null;
 	warnings: Warning[];
+	/** Label terminator set by `DT`; `print` when `DT c,0` asks for it to be drawn. */
+	terminator: { char: string; print: boolean };
+	/** `SI` (cm), `SR` (% of the P1–P2 span) or `SU` (user units); resolved when a label is drawn. */
+	charSize: { unit: "SI" | "SR" | "SU"; size: Point };
+	/** `DI` (absolute), `DR` (% of the P1–P2 span) or `DU` (user units) run/rise of the baseline. */
+	direction: { unit: "DI" | "DR" | "DU"; run: Point };
+	/** `SL` slant as tan(angle). */
+	slant: number;
+	/** `LO` label origin: 1–9 (3×3 grid), 11–19 the same pushed out by half a character. */
+	origin: number;
+	/** `ES` extra space between characters and lines, as fractions of the character cell. */
+	extraSpace: Point;
+	/** `DV1`: characters stack downwards. */
+	vertical: boolean;
+	/** Where the last label or `CP` left the pen, and the start column CR returns to. */
+	carriage: { from: Point; at: Point } | null;
+	/** Text stored by `BL` for `PB`. */
+	labelBuffer: string;
+	/** `CS`/`CA` designated sets; `shifted` when the alternate one is selected (`SA`, SO). */
+	charsets: { standard: number; alternate: number; shifted: boolean };
+	/** Character sets already reported as drawn in ASCII. */
+	warnedSets: Set<number>;
+	/** Mnemonic and input offset of the command being executed. */
+	command: { mnemonic: string; offset: number };
 }
 
 export function createState(): State {
@@ -66,8 +90,25 @@ export function createState(): State {
 		polygonMode: false,
 		stroke: null,
 		warnings: [],
+		...defaultLabelState(),
+		carriage: null,
+		labelBuffer: "",
+		warnedSets: new Set(),
+		command: { mnemonic: "", offset: 0 },
 	};
 }
+
+/** Label settings `IN` restores. */
+export const defaultLabelState = () => ({
+	terminator: { char: "\x03", print: false },
+	charSize: { unit: "SR" as const, size: [0.75, 1.5] as Point },
+	direction: { unit: "DI" as const, run: [1, 0] as Point },
+	slant: 0,
+	origin: 1,
+	extraSpace: [0, 0] as Point,
+	vertical: false,
+	charsets: { standard: 0, alternate: 0, shifted: false },
+});
 
 /** A3 landscape P1/P2 (HP 7475A); the viewer's default page. */
 export const defaultScalingPoints = (): { p1: Point; p2: Point } => ({

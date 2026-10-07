@@ -1,13 +1,34 @@
 import {
 	type Hatch,
+	type Label,
 	LINE_PATTERNS,
 	type Page,
 	type Point,
 	type Primitive,
 	tessellate,
+	type Window,
 } from "@hpgl-viewer/core";
 
 const MARGIN = 16; // CSS px
+// Cap height of the platform font as a fraction of its em size.
+const CAP_HEIGHT = 0.72;
+
+/** The corners of a label's text box, for fitting the view. */
+function labelCorners({ at, text, width, height, direction }: Label): Point[] {
+	const [ux, uy] = [
+		Math.cos((direction * Math.PI) / 180),
+		Math.sin((direction * Math.PI) / 180),
+	];
+	const length = [...text].length * 1.5 * width;
+	const [lx, ly] = [length * ux, length * uy];
+	const [hx, hy] = [-height * uy, height * ux];
+	return [
+		at,
+		[at[0] + lx, at[1] + ly],
+		[at[0] + lx + hx, at[1] + ly + hy],
+		[at[0] + hx, at[1] + hy],
+	];
+}
 
 /** The rings a primitive draws, in plotter units; `null` for types not rendered yet. */
 function outline(p: Primitive): { rings: Point[][]; closed: boolean } | null {
@@ -54,9 +75,16 @@ export function renderPage(
 		const o = outline(p);
 		return o ? [{ ...p, ...o }] : [];
 	});
+	const labels = page.primitives.flatMap((p) =>
+		p.type === "label" ? [p] : [],
+	);
+	const bounds = [
+		...shapes.map((s) => ({ points: s.rings.flat(), window: s.window })),
+		...labels.map((l) => ({ points: labelCorners(l), window: l.window })),
+	];
 	let [minX, minY, maxX, maxY] = [Infinity, Infinity, -Infinity, -Infinity];
-	for (const { rings, window } of shapes) {
-		for (let [x, y] of rings.flat()) {
+	for (const { points, window } of bounds) {
+		for (let [x, y] of points) {
 			// Only what survives the input window counts towards the fit.
 			if (window) {
 				x = Math.min(Math.max(x, window.from[0]), window.to[0]);
@@ -81,6 +109,15 @@ export function renderPage(
 		offsetX + (x - minX) * scale,
 		canvas.height - (offsetY + (y - minY) * scale),
 	];
+
+	const clip = (window: Window | undefined) => {
+		if (!window) return;
+		const [x1, y1] = toView(window.from);
+		const [x2, y2] = toView(window.to);
+		ctx.beginPath();
+		ctx.rect(x1, y2, x2 - x1, y1 - y2);
+		ctx.clip();
+	};
 
 	/** Strokes parallel lines `spacing` apart across the rings' bounds, anchored at the origin. */
 	const hatch = (rings: Point[][], { spacing, angle, cross }: Hatch) => {
@@ -109,13 +146,7 @@ export function renderPage(
 	for (const shape of shapes) {
 		const { pen, rings, closed, lineType, window } = shape;
 		ctx.save();
-		if (window) {
-			const [x1, y1] = toView(window.from);
-			const [x2, y2] = toView(window.to);
-			ctx.beginPath();
-			ctx.rect(x1, y2, x2 - x1, y1 - y2);
-			ctx.clip();
-		}
+		clip(window);
 		ctx.strokeStyle = ctx.fillStyle = colourOf(pen);
 		ctx.beginPath();
 		const dots =
@@ -146,6 +177,26 @@ export function renderPage(
 			);
 			ctx.stroke();
 		}
+		ctx.restore();
+	}
+
+	// Labels stay real text: the platform font, placed in the label's own frame.
+	ctx.textBaseline = "alphabetic";
+	for (const label of labels) {
+		const { pen, text, at, width, height, direction, slant, window } = label;
+		const size = (Math.abs(height) * scale) / CAP_HEIGHT;
+		if (!size) continue;
+		ctx.save();
+		clip(window);
+		ctx.fillStyle = colourOf(pen);
+		ctx.font = `${size}px monospace`;
+		const em = ctx.measureText("M").width || size;
+		ctx.translate(...toView(at));
+		ctx.rotate((-direction * Math.PI) / 180); // canvas Y points down
+		ctx.transform(1, 0, -slant, 1, 0, 0); // shear: x += y·tan(slant), Y up
+		ctx.scale((width * scale) / em, Math.sign(height));
+		// Plotter spacing: each character sits in a 1.5-width cell.
+		for (const [i, c] of [...text].entries()) ctx.fillText(c, i * 1.5 * em, 0);
 		ctx.restore();
 	}
 }

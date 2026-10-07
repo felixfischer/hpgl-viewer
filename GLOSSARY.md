@@ -70,3 +70,18 @@ _Avoid_: contour, loop
 **Fill type**:
 How `FT` fills a shape: solid (types 1 and 2, drawn as an area) or hatched with parallel lines (3) or crossed lines (4) at a spacing and angle.
 _Avoid_: pattern, fill style
+
+### Labels
+
+**Label**:
+Text drawn by `LB` (or `PB` from the **label buffer** filled by `BL`), ending at the label terminator set by `DT`. The viewer draws it as real text in the platform font, never as strokes.
+_Avoid_: text primitive, annotation
+
+**Character cell**:
+The 1.5 × width by 2 × height box each label character occupies; characters advance one cell along the label direction, lines one cell height across it.
+
+**Label origin**:
+Where a label sits relative to the pen, set by `LO`: a 3×3 grid (1–9), or 11–19 pushed out by half a character.
+
+**Character set**:
+The glyph table a label is drawn in: the standard set (`CS`, selected by `SS` or SI) or the alternate set (`CA`, selected by `SA` or SO). Sets 8 (katakana) and 101 (JIS kanji) are drawn as such; other non-ASCII sets fall back to ASCII with a warning.

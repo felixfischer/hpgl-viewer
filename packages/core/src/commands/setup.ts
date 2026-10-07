@@ -1,6 +1,7 @@
 import {
 	breakStroke,
 	defaultFill,
+	defaultLabelState,
 	defaultScalingPoints,
 	rotate,
 } from "../state.ts";
@@ -17,6 +18,7 @@ export const setup: Record<string, Handler> = {
 		state.window = null;
 		state.chordHeight = false;
 		Object.assign(state, defaultFill());
+		Object.assign(state, defaultLabelState());
 		state.polygon = [];
 		state.polygonMode = false;
 		breakStroke(state);

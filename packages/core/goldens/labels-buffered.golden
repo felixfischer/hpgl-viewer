@@ -1,0 +1,13 @@
+# page 1
+{"type":"label","pen":2,"lineType":null,"text":"Buffered","at":[1000,8000],"width":114,"height":150,"direction":0,"slant":0}
+{"type":"label","pen":2,"lineType":null,"text":"label","at":[1000,7700],"width":114,"height":150,"direction":0,"slant":0}
+{"type":"label","pen":2,"lineType":null,"text":"Buffered","at":[6000,8000],"width":114,"height":150,"direction":90,"slant":0}
+{"type":"label","pen":2,"lineType":null,"text":"label","at":[6300,8000],"width":114,"height":150,"direction":90,"slant":0}
+{"type":"label","pen":2,"lineType":null,"text":"terminator printed: $","at":[1000,6000],"width":114,"height":150,"direction":0,"slant":0}
+{"type":"label","pen":2,"lineType":null,"text":"ｱｲｳｴ","at":[1000,5000],"width":114,"height":150,"direction":0,"slant":0}
+{"type":"label","pen":2,"lineType":null,"text":"文字","at":[1000,4000],"width":114,"height":150,"direction":0,"slant":0}
+{"type":"label","pen":2,"lineType":null,"text":"AｱｲｳｴB","at":[1000,3000],"width":114,"height":150,"direction":0,"slant":0}
+{"type":"label","pen":2,"lineType":null,"text":"drawn as ASCII","at":[1000,2000],"width":114,"height":150,"direction":0,"slant":0}
+{"type":"label","pen":2,"lineType":null,"text":"no terminator to EOF","at":[1000,1000],"width":114,"height":150,"direction":0,"slant":0}
+# warnings
+{"kind":"charset","mnemonic":"LB","offset":226,"message":"Character set 3 is drawn as ASCII"}

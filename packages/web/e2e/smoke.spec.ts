@@ -119,3 +119,20 @@ test("circles and arcs are painted as curves", async ({ page }) => {
 	await expect(canvas).toHaveAttribute("data-rendered", "circles.hpgl");
 	expect(await canvas.evaluate(inkedIn, "#1a1a1a")).toBeGreaterThan(500);
 });
+
+test("labels are painted as text; an unsupported character set is noted in the banner", async ({
+	page,
+}) => {
+	await page.goto("/");
+	await page.locator("#file").setInputFiles({
+		name: "label.hpgl",
+		mimeType: "text/plain",
+		buffer: Buffer.from("IN;SP2;CS3;SI1,1.5;DI1,1;SL0.3;LBHello;\x03"),
+	});
+	const canvas = page.locator("#plot");
+	await expect(canvas).toHaveAttribute("data-rendered", "label.hpgl");
+	expect(await canvas.evaluate(inkedIn, "#e6194b")).toBeGreaterThan(500);
+	await expect(page.locator("#warnings p")).toHaveText(
+		"Character set 3 is drawn as ASCII",
+	);
+});

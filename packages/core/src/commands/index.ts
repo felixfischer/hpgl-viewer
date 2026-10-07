@@ -1,5 +1,6 @@
 import type { State } from "../state.ts";
 import { arcs } from "./arcs.ts";
+import { labels, labelText, type TextHandler } from "./labels.ts";
 import { page } from "./page.ts";
 import { pen } from "./pen.ts";
 import { polygons } from "./polygons.ts";
@@ -17,4 +18,8 @@ export const registry: Record<string, Handler> = {
 	...page,
 	...arcs,
 	...polygons,
+	...labels,
 };
+
+/** Commands that read raw text (labels) rather than numeric parameters. */
+export const textRegistry: Record<string, TextHandler> = labelText;

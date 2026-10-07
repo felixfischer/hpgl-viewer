@@ -1,0 +1,90 @@
+# page 1
+{"type":"label","pen":1,"lineType":null,"text":"Default size (SR 0.75,1.5)","at":[1000,10000],"width":114,"height":150,"direction":0,"slant":0}
+{"type":"label","pen":1,"lineType":null,"text":"SI 0.5,0.7 cm","at":[1000,9200],"width":200,"height":280,"direction":0,"slant":0}
+{"type":"label","pen":1,"lineType":null,"text":"SR 1.5,3 %","at":[1000,8200],"width":228,"height":300,"direction":0,"slant":0}
+{"type":"label","pen":1,"lineType":null,"text":"SL 0.5 slant","at":[1000,7400],"width":114,"height":150,"direction":0,"slant":0.5}
+{"type":"label","pen":1,"lineType":null,"text":"SL -0.5 slant","at":[1000,6800],"width":114,"height":150,"direction":0,"slant":-0.5}
+{"type":"label","pen":1,"lineType":null,"text":"DI 1,1","at":[9000,8000],"width":114,"height":150,"direction":45,"slant":0}
+{"type":"label","pen":1,"lineType":null,"text":"DI 0,1","at":[9000,8000],"width":114,"height":150,"direction":90,"slant":0}
+{"type":"label","pen":1,"lineType":null,"text":"DI -1,0","at":[9000,8000],"width":114,"height":150,"direction":180,"slant":0}
+{"type":"label","pen":1,"lineType":null,"text":"DI 0,-1","at":[9000,8000],"width":114,"height":150,"direction":-90,"slant":0}
+{"type":"label","pen":1,"lineType":null,"text":"D","at":[13000,10000],"width":114,"height":150,"direction":0,"slant":0}
+{"type":"label","pen":1,"lineType":null,"text":"V","at":[13000,9700],"width":114,"height":150,"direction":0,"slant":0}
+{"type":"label","pen":1,"lineType":null,"text":"1","at":[13000,9400],"width":114,"height":150,"direction":0,"slant":0}
+{"type":"label","pen":1,"lineType":null,"text":"E","at":[1000,5800],"width":114,"height":150,"direction":0,"slant":0}
+{"type":"label","pen":1,"lineType":null,"text":"S","at":[1256.5,5800],"width":114,"height":150,"direction":0,"slant":0}
+{"type":"label","pen":1,"lineType":null,"text":"0","at":[1769.5,5800],"width":114,"height":150,"direction":0,"slant":0}
+{"type":"label","pen":1,"lineType":null,"text":".","at":[2026,5800],"width":114,"height":150,"direction":0,"slant":0}
+{"type":"label","pen":1,"lineType":null,"text":"5","at":[2282.5,5800],"width":114,"height":150,"direction":0,"slant":0}
+{"type":"label","pen":1,"lineType":null,"text":",","at":[2539,5800],"width":114,"height":150,"direction":0,"slant":0}
+{"type":"label","pen":1,"lineType":null,"text":"1","at":[2795.5,5800],"width":114,"height":150,"direction":0,"slant":0}
+{"type":"label","pen":1,"lineType":null,"text":"n","at":[1000,5200],"width":114,"height":150,"direction":0,"slant":0}
+{"type":"label","pen":1,"lineType":null,"text":"e","at":[1256.5,5200],"width":114,"height":150,"direction":0,"slant":0}
+{"type":"label","pen":1,"lineType":null,"text":"x","at":[1513,5200],"width":114,"height":150,"direction":0,"slant":0}
+{"type":"label","pen":1,"lineType":null,"text":"t","at":[1769.5,5200],"width":114,"height":150,"direction":0,"slant":0}
+{"type":"label","pen":1,"lineType":null,"text":"l","at":[2282.5,5200],"width":114,"height":150,"direction":0,"slant":0}
+{"type":"label","pen":1,"lineType":null,"text":"i","at":[2539,5200],"width":114,"height":150,"direction":0,"slant":0}
+{"type":"label","pen":1,"lineType":null,"text":"n","at":[2795.5,5200],"width":114,"height":150,"direction":0,"slant":0}
+{"type":"label","pen":1,"lineType":null,"text":"e","at":[3052,5200],"width":114,"height":150,"direction":0,"slant":0}
+{"type":"label","pen":1,"lineType":null,"text":"CP:","at":[1000,4600],"width":114,"height":150,"direction":0,"slant":0}
+{"type":"label","pen":1,"lineType":null,"text":"up","at":[1855,4750],"width":114,"height":150,"direction":0,"slant":0}
+{"type":"label","pen":1,"lineType":null,"text":"next line","at":[1000,4450],"width":114,"height":150,"direction":0,"slant":0}
+{"type":"label","pen":1,"lineType":null,"text":"line 1","at":[1000,3000],"width":114,"height":150,"direction":0,"slant":0}
+{"type":"label","pen":1,"lineType":null,"text":"line 2","at":[1000,2700],"width":114,"height":150,"direction":0,"slant":0}
+{"type":"label","pen":1,"lineType":null,"text":"X","at":[1855,2700],"width":114,"height":150,"direction":0,"slant":0}
+{"type":"label","pen":1,"lineType":null,"text":"Y","at":[1940.5,2700],"width":114,"height":150,"direction":0,"slant":0}
+{"type":"label","pen":1,"lineType":null,"text":"Z","at":[2111.5,3000],"width":114,"height":150,"direction":0,"slant":0}
+{"type":"polyline","pen":1,"lineType":null,"points":[[5950,2400],[6050,2400]]}
+{"type":"polyline","pen":1,"lineType":null,"points":[[6000,2350],[6000,2450]]}
+{"type":"label","pen":1,"lineType":null,"text":"LO1","at":[6000,2400],"width":114,"height":150,"direction":0,"slant":0}
+{"type":"polyline","pen":1,"lineType":null,"points":[[5950,1700],[6050,1700]]}
+{"type":"polyline","pen":1,"lineType":null,"points":[[6000,1650],[6000,1750]]}
+{"type":"label","pen":1,"lineType":null,"text":"LO2","at":[6000,1625],"width":114,"height":150,"direction":0,"slant":0}
+{"type":"polyline","pen":1,"lineType":null,"points":[[5950,1000],[6050,1000]]}
+{"type":"polyline","pen":1,"lineType":null,"points":[[6000,950],[6000,1050]]}
+{"type":"label","pen":1,"lineType":null,"text":"LO3","at":[6000,850],"width":114,"height":150,"direction":0,"slant":0}
+{"type":"polyline","pen":1,"lineType":null,"points":[[7650,2400],[7750,2400]]}
+{"type":"polyline","pen":1,"lineType":null,"points":[[7700,2350],[7700,2450]]}
+{"type":"label","pen":1,"lineType":null,"text":"LO4","at":[7472,2400],"width":114,"height":150,"direction":0,"slant":0}
+{"type":"polyline","pen":1,"lineType":null,"points":[[7650,1700],[7750,1700]]}
+{"type":"polyline","pen":1,"lineType":null,"points":[[7700,1650],[7700,1750]]}
+{"type":"label","pen":1,"lineType":null,"text":"LO5","at":[7472,1625],"width":114,"height":150,"direction":0,"slant":0}
+{"type":"polyline","pen":1,"lineType":null,"points":[[7650,1000],[7750,1000]]}
+{"type":"polyline","pen":1,"lineType":null,"points":[[7700,950],[7700,1050]]}
+{"type":"label","pen":1,"lineType":null,"text":"LO6","at":[7472,850],"width":114,"height":150,"direction":0,"slant":0}
+{"type":"polyline","pen":1,"lineType":null,"points":[[9350,2400],[9450,2400]]}
+{"type":"polyline","pen":1,"lineType":null,"points":[[9400,2350],[9400,2450]]}
+{"type":"label","pen":1,"lineType":null,"text":"LO7","at":[8944,2400],"width":114,"height":150,"direction":0,"slant":0}
+{"type":"polyline","pen":1,"lineType":null,"points":[[9350,1700],[9450,1700]]}
+{"type":"polyline","pen":1,"lineType":null,"points":[[9400,1650],[9400,1750]]}
+{"type":"label","pen":1,"lineType":null,"text":"LO8","at":[8944,1625],"width":114,"height":150,"direction":0,"slant":0}
+{"type":"polyline","pen":1,"lineType":null,"points":[[9350,1000],[9450,1000]]}
+{"type":"polyline","pen":1,"lineType":null,"points":[[9400,950],[9400,1050]]}
+{"type":"label","pen":1,"lineType":null,"text":"LO9","at":[8944,850],"width":114,"height":150,"direction":0,"slant":0}
+{"type":"polyline","pen":1,"lineType":null,"points":[[11050,2400],[11150,2400]]}
+{"type":"polyline","pen":1,"lineType":null,"points":[[11100,2350],[11100,2450]]}
+{"type":"label","pen":1,"lineType":null,"text":"LO11","at":[11157,2475],"width":114,"height":150,"direction":0,"slant":0}
+{"type":"polyline","pen":1,"lineType":null,"points":[[11050,1700],[11150,1700]]}
+{"type":"polyline","pen":1,"lineType":null,"points":[[11100,1650],[11100,1750]]}
+{"type":"label","pen":1,"lineType":null,"text":"LO12","at":[11157,1625],"width":114,"height":150,"direction":0,"slant":0}
+{"type":"polyline","pen":1,"lineType":null,"points":[[11050,1000],[11150,1000]]}
+{"type":"polyline","pen":1,"lineType":null,"points":[[11100,950],[11100,1050]]}
+{"type":"label","pen":1,"lineType":null,"text":"LO13","at":[11157,775],"width":114,"height":150,"direction":0,"slant":0}
+{"type":"polyline","pen":1,"lineType":null,"points":[[12750,2400],[12850,2400]]}
+{"type":"polyline","pen":1,"lineType":null,"points":[[12800,2350],[12800,2450]]}
+{"type":"label","pen":1,"lineType":null,"text":"LO14","at":[12486.5,2475],"width":114,"height":150,"direction":0,"slant":0}
+{"type":"polyline","pen":1,"lineType":null,"points":[[12750,1700],[12850,1700]]}
+{"type":"polyline","pen":1,"lineType":null,"points":[[12800,1650],[12800,1750]]}
+{"type":"label","pen":1,"lineType":null,"text":"LO16","at":[12486.5,1475],"width":114,"height":150,"direction":0,"slant":0}
+{"type":"polyline","pen":1,"lineType":null,"points":[[12750,1000],[12850,1000]]}
+{"type":"polyline","pen":1,"lineType":null,"points":[[12800,950],[12800,1050]]}
+{"type":"label","pen":1,"lineType":null,"text":"LO17","at":[12116,1075],"width":114,"height":150,"direction":0,"slant":0}
+{"type":"polyline","pen":1,"lineType":null,"points":[[14450,2400],[14550,2400]]}
+{"type":"polyline","pen":1,"lineType":null,"points":[[14500,2350],[14500,2450]]}
+{"type":"label","pen":1,"lineType":null,"text":"LO18","at":[13816,2325],"width":114,"height":150,"direction":0,"slant":0}
+{"type":"polyline","pen":1,"lineType":null,"points":[[14450,1700],[14550,1700]]}
+{"type":"polyline","pen":1,"lineType":null,"points":[[14500,1650],[14500,1750]]}
+{"type":"label","pen":1,"lineType":null,"text":"LO19","at":[13816,1475],"width":114,"height":150,"direction":0,"slant":0}
+{"type":"label","pen":1,"lineType":null,"text":"SU 2,4","at":[1000,1000],"width":80,"height":160,"direction":0,"slant":0}
+{"type":"label","pen":1,"lineType":null,"text":"DU 1,-1","at":[1000,600],"width":80,"height":160,"direction":-45,"slant":0}
+# warnings

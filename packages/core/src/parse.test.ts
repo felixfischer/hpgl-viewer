@@ -607,6 +607,240 @@ describe("parseHpgl", () => {
 			{ spacing: 50, angle: 0, cross: false }, // default: 1% of the 5000 plu P1–P2 diagonal
 		]);
 	});
+
+	test("LB draws its text up to ETX at the pen, in the default relative size; ';' is literal", () => {
+		// SR 0.75,1.5 of the default P1–P2 span (15200 × 10000) = 114 × 150.
+		const [page] = parseHpgl("PU100,200;LBA;B\x03PD;").pages;
+		expect(page?.primitives).toEqual([
+			{
+				type: "label",
+				pen: 1,
+				lineType: null,
+				text: "A;B",
+				at: [100, 200],
+				width: 114,
+				height: 150,
+				direction: 0,
+				slant: 0,
+			},
+		]);
+	});
+
+	test("after LB the pen sits at the next character origin, 1.5 × width per character", () => {
+		const [, line] =
+			parseHpgl("PU100,200;LBAB\x03PD100,0;").pages[0]?.primitives ?? [];
+		expect(line?.type === "polyline" && line.points[0]).toEqual([442, 200]);
+	});
+
+	test("DT sets the terminator (not printed); DT; restores ETX; a label without one runs to EOF", () => {
+		const texts = (hpgl: string) =>
+			parseHpgl(hpgl).pages[0]?.primitives.map(
+				(p) => p.type === "label" && p.text,
+			);
+		expect(texts("DT$;LBA\x03B$DT;LBC\x03")).toEqual(["AB", "C"]);
+		expect(texts("DT$,0;LBA$\x03")).toEqual(["A$"]);
+		expect(texts("LBA;PD1,1;")).toEqual(["A;PD1,1;"]);
+	});
+
+	test("control characters in a label move within the label frame: CR LF BS HT VT", () => {
+		const placed = (hpgl: string) =>
+			parseHpgl(hpgl).pages[0]?.primitives.map(
+				(p) => p.type === "label" && [p.text, p.at],
+			);
+		// One cell is 171 wide (1.5 × 114); one line is 300 tall (2 × 150).
+		expect(placed("PU1000,1000;LBA\r\nB\x03")).toEqual([
+			["A", [1000, 1000]],
+			["B", [1000, 700]],
+		]);
+		expect(placed("LBAB\b\bC\tD\vE\x03")).toEqual([
+			["AB", [0, 0]],
+			["C", [0, 0]],
+			["D", [85.5, 0]],
+			["E", [256.5, 300]],
+		]);
+	});
+
+	test("SI sizes in cm, SR in % of the P1–P2 span (tracking IP), SU in user units; 1 or 3 params are ignored", () => {
+		const sizes = (hpgl: string) =>
+			parseHpgl(hpgl).pages[0]?.primitives.map(
+				(p) => p.type === "label" && [p.width, p.height],
+			);
+		expect(
+			sizes("SI0.5,1;LBA\x03SI2;LBB\x03SI1,1,1;LBC\x03SI;LBD\x03"),
+		).toEqual([
+			[200, 400],
+			[200, 400],
+			[200, 400],
+			[114, 150],
+		]);
+		expect(sizes("SR1,2;IP0,0,1000,2000;LBA\x03IN;LBB\x03")).toEqual([
+			[10, 40],
+			[114, 150],
+		]);
+		expect(sizes("IP0,0,4000,4000;SC0,100,0,100;SU5,10;LBA\x03")).toEqual([
+			[200, 400],
+		]);
+	});
+	test("DI/DR/DU turn the baseline and the label frame; SL slants; RO90 turns labels too", () => {
+		const labels = (hpgl: string) =>
+			parseHpgl(hpgl).pages[0]?.primitives.map((p) =>
+				p.type === "label" ? [p.text, p.at, p.direction, p.slant] : null,
+			);
+		expect(labels("DI0,1;SL0.5;LBAB\r\nC\x03")).toEqual([
+			["AB", [0, 0], 90, 0.5],
+			["C", [300, 0], 90, 0.5],
+		]);
+		// DI; restores 1,0; DI0,0 and one-parameter DI are ignored; SL; is upright.
+		expect(labels("DI0,1;DI0,0;DI5;LBA\x03DI;SL;LBB\x03")).toEqual([
+			["A", [0, 0], 90, 0],
+			["B", [0, 171], 0, 0],
+		]);
+		// DR runs against the P1–P2 orientation, DU against the user axes.
+		expect(labels("IP2000,0,0,1000;DR1,0;LBA\x03")?.[0]?.[2]).toBe(180);
+		expect(labels("IP0,0,100,100;SC100,0,0,100;DU1,0;LBA\x03")?.[0]?.[2]).toBe(
+			180,
+		);
+		expect(labels("RO90;LBA\x03")?.[0]?.[2]).toBe(90);
+	});
+	test("LO places each line around the pen (3×3 grid, +10 pushed out by half a character)", () => {
+		// "AB" spans 1.5 × 114 + 114 = 285 wide and 150 tall.
+		const at = (lo: number | string) =>
+			parseHpgl(`LO${lo};LBAB\x03`).pages[0]?.primitives.map(
+				(p) => p.type === "label" && p.at,
+			)[0];
+		expect([1, 2, 3, 4, 5, 6, 7, 8, 9].map(at)).toEqual([
+			[0, 0],
+			[0, -75],
+			[0, -150],
+			[-142.5, 0],
+			[-142.5, -75],
+			[-142.5, -150],
+			[-285, 0],
+			[-285, -75],
+			[-285, -150],
+		]);
+		expect([11, 13, 14, 16, 17, 19].map(at)).toEqual([
+			[57, 75],
+			[57, -225],
+			[-142.5, 75],
+			[-142.5, -225],
+			[-342, 75],
+			[-342, -225],
+		]);
+		// LO; is 1; undefined origins keep the previous one.
+		expect(["7;LO", "7;LO15", "7;LO0", "7;LO20"].map(at)).toEqual([
+			[0, 0],
+			[-285, 0],
+			[-285, 0],
+			[-285, 0],
+		]);
+	});
+
+	test("with LO, every line is aligned on its own; non-left origins leave the pen where it was", () => {
+		const prims = parseHpgl("PU1000,0;LO7;LBAB\r\nA\x03PD1000,10;").pages[0]
+			?.primitives;
+		expect(
+			prims?.map((p) =>
+				p.type === "label" ? p.at : p.type === "polyline" && p.points,
+			),
+		).toEqual([
+			[715, 0],
+			[886, -300],
+			[
+				[1000, 0],
+				[1000, 10],
+			],
+		]);
+		const [, line] = parseHpgl("LO2;LBAB\x03PD0,0;").pages[0]?.primitives ?? [];
+		expect(line?.type === "polyline" && line.points[0]).toEqual([342, 0]);
+	});
+	test("ES widens the character and line pitch by fractions of the cell; spaced characters are placed one by one", () => {
+		const placed = (hpgl: string) =>
+			parseHpgl(hpgl).pages[0]?.primitives.map(
+				(p) => p.type === "label" && [p.text, p.at],
+			);
+		expect(placed("ES0.5,1;LBAB\nC\x03")).toEqual([
+			["A", [0, 0]],
+			["B", [256.5, 0]],
+			["C", [513, -600]],
+		]);
+		expect(placed("ES0.5;ES;LBAB\x03")).toEqual([["AB", [0, 0]]]);
+	});
+
+	test("DV1 stacks upright characters downwards; a line feed starts the next column to the left", () => {
+		const placed = (hpgl: string) =>
+			parseHpgl(hpgl).pages[0]?.primitives.map(
+				(p) => p.type === "label" && [p.text, p.at, p.direction],
+			);
+		expect(placed("DV1;LBAB\r\nC\x03DV;LBD\x03")).toEqual([
+			["A", [0, 0], 0],
+			["B", [0, -300], 0],
+			["C", [-171, 0], 0],
+			["D", [-171, -300], 0],
+		]);
+	});
+	test("CP moves the pen by character cells and lines; CP; returns to the label's start column one line down", () => {
+		const placed = (hpgl: string) =>
+			parseHpgl(hpgl).pages[0]?.primitives.map(
+				(p) => p.type === "label" && [p.text, p.at],
+			);
+		expect(placed("CP2,0.5;LBA\x03")).toEqual([["A", [342, 150]]]);
+		expect(placed("PU100,0;LBAB\x03CP;LBC\x03")).toEqual([
+			["AB", [100, 0]],
+			["C", [100, -300]],
+		]);
+		// A pen move since the last label makes the new position the start column.
+		expect(placed("LBAB\x03PU500,500;CP;LBC\x03")).toEqual([
+			["AB", [0, 0]],
+			["C", [500, 200]],
+		]);
+	});
+	test("BL buffers a label (up to 150 characters) without drawing; PB draws it from the pen as lower-left, ignoring LO", () => {
+		const placed = (hpgl: string) =>
+			parseHpgl(hpgl).pages[0]?.primitives.map(
+				(p) => p.type === "label" && [p.text, p.at],
+			);
+		expect(placed("LO5;BLAB\r\nC\x03PU100,0;PB;PB;")).toEqual([
+			["AB", [100, 0]],
+			["C", [100, -300]],
+			["AB", [271, -300]],
+			["C", [100, -600]],
+		]);
+		expect(placed("BLA\x03BL\x03PB;")).toEqual([]);
+		const [long] =
+			parseHpgl(`BL${"x".repeat(200)}\x03PB;`).pages[0]?.primitives ?? [];
+		expect(long?.type === "label" && long.text).toHaveLength(150);
+	});
+
+	test("CS/CA designate the standard and alternate sets; SS/SA and SI/SO in a label select them", () => {
+		const result = (hpgl: string) => parseHpgl(hpgl);
+		const texts = (hpgl: string) =>
+			result(hpgl).pages[0]?.primitives.map(
+				(p) => p.type === "label" && p.text,
+			);
+		// Set 8: JIS X 0201 katakana; set 101: two-byte JIS kanji.
+		expect(texts("CS8;LB12\x03")).toEqual(["ｱｲ"]);
+		expect(texts("CS0;CA101;SA;LBJ8;z\x03SS;LBJ8\x03")).toEqual(["文字", "J8"]);
+		expect(texts("CA8;LBA\x0e1\x0fB\x03")).toEqual(["AｱB"]);
+		expect(texts("CA8;SA;IN;LB1\x03")).toEqual(["1"]);
+	});
+
+	test("labels in a character set the viewer can't draw fall back to ASCII with one warning per set", () => {
+		const { pages, warnings } = parseHpgl(
+			"CS3;LBA\x03LBB\x03CA4;SA;PB;CS;SS;LBC\x03",
+		);
+		expect(
+			pages[0]?.primitives.map((p) => p.type === "label" && p.text),
+		).toEqual(["A", "B", "C"]);
+		expect(warnings).toEqual([
+			{
+				kind: "charset",
+				mnemonic: "LB",
+				offset: 4,
+				message: "Character set 3 is drawn as ASCII",
+			},
+		]);
+	});
 });
 
 describe.each([
@@ -624,6 +858,8 @@ describe.each([
 	"polygons",
 	"rectangles",
 	"wedges",
+	"labels",
+	"labels-buffered",
 ])("fixture %s.hpgl", (name) => {
 	test("parses to its golden geometry stream", async () => {
 		const text = readFileSync(

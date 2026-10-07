@@ -1,4 +1,4 @@
-import { registry } from "./commands/index.ts";
+import { registry, textRegistry } from "./commands/index.ts";
 import type { ParseResult } from "./geometry.ts";
 import { createState, type State } from "./state.ts";
 
@@ -62,6 +62,12 @@ export function parseHpgl(text: string): ParseResult {
 		const offset = i;
 		const mnemonic = text.slice(i, i + 2).toUpperCase();
 		i += 2;
+		state.command = { mnemonic, offset };
+		const textHandler = textRegistry[mnemonic];
+		if (textHandler) {
+			i = textHandler(state, text, i);
+			continue;
+		}
 		const handler = registry[mnemonic];
 		if (!handler) {
 			if (HPGL2_ONLY.has(mnemonic)) flagHpgl2(state, mnemonic, offset);
