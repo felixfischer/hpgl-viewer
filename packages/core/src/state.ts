@@ -45,6 +45,8 @@ export interface State {
 	extraSpace: Point;
 	/** `DV1`: characters stack downwards. */
 	vertical: boolean;
+	/** Where the last label or `CP` left the pen, and the start column CR returns to. */
+	carriage: { from: Point; at: Point } | null;
 }
 
 export function createState(): State {
@@ -63,6 +65,7 @@ export function createState(): State {
 		stroke: null,
 		warnings: [],
 		...defaultLabelState(),
+		carriage: null,
 	};
 }
 

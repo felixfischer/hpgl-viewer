@@ -82,9 +82,8 @@ function lineLength(chars: string[], from: number): number {
 	return n;
 }
 
-/** Lays out `label` from the pen position, emitting one Label per run of printable characters. */
-function draw(state: State, label: string, lo = state.origin): void {
-	breakStroke(state);
+/** The label frame: character size, baseline and the advance (`a`) and line feed (`b`) vectors. */
+function frame(state: State) {
 	const [width, height] = charSize(state);
 	const [dx, dy] = baseline(state);
 	const direction = (Math.atan2(dy, dx) * 180) / Math.PI;
@@ -92,17 +91,34 @@ function draw(state: State, label: string, lo = state.origin): void {
 	const [ux, uy] = [dx / len, dy / len];
 	const w: Point = [width * ux, width * uy];
 	const h: Point = [-height * uy, height * ux];
-	// Character advance and line feed vectors: cell = 1.5w × 2h, widened by ES.
+	// Cell = 1.5w × 2h, widened by ES.
 	const [gap, lineGap] = state.extraSpace;
 	let a: Point = [1.5 * (1 + gap) * w[0], 1.5 * (1 + gap) * w[1]];
 	let b: Point = [-2 * (1 + lineGap) * h[0], -2 * (1 + lineGap) * h[1]];
-	// ponytail: DV columns run right to left and ignore LO (notes §8 gap 9).
-	if (state.vertical) [a, b, lo] = [b, [-a[0], -a[1]], 1];
+	// ponytail: DV columns run right to left (notes §8 gap 9).
+	if (state.vertical) [a, b] = [b, [-a[0], -a[1]]];
+	return { width, height, direction, w, h, a, b };
+}
+
+/** Where CR returns to: the last label's start, unless the pen has moved since. */
+function carriagePoint(state: State): Point {
+	const c = state.carriage;
+	return c && c.at[0] === state.at[0] && c.at[1] === state.at[1]
+		? c.from
+		: state.at;
+}
+
+/** Lays out `label` from the pen position, emitting one Label per run of printable characters. */
+function draw(state: State, label: string, lo = state.origin): void {
+	breakStroke(state);
+	const { width, height, direction, w, h, a, b } = frame(state);
+	// ponytail: DV ignores LO.
+	if (state.vertical) lo = 1;
 	// Renderers space a run's characters 1.5w apart; any other pitch is placed per character.
-	const single = state.vertical || gap !== 0;
+	const single = state.vertical || state.extraSpace[0] !== 0;
 	const chars = [...label];
-	const start = state.at;
-	let at = start;
+	const start = carriagePoint(state);
+	let at = state.at;
 	let run = "";
 	let runAt = at;
 	let offset = originOffset(lo, lineLength(chars, 0), a, w, h);
@@ -141,6 +157,7 @@ function draw(state: State, label: string, lo = state.origin): void {
 	flush();
 	// Left origins leave the pen at the next character; the others put it back.
 	if (lo % 10 <= 3) state.at = at;
+	state.carriage = { from: start, at: state.at };
 }
 
 /** Moves `at` back to the column of `start`, staying on its line. */
@@ -197,6 +214,18 @@ export const labels: Record<string, Handler> = {
 	DI: directing("DI"),
 	DR: directing("DR"),
 	DU: directing("DU"),
+	CP(state, params) {
+		if (params.length === 1) return;
+		breakStroke(state);
+		const { a, b } = frame(state);
+		const from = carriagePoint(state);
+		const [cells, lines] = params;
+		state.at =
+			cells === undefined || lines === undefined
+				? add(carriageReturn(state.at, from, a), b)
+				: add(add(state.at, a, cells), b, -lines);
+		state.carriage = { from, at: state.at };
+	},
 	DV(state, [n = 0]) {
 		state.vertical = n === 1;
 	},

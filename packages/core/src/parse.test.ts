@@ -478,6 +478,22 @@ describe("parseHpgl", () => {
 			["D", [-171, -300], 0],
 		]);
 	});
+	test("CP moves the pen by character cells and lines; CP; returns to the label's start column one line down", () => {
+		const placed = (hpgl: string) =>
+			parseHpgl(hpgl).pages[0]?.primitives.map(
+				(p) => p.type === "label" && [p.text, p.at],
+			);
+		expect(placed("CP2,0.5;LBA\x03")).toEqual([["A", [342, 150]]]);
+		expect(placed("PU100,0;LBAB\x03CP;LBC\x03")).toEqual([
+			["AB", [100, 0]],
+			["C", [100, -300]],
+		]);
+		// A pen move since the last label makes the new position the start column.
+		expect(placed("LBAB\x03PU500,500;CP;LBC\x03")).toEqual([
+			["AB", [0, 0]],
+			["C", [500, 200]],
+		]);
+	});
 });
 
 describe.each([
