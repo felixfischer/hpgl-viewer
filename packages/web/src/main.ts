@@ -6,6 +6,7 @@ import {
 	type Warning,
 } from "@hpgl-viewer/core";
 import { fittedView, renderPage } from "./render.ts";
+import { toSvg } from "./svg.ts";
 
 // Elements from index.html, which ships with this script.
 const canvas = document.querySelector("#plot") as HTMLCanvasElement;
@@ -110,7 +111,36 @@ function show(index: number) {
 	status.value = `${fileName}: ${of}${count} primitive(s)`;
 	canvas.dataset.rendered = fileName;
 	canvas.dataset.page = String(index + 1);
+	exportSvg.disabled = exportPng.disabled = !page;
 }
+
+const exportSvg = document.querySelector("#export-svg") as HTMLButtonElement;
+const exportPng = document.querySelector("#export-png") as HTMLButtonElement;
+
+/** The download name: the file's, with the page when there are several. */
+function exportName(extension: string) {
+	const base = fileName.replace(/\.[^.]*$/, "") || "plot";
+	const of = pages.length > 1 ? `-page${canvas.dataset.page}` : "";
+	return `${base}${of}.${extension}`;
+}
+
+function download(blob: Blob, name: string) {
+	const a = document.createElement("a");
+	a.href = URL.createObjectURL(blob);
+	a.download = name;
+	a.click();
+	setTimeout(() => URL.revokeObjectURL(a.href));
+}
+
+exportSvg.addEventListener("click", () => {
+	if (!page || !scalingPoints) return;
+	const svg = toSvg(page, { colourOf, scalingPoints, view });
+	download(new Blob([svg], { type: "image/svg+xml" }), exportName("svg"));
+});
+// PNG is the canvas as shown: current view, zoom and pan included.
+exportPng.addEventListener("click", () =>
+	canvas.toBlob((blob) => blob && download(blob, exportName("png"))),
+);
 
 worker.onmessage = ({ data }: MessageEvent<ParseResult>) => {
 	pages = data.pages;
