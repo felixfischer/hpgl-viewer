@@ -365,6 +365,37 @@ describe("parseHpgl", () => {
 			{ type: "polyline", pen: 1, lineType: null, points: [[10, 10], [11, 11]] },
 		]);
 	});
+
+	test("WG fills and EW edges a wedge about the pen; negative r flips the start radius", () => {
+		const [page] = parseHpgl(
+			"IP0,0,4000,4000;SC0,100,0,100;PA50,50;WG10,30,90;EW-10,30,-45,10;WG;PD50,60;",
+		).pages;
+		expect(page?.primitives).toEqual([
+			{
+				type: "wedge",
+				pen: 1,
+				lineType: null,
+				center: [2000, 2000],
+				radius: 400,
+				startAngle: 30,
+				sweepAngle: 90,
+				chordAngle: 5,
+				filled: true,
+			},
+			{
+				type: "wedge",
+				pen: 1,
+				lineType: null,
+				center: [2000, 2000],
+				radius: 400,
+				startAngle: 210,
+				sweepAngle: -45,
+				chordAngle: 10,
+				filled: false,
+			},
+			{ type: "polyline", pen: 1, lineType: null, points: [[2000, 2000], [2000, 2400]] },
+		]);
+	});
 });
 
 describe.each([

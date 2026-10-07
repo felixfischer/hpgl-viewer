@@ -4,6 +4,7 @@ import {
 	closeRing,
 	emit,
 	offset,
+	scaled,
 	type State,
 	strokeOf,
 	toPlotter,
@@ -36,6 +37,25 @@ function rectangle(
 	};
 }
 
+/** `WG`/`EW r,start,sweep[,res]`: a pie slice centred on the pen; the pen stays put. */
+function wedge(filled: boolean): Handler {
+	return (state, [r = 0, start = 0, sweep, res = 5]) => {
+		if (sweep === undefined || state.pen === 0) return;
+		breakStroke(state);
+		emit(state, {
+			type: "wedge",
+			...strokeOf(state),
+			center: state.at,
+			radius: Math.abs(scaled(state, r, 0)[0]),
+			startAngle: start + (r < 0 ? 180 : 0) + state.rotation,
+			sweepAngle: Math.min(Math.max(sweep, -360), 360),
+			// [R]: at most 90 chords per arc.
+			chordAngle: Math.min(Math.max(res, Math.abs(sweep) / 90), 180),
+			filled,
+		});
+	};
+}
+
 export const polygons: Record<string, Handler> = {
 	PM(state, [n = 0]) {
 		breakStroke(state);
@@ -53,4 +73,6 @@ export const polygons: Record<string, Handler> = {
 	RR: rectangle(offset, true),
 	EA: rectangle(toPlotter, false),
 	ER: rectangle(offset, false),
+	WG: wedge(true),
+	EW: wedge(false),
 };
