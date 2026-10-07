@@ -5,7 +5,7 @@ import {
 	usedPens,
 	type Warning,
 } from "@hpgl-viewer/core";
-import { renderPage } from "./render.ts";
+import { fittedView, renderPage } from "./render.ts";
 
 // Elements from index.html, which ships with this script.
 const canvas = document.querySelector("#plot") as HTMLCanvasElement;
@@ -57,12 +57,17 @@ const worker = new Worker(new URL("./parse.worker.ts", import.meta.url), {
 	type: "module",
 });
 let pages: Page[] = [];
+let scalingPoints: ParseResult["scalingPoints"] | undefined;
+let view = fittedView();
 let page: Page | undefined;
 let fileName = "";
 /** User overrides of the default pen colours; kept across files. */
 const colours = new Map<number, string>();
 const colourOf = (pen: number) => colours.get(pen) ?? penColour(pen);
-const render = () => page && renderPage(canvas, page, colourOf);
+const render = () =>
+	page &&
+	scalingPoints &&
+	renderPage(canvas, page, colourOf, scalingPoints, view);
 
 function showLegend(pens: number[]) {
 	legend.replaceChildren(
@@ -95,8 +100,10 @@ resetColours.addEventListener("click", () => {
 
 function show(index: number) {
 	page = pages[index];
-	if (page) render();
+	view = { ...fittedView(), actual: view.actual };
+	// Legend first: it changes the canvas's height.
 	showLegend(page ? usedPens(page) : []);
+	if (page) render();
 	const count = page?.primitives.length ?? 0;
 	const of = pages.length > 1 ? `page ${index + 1} of ${pages.length}, ` : "";
 	status.value = `${fileName}: ${of}${count} primitive(s)`;
@@ -106,12 +113,13 @@ function show(index: number) {
 
 worker.onmessage = ({ data }: MessageEvent<ParseResult>) => {
 	pages = data.pages;
+	scalingPoints = data.scalingPoints;
 	pageSelect.replaceChildren(
 		...pages.map((_, i) => new Option(`Page ${i + 1}`, String(i))),
 	);
 	pageSelect.hidden = pages.length < 2;
-	show(0);
 	showWarnings(data.warnings);
+	show(0);
 };
 // A parser crash (e.g. out of memory) keeps the previous plot on screen.
 worker.onerror = (event) => {
@@ -145,4 +153,71 @@ addEventListener("drop", (event: DragEvent) => {
 	const file = event.dataTransfer?.files[0];
 	if (file) void open(file);
 });
-addEventListener("resize", render);
+new ResizeObserver(() => render()).observe(canvas);
+
+const actualSize = document.querySelector("#actual-size") as HTMLInputElement;
+actualSize.addEventListener("change", () => {
+	view = { ...fittedView(), actual: actualSize.checked };
+	render();
+});
+(document.querySelector("#reset-view") as HTMLButtonElement).addEventListener(
+	"click",
+	() => {
+		view = fittedView();
+		actualSize.checked = false;
+		render();
+	},
+);
+
+// Pan/zoom events can outpace the display; draw at most once per frame.
+let frameRequested = false;
+const renderSoon = () => {
+	if (frameRequested) return;
+	frameRequested = true;
+	requestAnimationFrame(() => {
+		frameRequested = false;
+		render();
+	});
+};
+
+/** Pointer position in canvas px. */
+function canvasPoint(event: MouseEvent): [number, number] {
+	const r = canvas.getBoundingClientRect();
+	return [
+		((event.clientX - r.left) * canvas.width) / r.width,
+		((event.clientY - r.top) * canvas.height) / r.height,
+	];
+}
+
+// Zoom about the cursor: the point under it stays put.
+canvas.addEventListener(
+	"wheel",
+	(event) => {
+		event.preventDefault();
+		const [cx, cy] = canvasPoint(event);
+		const factor = Math.exp(-event.deltaY / 500);
+		const zoom = Math.min(Math.max(view.zoom * factor, 0.05), 1000);
+		const k = zoom / view.zoom;
+		view.pan = [cx - (cx - view.pan[0]) * k, cy - (cy - view.pan[1]) * k];
+		view.zoom = zoom;
+		renderSoon();
+	},
+	{ passive: false },
+);
+
+canvas.addEventListener("pointerdown", (event) => {
+	canvas.setPointerCapture(event.pointerId);
+	let last = canvasPoint(event);
+	const move = (e: PointerEvent) => {
+		const at = canvasPoint(e);
+		view.pan = [view.pan[0] + at[0] - last[0], view.pan[1] + at[1] - last[1]];
+		last = at;
+		renderSoon();
+	};
+	canvas.addEventListener("pointermove", move);
+	canvas.addEventListener(
+		"pointerup",
+		() => canvas.removeEventListener("pointermove", move),
+		{ once: true },
+	);
+});

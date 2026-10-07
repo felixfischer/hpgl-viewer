@@ -107,3 +107,41 @@ test("each used pen is listed with its colour, recolourable and resettable", asy
 	expect(await canvas.evaluate(inkedIn, "#00ff00")).toBe(0);
 	expect(await canvas.evaluate(inkedIn, "#e6194b")).toBeGreaterThan(50);
 });
+
+test("pan, zoom and the actual-page-size toggle change the view; reset fits again", async ({
+	page,
+}) => {
+	await page.goto("/");
+	await page.locator("#file").setInputFiles(fixture);
+	const canvas = page.locator("#plot");
+	await expect(canvas).toHaveAttribute("data-rendered", "space-shuttle.hpgl");
+	const pixels = () =>
+		canvas.evaluate((el: HTMLCanvasElement) => el.toDataURL());
+	const fitted = await pixels();
+
+	const box = await canvas.boundingBox();
+	if (!box) throw new Error("canvas has no layout box");
+	await page.mouse.move(box.x + box.width / 3, box.y + box.height / 3);
+	await page.mouse.wheel(0, -500);
+	await expect.poll(pixels).not.toBe(fitted);
+	const zoomed = await pixels();
+
+	await page.mouse.down();
+	await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2, {
+		steps: 5,
+	});
+	await page.mouse.up();
+	await expect.poll(pixels).not.toBe(zoomed);
+
+	const reset = page.getByRole("button", { name: "Reset view" });
+	await reset.click();
+	await expect.poll(pixels).toBe(fitted);
+
+	const actual = page.getByLabel("Actual page size");
+	await actual.check();
+	await expect.poll(pixels).not.toBe(fitted);
+
+	await reset.click();
+	await expect(actual).not.toBeChecked();
+	await expect.poll(pixels).toBe(fitted);
+});

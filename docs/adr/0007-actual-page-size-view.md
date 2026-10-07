@@ -1,0 +1,3 @@
+# Actual page size: real scale, sheet from PS or P1/P2
+
+The actual-page-size view draws one plotter unit (0.025 mm) at its physical size, taking a CSS pixel as 1/96 inch, and outlines the sheet the plot sits on. The sheet's lower-left corner is the plotter origin; its extent is the `PS` size when the page has one, otherwise the rectangle that holds P1/P2 with the same margin on the far side (width `P1x + P2x`, height `P1y + P2y`), so `IP` moves the sheet edge. A real sheet is usually larger than the window, so the view centres on the drawn content rather than the sheet. Core reports the P1/P2 in force at the end of the file on `ParseResult.scalingPoints`; a file that re-issues `IP` between pages gets the last pair for every page.

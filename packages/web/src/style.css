@@ -45,6 +45,11 @@ canvas {
 	min-height: 0;
 	width: 100%;
 	background: #fff;
+	cursor: grab;
+	touch-action: none;
+}
+canvas:active {
+	cursor: grabbing;
 }
 body.dragging canvas {
 	outline: 3px dashed #4363d8;
