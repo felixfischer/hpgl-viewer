@@ -1,4 +1,9 @@
-import { breakStroke, defaultScalingPoints, rotate } from "../state.ts";
+import {
+	breakStroke,
+	defaultLabelState,
+	defaultScalingPoints,
+	rotate,
+} from "../state.ts";
 import type { Handler } from "./index.ts";
 
 export const setup: Record<string, Handler> = {
@@ -10,6 +15,7 @@ export const setup: Record<string, Handler> = {
 		state.scale = null;
 		state.rotation = 0;
 		state.window = null;
+		Object.assign(state, defaultLabelState());
 		breakStroke(state);
 	},
 	IP(state, params) {

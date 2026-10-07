@@ -1,5 +1,12 @@
 import type { Point } from "../geometry.ts";
-import { breakStroke, emit, type State, strokeOf } from "../state.ts";
+import {
+	breakStroke,
+	defaultLabelState,
+	emit,
+	type State,
+	scaled,
+	strokeOf,
+} from "../state.ts";
 import type { Handler } from "./index.ts";
 
 /** Consumes a command's raw text from `i` (just after the mnemonic); returns the index after it. */
@@ -17,14 +24,20 @@ function readLabel(state: State, text: string, i: number): [string, number] {
 
 /** Character width and height in plotter units. */
 function charSize(state: State): [number, number] {
-	const [w, h] = state.charSize.size;
+	const { unit, size } = state.charSize;
+	const [w, h] = size;
+	if (unit === "SI") return [w * 400, h * 400]; // 400 plotter units per cm
+	if (unit === "SU") return scaled(state, w, h).map(Math.abs) as Point;
 	return [
 		(w / 100) * Math.abs(state.p2[0] - state.p1[0]),
 		(h / 100) * Math.abs(state.p2[1] - state.p1[1]),
 	];
 }
 
-const add = (p: Point, v: Point, k = 1): Point => [p[0] + k * v[0], p[1] + k * v[1]];
+const add = (p: Point, v: Point, k = 1): Point => [
+	p[0] + k * v[0],
+	p[1] + k * v[1],
+];
 
 /** Lays out `label` from the pen position, emitting one Label per run of printable characters. */
 function draw(state: State, label: string): void {
@@ -93,9 +106,25 @@ export const labelText: Record<string, TextHandler> = {
 		DT_REST.lastIndex = i + 1;
 		const mode = DT_REST.exec(text)?.[1];
 		// Classic plotters don't print the terminator unless mode 0 is given explicitly (notes §DT).
-		state.terminator = { char, print: mode !== undefined && Number(mode) === 0 };
+		state.terminator = {
+			char,
+			print: mode !== undefined && Number(mode) === 0,
+		};
 		return DT_REST.lastIndex;
 	},
 };
 
-export const labels: Record<string, Handler> = {};
+/** A size command: 2 params set it, none restores the default, any other count is ignored. */
+const sizing =
+	(unit: "SI" | "SR" | "SU"): Handler =>
+	(state, params) => {
+		const [w = 0, h = 0] = params;
+		if (params.length === 2) state.charSize = { unit, size: [w, h] };
+		else if (!params.length) state.charSize = defaultLabelState().charSize;
+	};
+
+export const labels: Record<string, Handler> = {
+	SI: sizing("SI"),
+	SR: sizing("SR"),
+	SU: sizing("SU"),
+};

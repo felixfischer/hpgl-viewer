@@ -69,7 +69,7 @@ export const defaultScalingPoints = (): { p1: Point; p2: Point } => ({
 });
 
 /** Scales a user-unit offset to plotter units. */
-function scaled(state: State, dx: number, dy: number): Point {
+export function scaled(state: State, dx: number, dy: number): Point {
 	if (!state.scale) return [dx, dy];
 	const [xmin, xmax, ymin, ymax] = state.scale;
 	return [

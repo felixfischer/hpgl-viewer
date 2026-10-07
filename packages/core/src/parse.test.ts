@@ -330,13 +330,16 @@ describe("parseHpgl", () => {
 	});
 
 	test("after LB the pen sits at the next character origin, 1.5 × width per character", () => {
-		const [, line] = parseHpgl("PU100,200;LBAB\x03PD100,0;").pages[0]?.primitives ?? [];
+		const [, line] =
+			parseHpgl("PU100,200;LBAB\x03PD100,0;").pages[0]?.primitives ?? [];
 		expect(line?.type === "polyline" && line.points[0]).toEqual([442, 200]);
 	});
 
 	test("DT sets the terminator (not printed); DT; restores ETX; a label without one runs to EOF", () => {
 		const texts = (hpgl: string) =>
-			parseHpgl(hpgl).pages[0]?.primitives.map((p) => p.type === "label" && p.text);
+			parseHpgl(hpgl).pages[0]?.primitives.map(
+				(p) => p.type === "label" && p.text,
+			);
 		expect(texts("DT$;LBA\x03B$DT;LBC\x03")).toEqual(["AB", "C"]);
 		expect(texts("DT$,0;LBA$\x03")).toEqual(["A$"]);
 		expect(texts("LBA;PD1,1;")).toEqual(["A;PD1,1;"]);
@@ -344,7 +347,9 @@ describe("parseHpgl", () => {
 
 	test("control characters in a label move within the label frame: CR LF BS HT VT", () => {
 		const placed = (hpgl: string) =>
-			parseHpgl(hpgl).pages[0]?.primitives.map((p) => p.type === "label" && [p.text, p.at]);
+			parseHpgl(hpgl).pages[0]?.primitives.map(
+				(p) => p.type === "label" && [p.text, p.at],
+			);
 		// One cell is 171 wide (1.5 × 114); one line is 300 tall (2 × 150).
 		expect(placed("PU1000,1000;LBA\r\nB\x03")).toEqual([
 			["A", [1000, 1000]],
@@ -358,6 +363,27 @@ describe("parseHpgl", () => {
 		]);
 	});
 
+	test("SI sizes in cm, SR in % of the P1–P2 span (tracking IP), SU in user units; 1 or 3 params are ignored", () => {
+		const sizes = (hpgl: string) =>
+			parseHpgl(hpgl).pages[0]?.primitives.map(
+				(p) => p.type === "label" && [p.width, p.height],
+			);
+		expect(
+			sizes("SI0.5,1;LBA\x03SI2;LBB\x03SI1,1,1;LBC\x03SI;LBD\x03"),
+		).toEqual([
+			[200, 400],
+			[200, 400],
+			[200, 400],
+			[114, 150],
+		]);
+		expect(sizes("SR1,2;IP0,0,1000,2000;LBA\x03IN;LBB\x03")).toEqual([
+			[10, 40],
+			[114, 150],
+		]);
+		expect(sizes("IP0,0,4000,4000;SC0,100,0,100;SU5,10;LBA\x03")).toEqual([
+			[200, 400],
+		]);
+	});
 });
 
 describe.each([
