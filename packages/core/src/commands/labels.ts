@@ -52,8 +52,34 @@ const add = (p: Point, v: Point, k = 1): Point => [
 	p[1] + k * v[1],
 ];
 
+/**
+ * Offset of a line of `n` characters from the pen for label origin `lo`,
+ * given the advance `a` and line feed `b` vectors.
+ */
+function originOffset(lo: number, n: number, a: Point, b: Point): Point {
+	const col = Math.floor(((lo % 10) - 1) / 3); // 0 left, 1 centre, 2 right
+	const row = ((lo % 10) - 1) % 3; // 0 below, 1 middle, 2 above
+	const w: Point = [a[0] / 1.5, a[1] / 1.5];
+	const h: Point = [-b[0] / 2, -b[1] / 2];
+	const out = lo > 10 ? 0.5 : 0;
+	// ponytail: the line spans (n − 1) advances plus one character, no trailing gap (notes §8 gap 9).
+	const length = add(w, a, Math.max(n - 1, 0));
+	let at = add([0, 0], length, -col / 2);
+	at = add(at, h, -row / 2);
+	at = add(at, w, col === 0 ? out : col === 2 ? -out : 0);
+	return add(at, h, row === 0 ? out : row === 2 ? -out : 0);
+}
+
+/** Printable characters before the next CR or LF. */
+function lineLength(chars: string[], from: number): number {
+	let n = 0;
+	for (let i = from; i < chars.length && !"\r\n".includes(chars[i] ?? ""); i++)
+		if ((chars[i] ?? "") >= " ") n++;
+	return n;
+}
+
 /** Lays out `label` from the pen position, emitting one Label per run of printable characters. */
-function draw(state: State, label: string): void {
+function draw(state: State, label: string, lo = state.origin): void {
 	breakStroke(state);
 	const [width, height] = charSize(state);
 	const [dx, dy] = baseline(state);
@@ -63,10 +89,12 @@ function draw(state: State, label: string): void {
 	// Character advance and line feed vectors (notes §Labels: cell = 1.5w × 2h).
 	const a: Point = [1.5 * width * ux, 1.5 * width * uy];
 	const b: Point = [2 * height * uy, -2 * height * ux];
+	const chars = [...label];
 	const start = state.at;
 	let at = start;
 	let run = "";
 	let runAt = at;
+	let offset = originOffset(lo, lineLength(chars, 0), a, b);
 	const flush = () => {
 		if (run && state.pen !== 0)
 			emit(state, {
@@ -81,9 +109,9 @@ function draw(state: State, label: string): void {
 			});
 		run = "";
 	};
-	for (const c of label) {
+	for (const [i, c] of chars.entries()) {
 		if (c >= " ") {
-			if (!run) runAt = at;
+			if (!run) runAt = add(at, offset);
 			run += c;
 			at = add(at, a);
 			continue;
@@ -95,9 +123,12 @@ function draw(state: State, label: string): void {
 		else if (c === "\n") at = add(at, b);
 		else if (c === "\v") at = add(at, b, -1);
 		else at = carriageReturn(at, start, a);
+		if (c === "\r" || c === "\n")
+			offset = originOffset(lo, lineLength(chars, i + 1), a, b);
 	}
 	flush();
-	state.at = at;
+	// Left origins leave the pen at the next character; the others put it back.
+	if (lo % 10 <= 3) state.at = at;
 }
 
 /** Moves `at` back to the column of `start`, staying on its line. */
@@ -154,6 +185,10 @@ export const labels: Record<string, Handler> = {
 	DI: directing("DI"),
 	DR: directing("DR"),
 	DU: directing("DU"),
+	LO(state, [n = 1]) {
+		if ((n >= 1 && n <= 9) || (n >= 11 && n <= 19 && n !== 15))
+			state.origin = Math.trunc(n);
+	},
 	SL(state, [tan = 0]) {
 		state.slant = tan;
 	},

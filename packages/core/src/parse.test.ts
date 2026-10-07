@@ -405,6 +405,54 @@ describe("parseHpgl", () => {
 		);
 		expect(labels("RO90;LBA\x03")?.[0]?.[2]).toBe(90);
 	});
+	test("LO places each line around the pen (3×3 grid, +10 pushed out by half a character)", () => {
+		// "AB" spans 1.5 × 114 + 114 = 285 wide and 150 tall.
+		const at = (lo: number | string) =>
+			parseHpgl(`LO${lo};LBAB\x03`).pages[0]?.primitives.map(
+				(p) => p.type === "label" && p.at,
+			)[0];
+		expect([1, 2, 3, 4, 5, 6, 7, 8, 9].map(at)).toEqual([
+			[0, 0],
+			[0, -75],
+			[0, -150],
+			[-142.5, 0],
+			[-142.5, -75],
+			[-142.5, -150],
+			[-285, 0],
+			[-285, -75],
+			[-285, -150],
+		]);
+		expect([11, 13, 14, 16, 17, 19].map(at)).toEqual([
+			[57, 75],
+			[57, -225],
+			[-142.5, 75],
+			[-142.5, -225],
+			[-342, 75],
+			[-342, -225],
+		]);
+		// LO; is 1; undefined origins keep the previous one.
+		expect(["7;LO", "7;LO15", "7;LO0", "7;LO20"].map(at)).toEqual([
+			[0, 0],
+			[-285, 0],
+			[-285, 0],
+			[-285, 0],
+		]);
+	});
+
+	test("with LO, every line is aligned on its own; non-left origins leave the pen where it was", () => {
+		const prims = parseHpgl("PU1000,0;LO7;LBAB\r\nA\x03PD1000,10;").pages[0]
+			?.primitives;
+		expect(prims?.map((p) => (p.type === "label" ? p.at : p.points))).toEqual([
+			[715, 0],
+			[886, -300],
+			[
+				[1000, 0],
+				[1000, 10],
+			],
+		]);
+		const [, line] = parseHpgl("LO2;LBAB\x03PD0,0;").pages[0]?.primitives ?? [];
+		expect(line?.type === "polyline" && line.points[0]).toEqual([342, 0]);
+	});
 });
 
 describe.each([

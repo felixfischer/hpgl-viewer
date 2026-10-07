@@ -39,6 +39,8 @@ export interface State {
 	direction: { unit: "DI" | "DR" | "DU"; run: Point };
 	/** `SL` slant as tan(angle). */
 	slant: number;
+	/** `LO` label origin: 1–9 (3×3 grid), 11–19 the same pushed out by half a character. */
+	origin: number;
 }
 
 export function createState(): State {
@@ -66,6 +68,7 @@ export const defaultLabelState = () => ({
 	charSize: { unit: "SR" as const, size: [0.75, 1.5] as Point },
 	direction: { unit: "DI" as const, run: [1, 0] as Point },
 	slant: 0,
+	origin: 1,
 });
 
 /** A3 landscape P1/P2 (HP 7475A); the viewer's default page. */
