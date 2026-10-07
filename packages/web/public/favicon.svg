@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+	<title>HP-GL Viewer</title>
+	<rect width="32" height="32" rx="7" fill="#0f172a" />
+	<polyline
+		points="6,24 12,13 18,19 25,9"
+		fill="none"
+		stroke="#38bdf8"
+		stroke-width="2.4"
+		stroke-linecap="round"
+		stroke-linejoin="round"
+	/>
+	<g fill="#0f172a" stroke="#e2e8f0" stroke-width="1.6">
+		<rect x="4.4" y="22.4" width="3.2" height="3.2" rx="0.8" />
+		<rect x="10.4" y="11.4" width="3.2" height="3.2" rx="0.8" />
+		<rect x="16.4" y="17.4" width="3.2" height="3.2" rx="0.8" />
+	</g>
+	<circle cx="25" cy="9" r="3" fill="#fbbf24" />
+	<circle cx="25" cy="9" r="1.1" fill="#0f172a" />
+</svg>

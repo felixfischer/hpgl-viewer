@@ -918,6 +918,7 @@ describe.each([
 	"wedges",
 	"labels",
 	"labels-buffered",
+	"showcase",
 ])("fixture %s.hpgl", (name) => {
 	test("parses to its golden geometry stream", async () => {
 		const text = readFileSync(

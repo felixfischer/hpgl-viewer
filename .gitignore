@@ -3,4 +3,5 @@ node_modules/
 dist/
 test-results/
 playwright-report/
-.commandcode/settings.json
+.commandcode/
+.claude/

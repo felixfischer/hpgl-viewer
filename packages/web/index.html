@@ -1,34 +1,40 @@
 <!doctype html>
 <html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<title>HP-GL Viewer</title>
-		<link rel="stylesheet" href="/src/style.css" />
-	</head>
-	<body>
-		<header>
-			<label>Open HP-GL file <input id="file" type="file" accept=".hpgl,.hpg,.plt,.hgl,text/plain" /></label>
-			<select id="page" aria-label="Page" hidden></select>
-			<label><input id="actual-size" type="checkbox" /> Actual page size</label>
-			<button id="reset-view" type="button">Reset view</button>
-			<button id="export-svg" type="button" disabled>Export SVG</button>
-			<button id="export-png" type="button" disabled>Export PNG</button>
-			<output id="status" aria-live="polite">Drop an HP-GL file anywhere, or pick one.</output>
-		</header>
-		<div id="warnings" role="status" hidden>
-			<p id="dialect" hidden></p>
-			<details>
-				<summary></summary>
-				<ul></ul>
-			</details>
-			<button type="button" aria-label="Dismiss warnings">×</button>
-		</div>
-		<aside aria-label="Pens" hidden>
-			<ul id="legend"></ul>
-			<button id="reset-colours" type="button">Reset colours</button>
-		</aside>
-		<canvas id="plot" aria-label="Plot"></canvas>
-		<script type="module" src="/src/main.ts"></script>
-	</body>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<meta name="description"
+		content="View classic HP-GL plotter files (.hpgl, .plt) in your browser: client-side vector rendering with a pen legend and SVG/PNG export — nothing is uploaded." />
+	<title>HP-GL Viewer</title>
+	<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+	<link rel="stylesheet" href="/src/style.css" />
+</head>
+
+<body>
+	<header>
+		<label>Open HP-GL file <input id="file" type="file" accept=".hpgl,.hpg,.plt,.hgl,text/plain" /></label>
+		<select id="page" aria-label="Page" hidden></select>
+		<label><input id="actual-size" type="checkbox" /> Actual page size</label>
+		<button id="reset-view" type="button">Reset view</button>
+		<button id="export-svg" type="button" disabled>Export SVG</button>
+		<button id="export-png" type="button" disabled>Export PNG</button>
+		<output id="status" aria-live="polite">Drop an HP-GL file anywhere, or pick one.</output>
+	</header>
+	<div id="warnings" role="status" hidden>
+		<p id="dialect" hidden></p>
+		<details>
+			<summary></summary>
+			<ul></ul>
+		</details>
+		<button type="button" aria-label="Dismiss warnings">×</button>
+	</div>
+	<aside aria-label="Pens" hidden>
+		<ul id="legend"></ul>
+		<button id="reset-colours" type="button">Reset colours</button>
+	</aside>
+	<canvas id="plot" aria-label="Plot"></canvas>
+	<script type="module" src="/src/main.ts"></script>
+</body>
+
 </html>

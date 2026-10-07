@@ -7,6 +7,9 @@ client-side: parsing happens in a Web Worker and nothing is uploaded.
 Live site: https://felixfischer.github.io/hpgl-viewer/ (deployed from `main` by GitHub
 Actions).
 
+![The viewer rendering the bundled showcase plot: a reference sheet of
+vectors, line types, circles, arcs, wedges, rectangles, polygons, fills and labels](screenshot.webp)
+
 ## What it does
 
 - **Load** by drag-and-drop or file picker; drop another file to replace the first.

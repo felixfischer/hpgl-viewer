@@ -1,0 +1,157 @@
+# page 1
+{"type":"rectangle","pen":1,"lineType":null,"from":[490,1002],"to":[15050,10202],"filled":false}
+{"type":"rectangle","pen":1,"lineType":null,"from":[610,1122],"to":[14930,10082],"filled":false}
+{"type":"polyline","pen":1,"lineType":null,"points":[[610,8842],[14930,8842]]}
+{"type":"label","pen":1,"lineType":null,"text":"HP-GL REFERENCE SHEET","at":[810,9642],"width":200,"height":360,"direction":0,"slant":0}
+{"type":"label","pen":1,"lineType":null,"text":"classic HP-GL - HP-GL/2 not supported","at":[810,9202],"width":80,"height":136,"direction":0,"slant":0}
+{"type":"label","pen":1,"lineType":null,"text":"rendered by hpgl-viewer","at":[11690,9202],"width":80,"height":136,"direction":0,"slant":0}
+{"type":"rectangle","pen":1,"lineType":null,"from":[650,6922],"to":[5130,8682],"filled":false}
+{"type":"label","pen":1,"lineType":null,"text":"VECTORS","at":[770,8382],"width":128,"height":220.00000000000003,"direction":0,"slant":0}
+{"type":"label","pen":1,"lineType":null,"text":"PU PD PA PR","at":[770,8182],"width":68,"height":120,"direction":0,"slant":0}
+{"type":"polyline","pen":2,"lineType":null,"points":[[970,7482],[1450,7842],[1930,7482],[2410,7842],[2890,7482],[3370,7842],[3850,7482]]}
+{"type":"polyline","pen":3,"lineType":null,"points":[[970,7082],[1450,7322],[1930,7082],[2410,7322],[2890,7082],[3370,7322],[3850,7082]]}
+{"type":"label","pen":1,"lineType":null,"text":"PA abs","at":[4010,7682],"width":68,"height":120,"direction":0,"slant":0}
+{"type":"label","pen":1,"lineType":null,"text":"PR rel","at":[4010,7162],"width":68,"height":120,"direction":0,"slant":0}
+{"type":"rectangle","pen":1,"lineType":null,"from":[5530,6922],"to":[10010,8682],"filled":false}
+{"type":"label","pen":1,"lineType":null,"text":"LINE TYPES","at":[5650,8382],"width":128,"height":220.00000000000003,"direction":0,"slant":0}
+{"type":"label","pen":1,"lineType":null,"text":"LT 0-6, length %","at":[5650,8182],"width":68,"height":120,"direction":0,"slant":0}
+{"type":"polyline","pen":2,"lineType":{"pattern":0,"length":363.89009329741305},"points":[[6250,8002],[6410,8002],[6570,8002],[6730,8002],[6890,8002],[7050,8002],[7210,8002],[7370,8002],[7530,8002],[7690,8002],[7850,8002],[8010,8002],[8170,8002],[8330,8002],[8490,8002],[8650,8002],[8810,8002],[8970,8002],[9130,8002],[9290,8002],[9450,8002],[9610,8002],[9770,8002]]}
+{"type":"polyline","pen":2,"lineType":{"pattern":1,"length":363.89009329741305},"points":[[6250,7862],[6410,7862],[6570,7862],[6730,7862],[6890,7862],[7050,7862],[7210,7862],[7370,7862],[7530,7862],[7690,7862],[7850,7862],[8010,7862],[8170,7862],[8330,7862],[8490,7862],[8650,7862],[8810,7862],[8970,7862],[9130,7862],[9290,7862],[9450,7862],[9610,7862],[9770,7862]]}
+{"type":"polyline","pen":2,"lineType":{"pattern":2,"length":363.89009329741305},"points":[[6250,7722],[6410,7722],[6570,7722],[6730,7722],[6890,7722],[7050,7722],[7210,7722],[7370,7722],[7530,7722],[7690,7722],[7850,7722],[8010,7722],[8170,7722],[8330,7722],[8490,7722],[8650,7722],[8810,7722],[8970,7722],[9130,7722],[9290,7722],[9450,7722],[9610,7722],[9770,7722]]}
+{"type":"polyline","pen":2,"lineType":{"pattern":3,"length":363.89009329741305},"points":[[6250,7582],[6410,7582],[6570,7582],[6730,7582],[6890,7582],[7050,7582],[7210,7582],[7370,7582],[7530,7582],[7690,7582],[7850,7582],[8010,7582],[8170,7582],[8330,7582],[8490,7582],[8650,7582],[8810,7582],[8970,7582],[9130,7582],[9290,7582],[9450,7582],[9610,7582],[9770,7582]]}
+{"type":"polyline","pen":2,"lineType":{"pattern":4,"length":363.89009329741305},"points":[[6250,7442],[6410,7442],[6570,7442],[6730,7442],[6890,7442],[7050,7442],[7210,7442],[7370,7442],[7530,7442],[7690,7442],[7850,7442],[8010,7442],[8170,7442],[8330,7442],[8490,7442],[8650,7442],[8810,7442],[8970,7442],[9130,7442],[9290,7442],[9450,7442],[9610,7442],[9770,7442]]}
+{"type":"polyline","pen":2,"lineType":{"pattern":5,"length":363.89009329741305},"points":[[6250,7302],[6410,7302],[6570,7302],[6730,7302],[6890,7302],[7050,7302],[7210,7302],[7370,7302],[7530,7302],[7690,7302],[7850,7302],[8010,7302],[8170,7302],[8330,7302],[8490,7302],[8650,7302],[8810,7302],[8970,7302],[9130,7302],[9290,7302],[9450,7302],[9610,7302],[9770,7302]]}
+{"type":"polyline","pen":2,"lineType":{"pattern":6,"length":363.89009329741305},"points":[[6250,7162],[6410,7162],[6570,7162],[6730,7162],[6890,7162],[7050,7162],[7210,7162],[7370,7162],[7530,7162],[7690,7162],[7850,7162],[8010,7162],[8170,7162],[8330,7162],[8490,7162],[8650,7162],[8810,7162],[8970,7162],[9130,7162],[9290,7162],[9450,7162],[9610,7162],[9770,7162]]}
+{"type":"label","pen":1,"lineType":null,"text":"LT0","at":[5770,7966],"width":64,"height":112.00000000000001,"direction":0,"slant":0}
+{"type":"label","pen":1,"lineType":null,"text":"LT1","at":[5770,7826],"width":64,"height":112.00000000000001,"direction":0,"slant":0}
+{"type":"label","pen":1,"lineType":null,"text":"LT2","at":[5770,7686],"width":64,"height":112.00000000000001,"direction":0,"slant":0}
+{"type":"label","pen":1,"lineType":null,"text":"LT3","at":[5770,7546],"width":64,"height":112.00000000000001,"direction":0,"slant":0}
+{"type":"label","pen":1,"lineType":null,"text":"LT4","at":[5770,7406],"width":64,"height":112.00000000000001,"direction":0,"slant":0}
+{"type":"label","pen":1,"lineType":null,"text":"LT5","at":[5770,7266],"width":64,"height":112.00000000000001,"direction":0,"slant":0}
+{"type":"label","pen":1,"lineType":null,"text":"LT6","at":[5770,7126],"width":64,"height":112.00000000000001,"direction":0,"slant":0}
+{"type":"rectangle","pen":1,"lineType":null,"from":[10410,6922],"to":[14890,8682],"filled":false}
+{"type":"label","pen":1,"lineType":null,"text":"CIRCLES","at":[10530,8382],"width":128,"height":220.00000000000003,"direction":0,"slant":0}
+{"type":"label","pen":1,"lineType":null,"text":"CI r[,chord]  CT","at":[10530,8182],"width":68,"height":120,"direction":0,"slant":0}
+{"type":"circle","pen":2,"lineType":null,"center":[11370,7642],"radius":400,"chordAngle":5}
+  tessellated [[11770,7642],[11768.48,7676.86],[11763.92,7711.46],[11756.37,7745.53],[11745.88,7778.81],[11732.52,7811.05],[11716.41,7842],[11697.66,7871.43],[11676.42,7899.12],[11652.84,7924.84],[11627.12,7948.42],[11599.43,7969.66],[11570,7988.41],[11539.05,8004.52],[11506.81,8017.88],[11473.53,8028.37],[11439.46,8035.92],[11404.86,8040.48],[11370,8042],[11335.14,8040.48],[11300.54,8035.92],[11266.47,8028.37],[11233.19,8017.88],[11200.95,8004.52],[11170,7988.41],[11140.57,7969.66],[11112.88,7948.42],[11087.16,7924.84],[11063.58,7899.12],[11042.34,7871.43],[11023.59,7842],[11007.48,7811.05],[10994.12,7778.81],[10983.63,7745.53],[10976.08,7711.46],[10971.52,7676.86],[10970,7642],[10971.52,7607.14],[10976.08,7572.54],[10983.63,7538.47],[10994.12,7505.19],[11007.48,7472.95],[11023.59,7442],[11042.34,7412.57],[11063.58,7384.88],[11087.16,7359.16],[11112.88,7335.58],[11140.57,7314.34],[11170,7295.59],[11200.95,7279.48],[11233.19,7266.12],[11266.47,7255.63],[11300.54,7248.08],[11335.14,7243.52],[11370,7242],[11404.86,7243.52],[11439.46,7248.08],[11473.53,7255.63],[11506.81,7266.12],[11539.05,7279.48],[11570,7295.59],[11599.43,7314.34],[11627.12,7335.58],[11652.84,7359.16],[11676.42,7384.88],[11697.66,7412.57],[11716.41,7442],[11732.52,7472.95],[11745.88,7505.19],[11756.37,7538.47],[11763.92,7572.54],[11768.48,7607.14],[11770,7642]]
+{"type":"circle","pen":3,"lineType":null,"center":[12330,7642],"radius":400,"chordAngle":30}
+  tessellated [[12730,7642],[12676.41,7842],[12530,7988.41],[12330,8042],[12130,7988.41],[11983.59,7842],[11930,7642],[11983.59,7442],[12130,7295.59],[12330,7242],[12530,7295.59],[12676.41,7442],[12730,7642]]
+{"type":"circle","pen":4,"lineType":null,"center":[13290,7642],"radius":400,"chordAngle":90}
+  tessellated [[13690,7642],[13290,8042],[12890,7642],[13290,7242],[13690,7642]]
+{"type":"circle","pen":5,"lineType":null,"center":[14250,7642],"radius":400,"chordAngle":16.219228911988367}
+  tessellated [[14650,7642],[14633.8,7754.69],[14586.5,7858.26],[14511.94,7944.3],[14416.17,8005.85],[14306.93,8037.93],[14193.07,8037.93],[14083.83,8005.85],[13988.06,7944.3],[13913.5,7858.26],[13866.2,7754.69],[13850,7642],[13866.2,7529.31],[13913.5,7425.74],[13988.06,7339.7],[14083.83,7278.15],[14193.07,7246.07],[14306.93,7246.07],[14416.17,7278.15],[14511.94,7339.7],[14586.5,7425.74],[14633.8,7529.31],[14650,7642]]
+{"type":"label","pen":1,"lineType":null,"text":"5°","at":[11090,7122],"width":64,"height":112.00000000000001,"direction":0,"slant":0}
+{"type":"label","pen":1,"lineType":null,"text":"30°","at":[12050,7122],"width":64,"height":112.00000000000001,"direction":0,"slant":0}
+{"type":"label","pen":1,"lineType":null,"text":"90°","at":[13010,7122],"width":64,"height":112.00000000000001,"direction":0,"slant":0}
+{"type":"label","pen":1,"lineType":null,"text":"CT1 0.1","at":[13890,7122],"width":64,"height":112.00000000000001,"direction":0,"slant":0}
+{"type":"rectangle","pen":1,"lineType":null,"from":[650,4922],"to":[5130,6682],"filled":false}
+{"type":"label","pen":1,"lineType":null,"text":"ARCS","at":[770,6382],"width":128,"height":220.00000000000003,"direction":0,"slant":0}
+{"type":"label","pen":1,"lineType":null,"text":"AA abs  AR rel","at":[770,6182],"width":68,"height":120,"direction":0,"slant":0}
+{"type":"arc","pen":2,"lineType":null,"center":[1530,5682],"radius":440,"startAngle":0,"sweepAngle":180,"chordAngle":5}
+  tessellated [[1970,5682],[1968.33,5720.35],[1963.32,5758.41],[1955.01,5795.88],[1943.46,5832.49],[1928.78,5867.95],[1911.05,5902],[1890.43,5934.37],[1867.06,5964.83],[1841.13,5993.13],[1812.83,6019.06],[1782.37,6042.43],[1750,6063.05],[1715.95,6080.78],[1680.49,6095.46],[1643.88,6107.01],[1606.41,6115.32],[1568.35,6120.33],[1530,6122],[1491.65,6120.33],[1453.59,6115.32],[1416.12,6107.01],[1379.51,6095.46],[1344.05,6080.78],[1310,6063.05],[1277.63,6042.43],[1247.17,6019.06],[1218.87,5993.13],[1192.94,5964.83],[1169.57,5934.37],[1148.95,5902],[1131.22,5867.95],[1116.54,5832.49],[1104.99,5795.88],[1096.68,5758.41],[1091.67,5720.35],[1090,5682]]
+{"type":"arc","pen":3,"lineType":null,"center":[3050,5682],"radius":440,"startAngle":-90,"sweepAngle":90,"chordAngle":5}
+  tessellated [[3050,5242],[3088.35,5243.67],[3126.41,5248.68],[3163.88,5256.99],[3200.49,5268.54],[3235.95,5283.22],[3270,5300.95],[3302.37,5321.57],[3332.83,5344.94],[3361.13,5370.87],[3387.06,5399.17],[3410.43,5429.63],[3431.05,5462],[3448.78,5496.05],[3463.46,5531.51],[3475.01,5568.12],[3483.32,5605.59],[3488.33,5643.65],[3490,5682]]
+{"type":"arc","pen":4,"lineType":null,"center":[4250,5682],"radius":440,"startAngle":90,"sweepAngle":-90,"chordAngle":5}
+  tessellated [[4250,6122],[4288.35,6120.33],[4326.41,6115.32],[4363.88,6107.01],[4400.49,6095.46],[4435.95,6080.78],[4470,6063.05],[4502.37,6042.43],[4532.83,6019.06],[4561.13,5993.13],[4587.06,5964.83],[4610.43,5934.37],[4631.05,5902],[4648.78,5867.95],[4663.46,5832.49],[4675.01,5795.88],[4683.32,5758.41],[4688.33,5720.35],[4690,5682]]
+{"type":"label","pen":1,"lineType":null,"text":"AA 180","at":[1090,5102],"width":64,"height":112.00000000000001,"direction":0,"slant":0}
+{"type":"label","pen":1,"lineType":null,"text":"AR 90","at":[2650,5102],"width":64,"height":112.00000000000001,"direction":0,"slant":0}
+{"type":"label","pen":1,"lineType":null,"text":"AR -90","at":[3850,5102],"width":64,"height":112.00000000000001,"direction":0,"slant":0}
+{"type":"rectangle","pen":1,"lineType":null,"from":[5530,4922],"to":[10010,6682],"filled":false}
+{"type":"label","pen":1,"lineType":null,"text":"WEDGES","at":[5650,6382],"width":128,"height":220.00000000000003,"direction":0,"slant":0}
+{"type":"label","pen":1,"lineType":null,"text":"WG fill  EW edge","at":[5650,6182],"width":68,"height":120,"direction":0,"slant":0}
+{"type":"wedge","pen":2,"lineType":null,"center":[6650,5682],"radius":480,"startAngle":0,"sweepAngle":90,"chordAngle":5,"filled":true}
+  tessellated [[6650,5682],[7130,5682],[7128.17,5723.83],[7122.71,5765.35],[7113.64,5806.23],[7101.05,5846.17],[7085.03,5884.86],[7065.69,5922],[7043.19,5957.32],[7017.7,5990.54],[6989.41,6021.41],[6958.54,6049.7],[6925.32,6075.19],[6890,6097.69],[6852.86,6117.03],[6814.17,6133.05],[6774.23,6145.64],[6733.35,6154.71],[6691.83,6160.17],[6650,6162],[6650,5682]]
+{"type":"wedge","pen":3,"lineType":null,"center":[6650,5682],"radius":480,"startAngle":90,"sweepAngle":90,"chordAngle":5,"filled":true}
+  tessellated [[6650,5682],[6650,6162],[6608.17,6160.17],[6566.65,6154.71],[6525.77,6145.64],[6485.83,6133.05],[6447.14,6117.03],[6410,6097.69],[6374.68,6075.19],[6341.46,6049.7],[6310.59,6021.41],[6282.3,5990.54],[6256.81,5957.32],[6234.31,5922],[6214.97,5884.86],[6198.95,5846.17],[6186.36,5806.23],[6177.29,5765.35],[6171.83,5723.83],[6170,5682],[6650,5682]]
+{"type":"wedge","pen":4,"lineType":null,"center":[6650,5682],"radius":480,"startAngle":180,"sweepAngle":90,"chordAngle":5,"filled":true}
+  tessellated [[6650,5682],[6170,5682],[6171.83,5640.17],[6177.29,5598.65],[6186.36,5557.77],[6198.95,5517.83],[6214.97,5479.14],[6234.31,5442],[6256.81,5406.68],[6282.3,5373.46],[6310.59,5342.59],[6341.46,5314.3],[6374.68,5288.81],[6410,5266.31],[6447.14,5246.97],[6485.83,5230.95],[6525.77,5218.36],[6566.65,5209.29],[6608.17,5203.83],[6650,5202],[6650,5682]]
+{"type":"wedge","pen":5,"lineType":null,"center":[6650,5682],"radius":480,"startAngle":270,"sweepAngle":90,"chordAngle":5,"filled":true}
+  tessellated [[6650,5682],[6650,5202],[6691.83,5203.83],[6733.35,5209.29],[6774.23,5218.36],[6814.17,5230.95],[6852.86,5246.97],[6890,5266.31],[6925.32,5288.81],[6958.54,5314.3],[6989.41,5342.59],[7017.7,5373.46],[7043.19,5406.68],[7065.69,5442],[7085.03,5479.14],[7101.05,5517.83],[7113.64,5557.77],[7122.71,5598.65],[7128.17,5640.17],[7130,5682],[6650,5682]]
+{"type":"wedge","pen":2,"lineType":null,"center":[8170,5682],"radius":480,"startAngle":0,"sweepAngle":120,"chordAngle":5,"filled":false}
+  tessellated [[8170,5682],[8650,5682],[8648.17,5723.83],[8642.71,5765.35],[8633.64,5806.23],[8621.05,5846.17],[8605.03,5884.86],[8585.69,5922],[8563.19,5957.32],[8537.7,5990.54],[8509.41,6021.41],[8478.54,6049.7],[8445.32,6075.19],[8410,6097.69],[8372.86,6117.03],[8334.17,6133.05],[8294.23,6145.64],[8253.35,6154.71],[8211.83,6160.17],[8170,6162],[8128.17,6160.17],[8086.65,6154.71],[8045.77,6145.64],[8005.83,6133.05],[7967.14,6117.03],[7930,6097.69],[8170,5682]]
+{"type":"wedge","pen":3,"lineType":null,"center":[8170,5682],"radius":480,"startAngle":120,"sweepAngle":120,"chordAngle":5,"filled":false}
+  tessellated [[8170,5682],[7930,6097.69],[7894.68,6075.19],[7861.46,6049.7],[7830.59,6021.41],[7802.3,5990.54],[7776.81,5957.32],[7754.31,5922],[7734.97,5884.86],[7718.95,5846.17],[7706.36,5806.23],[7697.29,5765.35],[7691.83,5723.83],[7690,5682],[7691.83,5640.17],[7697.29,5598.65],[7706.36,5557.77],[7718.95,5517.83],[7734.97,5479.14],[7754.31,5442],[7776.81,5406.68],[7802.3,5373.46],[7830.59,5342.59],[7861.46,5314.3],[7894.68,5288.81],[7930,5266.31],[8170,5682]]
+{"type":"wedge","pen":4,"lineType":null,"center":[8170,5682],"radius":480,"startAngle":240,"sweepAngle":120,"chordAngle":5,"filled":false}
+  tessellated [[8170,5682],[7930,5266.31],[7967.14,5246.97],[8005.83,5230.95],[8045.77,5218.36],[8086.65,5209.29],[8128.17,5203.83],[8170,5202],[8211.83,5203.83],[8253.35,5209.29],[8294.23,5218.36],[8334.17,5230.95],[8372.86,5246.97],[8410,5266.31],[8445.32,5288.81],[8478.54,5314.3],[8509.41,5342.59],[8537.7,5373.46],[8563.19,5406.68],[8585.69,5442],[8605.03,5479.14],[8621.05,5517.83],[8633.64,5557.77],[8642.71,5598.65],[8648.17,5640.17],[8650,5682],[8170,5682]]
+{"type":"wedge","pen":6,"lineType":null,"center":[9530,5682],"radius":440,"startAngle":0,"sweepAngle":270,"chordAngle":5,"filled":true,"hatch":{"spacing":80,"angle":45,"cross":false}}
+  tessellated [[9530,5682],[9970,5682],[9968.33,5720.35],[9963.32,5758.41],[9955.01,5795.88],[9943.46,5832.49],[9928.78,5867.95],[9911.05,5902],[9890.43,5934.37],[9867.06,5964.83],[9841.13,5993.13],[9812.83,6019.06],[9782.37,6042.43],[9750,6063.05],[9715.95,6080.78],[9680.49,6095.46],[9643.88,6107.01],[9606.41,6115.32],[9568.35,6120.33],[9530,6122],[9491.65,6120.33],[9453.59,6115.32],[9416.12,6107.01],[9379.51,6095.46],[9344.05,6080.78],[9310,6063.05],[9277.63,6042.43],[9247.17,6019.06],[9218.87,5993.13],[9192.94,5964.83],[9169.57,5934.37],[9148.95,5902],[9131.22,5867.95],[9116.54,5832.49],[9104.99,5795.88],[9096.68,5758.41],[9091.67,5720.35],[9090,5682],[9091.67,5643.65],[9096.68,5605.59],[9104.99,5568.12],[9116.54,5531.51],[9131.22,5496.05],[9148.95,5462],[9169.57,5429.63],[9192.94,5399.17],[9218.87,5370.87],[9247.17,5344.94],[9277.63,5321.57],[9310,5300.95],[9344.05,5283.22],[9379.51,5268.54],[9416.12,5256.99],[9453.59,5248.68],[9491.65,5243.67],[9530,5242],[9530,5682]]
+{"type":"label","pen":1,"lineType":null,"text":"WG","at":[6410,5082],"width":64,"height":112.00000000000001,"direction":0,"slant":0}
+{"type":"label","pen":1,"lineType":null,"text":"EW","at":[8010,5082],"width":64,"height":112.00000000000001,"direction":0,"slant":0}
+{"type":"label","pen":1,"lineType":null,"text":"FT3+WG","at":[9130,5082],"width":64,"height":112.00000000000001,"direction":0,"slant":0}
+{"type":"rectangle","pen":1,"lineType":null,"from":[10410,4922],"to":[14890,6682],"filled":false}
+{"type":"label","pen":1,"lineType":null,"text":"RECTANGLES","at":[10530,6382],"width":128,"height":220.00000000000003,"direction":0,"slant":0}
+{"type":"label","pen":1,"lineType":null,"text":"RA EA RR ER  FT 1 3 4","at":[10530,6182],"width":68,"height":120,"direction":0,"slant":0}
+{"type":"rectangle","pen":2,"lineType":null,"from":[10730,5322],"to":[11530,6122],"filled":true}
+{"type":"rectangle","pen":3,"lineType":null,"from":[11770,5322],"to":[12570,6122],"filled":false}
+{"type":"rectangle","pen":4,"lineType":null,"from":[12810,5322],"to":[13610,6122],"filled":true,"hatch":{"spacing":80,"angle":45,"cross":false}}
+{"type":"rectangle","pen":4,"lineType":null,"from":[12810,5322],"to":[13610,6122],"filled":false}
+{"type":"rectangle","pen":5,"lineType":null,"from":[13850,5322],"to":[14650,6122],"filled":true,"hatch":{"spacing":80,"angle":0,"cross":true}}
+{"type":"rectangle","pen":5,"lineType":null,"from":[13850,5322],"to":[14650,6122],"filled":false}
+{"type":"label","pen":1,"lineType":null,"text":"RA","at":[10810,5042],"width":64,"height":112.00000000000001,"direction":0,"slant":0}
+{"type":"label","pen":1,"lineType":null,"text":"EA","at":[11850,5042],"width":64,"height":112.00000000000001,"direction":0,"slant":0}
+{"type":"label","pen":1,"lineType":null,"text":"FT3","at":[12810,5042],"width":64,"height":112.00000000000001,"direction":0,"slant":0}
+{"type":"label","pen":1,"lineType":null,"text":"FT4","at":[13850,5042],"width":64,"height":112.00000000000001,"direction":0,"slant":0}
+{"type":"rectangle","pen":1,"lineType":null,"from":[650,2922],"to":[5130,4682],"filled":false}
+{"type":"label","pen":1,"lineType":null,"text":"POLYGONS","at":[770,4382],"width":128,"height":220.00000000000003,"direction":0,"slant":0}
+{"type":"label","pen":1,"lineType":null,"text":"PM FP EP  rings","at":[770,4182],"width":68,"height":120,"direction":0,"slant":0}
+{"type":"polygon","pen":2,"lineType":null,"rings":[[[1610,4042],[1229.6,3765.6],[1374.8,3318.4],[1845.2,3318.4],[1990.4,3765.6]]],"filled":true}
+{"type":"polygon","pen":2,"lineType":null,"rings":[[[1610,4042],[1229.6,3765.6],[1374.8,3318.4],[1845.2,3318.4],[1990.4,3765.6]]],"filled":false}
+{"type":"polygon","pen":3,"lineType":null,"rings":[[[2810,3242],[3850,3242],[3850,4042],[2810,4042]],[[3050,3442],[3610,3442],[3610,3842],[3050,3842]]],"filled":true}
+{"type":"polygon","pen":3,"lineType":null,"rings":[[[2810,3242],[3850,3242],[3850,4042],[2810,4042]],[[3050,3442],[3610,3442],[3610,3842],[3050,3842]]],"filled":false}
+{"type":"label","pen":1,"lineType":null,"text":"FP fill","at":[1130,3122],"width":56.00000000000001,"height":104,"direction":0,"slant":0}
+{"type":"label","pen":1,"lineType":null,"text":"FP + hole","at":[2570,3122],"width":56.00000000000001,"height":104,"direction":0,"slant":0}
+{"type":"rectangle","pen":1,"lineType":null,"from":[5530,2922],"to":[10010,4682],"filled":false}
+{"type":"label","pen":1,"lineType":null,"text":"FILLS","at":[5650,4382],"width":128,"height":220.00000000000003,"direction":0,"slant":0}
+{"type":"label","pen":1,"lineType":null,"text":"FT 1 solid - 3 hatch - 4 cross","at":[5650,4182],"width":68,"height":120,"direction":0,"slant":0}
+{"type":"rectangle","pen":2,"lineType":null,"from":[5850,3242],"to":[6730,3962],"filled":true}
+{"type":"rectangle","pen":2,"lineType":null,"from":[5850,3242],"to":[6730,3962],"filled":false}
+{"type":"rectangle","pen":3,"lineType":null,"from":[6890,3242],"to":[7770,3962],"filled":true,"hatch":{"spacing":80,"angle":45,"cross":false}}
+{"type":"rectangle","pen":3,"lineType":null,"from":[6890,3242],"to":[7770,3962],"filled":false}
+{"type":"rectangle","pen":4,"lineType":null,"from":[7930,3242],"to":[8810,3962],"filled":true,"hatch":{"spacing":80,"angle":0,"cross":false}}
+{"type":"rectangle","pen":4,"lineType":null,"from":[7930,3242],"to":[8810,3962],"filled":false}
+{"type":"rectangle","pen":5,"lineType":null,"from":[8970,3242],"to":[9850,3962],"filled":true,"hatch":{"spacing":80,"angle":0,"cross":true}}
+{"type":"rectangle","pen":5,"lineType":null,"from":[8970,3242],"to":[9850,3962],"filled":false}
+{"type":"label","pen":1,"lineType":null,"text":"solid","at":[5850,3122],"width":56.00000000000001,"height":104,"direction":0,"slant":0}
+{"type":"label","pen":1,"lineType":null,"text":"hatch 45","at":[6890,3122],"width":56.00000000000001,"height":104,"direction":0,"slant":0}
+{"type":"label","pen":1,"lineType":null,"text":"hatch 0","at":[7930,3122],"width":56.00000000000001,"height":104,"direction":0,"slant":0}
+{"type":"label","pen":1,"lineType":null,"text":"cross","at":[8970,3122],"width":56.00000000000001,"height":104,"direction":0,"slant":0}
+{"type":"rectangle","pen":1,"lineType":null,"from":[10410,2922],"to":[14890,4682],"filled":false}
+{"type":"label","pen":1,"lineType":null,"text":"LABELS","at":[10530,4382],"width":128,"height":220.00000000000003,"direction":0,"slant":0}
+{"type":"label","pen":1,"lineType":null,"text":"LB SI SL DI LO","at":[10530,4182],"width":68,"height":120,"direction":0,"slant":0}
+{"type":"label","pen":1,"lineType":null,"text":"Large","at":[10650,3922],"width":120,"height":200,"direction":0,"slant":0}
+{"type":"label","pen":1,"lineType":null,"text":"Medium","at":[10650,3602],"width":88,"height":152,"direction":0,"slant":0}
+{"type":"label","pen":1,"lineType":null,"text":"Small","at":[10650,3342],"width":64,"height":112.00000000000001,"direction":0,"slant":0}
+{"type":"label","pen":1,"lineType":null,"text":"Slant","at":[10650,3122],"width":88,"height":152,"direction":0,"slant":0.4}
+{"type":"label","pen":1,"lineType":null,"text":"DI 0,1","at":[14090,3162],"width":80,"height":136,"direction":90,"slant":0}
+{"type":"polyline","pen":2,"lineType":null,"points":[[13130,3242],[12890,3242]]}
+{"type":"polyline","pen":2,"lineType":null,"points":[[13130,3242],[13130,3002]]}
+{"type":"label","pen":1,"lineType":null,"text":"LO1","at":[13130,3242],"width":80,"height":136,"direction":0,"slant":0}
+{"type":"rectangle","pen":1,"lineType":null,"from":[650,1162],"to":[14890,2682],"filled":false}
+{"type":"label","pen":1,"lineType":null,"text":"PENS","at":[810,2042],"width":120,"height":200,"direction":0,"slant":0}
+{"type":"label","pen":1,"lineType":null,"text":"SP n selects","at":[810,1762],"width":60,"height":108,"direction":0,"slant":0}
+{"type":"label","pen":1,"lineType":null,"text":"SP0 parks","at":[810,1602],"width":60,"height":108,"direction":0,"slant":0}
+{"type":"rectangle","pen":1,"lineType":null,"from":[4170,1562],"to":[5210,2202],"filled":true}
+{"type":"rectangle","pen":1,"lineType":null,"from":[4170,1562],"to":[5210,2202],"filled":false}
+{"type":"rectangle","pen":2,"lineType":null,"from":[5450,1562],"to":[6490,2202],"filled":true}
+{"type":"rectangle","pen":1,"lineType":null,"from":[5450,1562],"to":[6490,2202],"filled":false}
+{"type":"rectangle","pen":3,"lineType":null,"from":[6730,1562],"to":[7770,2202],"filled":true}
+{"type":"rectangle","pen":1,"lineType":null,"from":[6730,1562],"to":[7770,2202],"filled":false}
+{"type":"rectangle","pen":4,"lineType":null,"from":[8010,1562],"to":[9050,2202],"filled":true}
+{"type":"rectangle","pen":1,"lineType":null,"from":[8010,1562],"to":[9050,2202],"filled":false}
+{"type":"rectangle","pen":5,"lineType":null,"from":[9290,1562],"to":[10330,2202],"filled":true}
+{"type":"rectangle","pen":1,"lineType":null,"from":[9290,1562],"to":[10330,2202],"filled":false}
+{"type":"rectangle","pen":6,"lineType":null,"from":[10570,1562],"to":[11610,2202],"filled":true}
+{"type":"rectangle","pen":1,"lineType":null,"from":[10570,1562],"to":[11610,2202],"filled":false}
+{"type":"rectangle","pen":7,"lineType":null,"from":[11850,1562],"to":[12890,2202],"filled":true}
+{"type":"rectangle","pen":1,"lineType":null,"from":[11850,1562],"to":[12890,2202],"filled":false}
+{"type":"rectangle","pen":8,"lineType":null,"from":[13130,1562],"to":[14170,2202],"filled":true}
+{"type":"rectangle","pen":1,"lineType":null,"from":[13130,1562],"to":[14170,2202],"filled":false}
+{"type":"label","pen":1,"lineType":null,"text":"1","at":[4610,1402],"width":60,"height":108,"direction":0,"slant":0}
+{"type":"label","pen":1,"lineType":null,"text":"2","at":[5890,1402],"width":60,"height":108,"direction":0,"slant":0}
+{"type":"label","pen":1,"lineType":null,"text":"3","at":[7170,1402],"width":60,"height":108,"direction":0,"slant":0}
+{"type":"label","pen":1,"lineType":null,"text":"4","at":[8450,1402],"width":60,"height":108,"direction":0,"slant":0}
+{"type":"label","pen":1,"lineType":null,"text":"5","at":[9730,1402],"width":60,"height":108,"direction":0,"slant":0}
+{"type":"label","pen":1,"lineType":null,"text":"6","at":[11010,1402],"width":60,"height":108,"direction":0,"slant":0}
+{"type":"label","pen":1,"lineType":null,"text":"7","at":[12290,1402],"width":60,"height":108,"direction":0,"slant":0}
+{"type":"label","pen":1,"lineType":null,"text":"8","at":[13570,1402],"width":60,"height":108,"direction":0,"slant":0}
+# warnings
