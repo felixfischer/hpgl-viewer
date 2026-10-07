@@ -151,7 +151,7 @@ function draw(state: State, label: string, lo = state.origin): void {
 	let runAt = at;
 	let offset = originOffset(lo, lineLength(chars, 0), a, w, h);
 	const flush = () => {
-		if (run && state.pen !== 0)
+		if (run.trim() && state.pen !== 0)
 			emit(state, {
 				type: "label",
 				...strokeOf(state),
