@@ -19,11 +19,17 @@ const details = banner.querySelector("details") as HTMLDetailsElement;
 const MAX_LISTED = 50;
 
 /** Shows the non-fatal warnings banner; rendering never waits on it. */
-function showWarnings(warnings: Warning[]) {
+function showWarnings(warnings: Warning[], hasContent: boolean) {
 	// Dialect and character-set notices, one sentence each.
-	const notices = warnings.filter((w) => w.kind !== "skipped");
+	const notices = warnings
+		.filter((w) => w.kind !== "skipped")
+		.map((w) => w.message);
+	if (!hasContent && warnings.some((w) => w.kind === "skipped"))
+		notices.unshift(
+			"No HP-GL commands were recognised — this may not be an HP-GL file",
+		);
 	dialect.hidden = !notices.length;
-	dialect.textContent = notices.map((w) => w.message).join(". ");
+	dialect.textContent = notices.join(". ");
 
 	const skipped = warnings.filter((w) => w.kind === "skipped");
 	const counts = new Map<string, number>();
@@ -149,7 +155,10 @@ worker.onmessage = ({ data }: MessageEvent<ParseResult>) => {
 		...pages.map((_, i) => new Option(`Page ${i + 1}`, String(i))),
 	);
 	pageSelect.hidden = pages.length < 2;
-	showWarnings(data.warnings);
+	showWarnings(
+		data.warnings,
+		pages.some((p) => p.primitives.length > 0),
+	);
 	show(0);
 };
 // A parser crash (e.g. out of memory) keeps the previous plot on screen.

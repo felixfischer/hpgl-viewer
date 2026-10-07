@@ -4,25 +4,37 @@ import {
 	defaultLabelState,
 	defaultScalingPoints,
 	rotate,
+	type State,
 } from "../state.ts";
 import type { Handler } from "./index.ts";
 
+/**
+ * The modal defaults both `IN` and `DF` restore. Neither touches P1/P2, the pen,
+ * its position or `RO`, so this leaves those alone (reference notes §IN/§DF).
+ */
+function resetModal(state: State): void {
+	state.relative = false; // PA
+	state.lineType = null; // LT solid
+	state.scale = null; // SC off
+	state.window = null; // IW = hard clip
+	state.chordHeight = false; // CT0
+	Object.assign(state, defaultFill());
+	Object.assign(state, defaultLabelState());
+	state.polygon = [];
+	state.polygonMode = false;
+	state.labelBuffer = "";
+	state.carriage = null;
+	breakStroke(state);
+}
+
 export const setup: Record<string, Handler> = {
 	IN(state) {
-		state.penDown = false;
-		state.relative = false;
-		state.lineType = null;
+		resetModal(state);
+		state.penDown = false; // PU
 		Object.assign(state, defaultScalingPoints());
-		state.scale = null;
-		state.rotation = 0;
-		state.window = null;
-		state.chordHeight = false;
-		Object.assign(state, defaultFill());
-		Object.assign(state, defaultLabelState());
-		state.polygon = [];
-		state.polygonMode = false;
-		breakStroke(state);
+		state.rotation = 0; // RO0
 	},
+	DF: resetModal,
 	IP(state, params) {
 		const [x1, y1, x2, y2] = params.map(Math.trunc);
 		if (x1 === undefined || y1 === undefined) {

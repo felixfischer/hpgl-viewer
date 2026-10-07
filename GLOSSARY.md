@@ -81,7 +81,7 @@ _Avoid_: text primitive, annotation
 The 1.5 × width by 2 × height box each label character occupies; characters advance one cell along the label direction, lines one cell height across it.
 
 **Label origin**:
-Where a label sits relative to the pen, set by `LO`: a 3×3 grid (1–9), or 11–19 pushed out by half a character.
+Where a label sits relative to the pen, set by `LO`: a 3×3 grid (1–9), or 11–19 pushed out by half a character (15 is unused).
 
 **Character set**:
 The glyph table a label is drawn in: the standard set (`CS`, selected by `SS` or SI) or the alternate set (`CA`, selected by `SA` or SO). Sets 8 (katakana) and 101 (JIS kanji) are drawn as such; other non-ASCII sets fall back to ASCII with a warning.

@@ -436,6 +436,53 @@ describe("parseHpgl", () => {
 		expect(result.pages).toHaveLength(1);
 	});
 
+	test("DF is a known command and restores PA mode without a warning", () => {
+		const result = parseHpgl("PR;DF;PD100,0;");
+		expect(result.warnings).toEqual([]);
+		expect(
+			result.pages[0]?.primitives.map((p) => p.type === "polyline" && p.points),
+		).toEqual([
+			[
+				[0, 0],
+				[100, 0],
+			],
+		]);
+	});
+
+	test("DF keeps P1/P2 and RO; IN resets them", () => {
+		const points = (hpgl: string) =>
+			parseHpgl(hpgl).pages[0]?.primitives.map(
+				(p) => p.type === "polyline" && p.points,
+			);
+		// DF keeps P1/P2, so SC0,100 still maps 100 user units onto the 4000 plu span.
+		expect(points("IP0,0,4000,4000;DF;SC0,100,0,100;PD100,0;")).toEqual([
+			[
+				[0, 0],
+				[4000, 0],
+			],
+		]);
+		// IN drops SC and resets P1/P2 to A3 (170,602)…(15370,10602).
+		expect(points("IP0,0,4000,4000;IN;SC0,100,0,100;PD100,0;")).toEqual([
+			[
+				[0, 0],
+				[15370, 602],
+			],
+		]);
+		// RO90 survives DF but IN restores RO0.
+		expect(points("RO90;DF;PD1000,0;")).toEqual([
+			[
+				[0, 0],
+				[0, 1000],
+			],
+		]);
+		expect(points("RO90;IN;PD1000,0;")).toEqual([
+			[
+				[0, 0],
+				[1000, 0],
+			],
+		]);
+	});
+
 	test("PM0…PM2 buffers vertices without drawing; FP fills and EP edges the buffer", () => {
 		const [page] = parseHpgl("SP2;PA0,0;PM0;PD100,0,100,100;PM2;FP;EP;").pages;
 		const ring = [
