@@ -311,6 +311,47 @@ describe("parseHpgl", () => {
 		expect(result.warnings).toEqual([]);
 		expect(result.pages).toHaveLength(1);
 	});
+
+	test("PM0…PM2 buffers vertices without drawing; FP fills and EP edges the buffer", () => {
+		const [page] = parseHpgl(
+			"SP2;PA0,0;PM0;PD100,0,100,100;PM2;FP;EP;",
+		).pages;
+		const ring = [
+			[0, 0],
+			[100, 0],
+			[100, 100],
+		];
+		expect(page?.primitives).toEqual([
+			{ type: "polygon", pen: 2, lineType: null, rings: [ring], filled: true },
+			{ type: "polygon", pen: 2, lineType: null, rings: [ring], filled: false },
+		]);
+	});
+
+	test("PM1 and pen-up moves start new rings; the buffer survives PM2 until PM0 or IN", () => {
+		const rings = (hpgl: string) =>
+			parseHpgl(hpgl).pages[0]?.primitives.map(
+				(p) => p.type === "polygon" && p.rings,
+			);
+		expect(
+			rings("PM0;PD10,0,10,10;PM1;PU20,20;PD30,20,30,30;PU50,50;PD60,50,60,60;PM2;FP;PD5,5;EP;"),
+		).toEqual([
+			[
+				[[0, 0], [10, 0], [10, 10]],
+				[[20, 20], [30, 20], [30, 30]],
+				[[50, 50], [60, 50], [60, 60]],
+			],
+			false, // the PD between is an ordinary polyline
+			[
+				[[0, 0], [10, 0], [10, 10]],
+				[[20, 20], [30, 20], [30, 30]],
+				[[50, 50], [60, 50], [60, 60]],
+			],
+		]);
+		// PM1/PM2 outside polygon mode are ignored; IN clears the buffer.
+		expect(rings("PM1;PD10,0;PM2;PU;PM0;PD10,0,10,10;PM2;IN;FP;")).toEqual([
+			false,
+		]);
+	});
 });
 
 describe.each([

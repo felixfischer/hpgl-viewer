@@ -28,6 +28,13 @@ export interface State {
 	/** `IW` clip window in plotter units; `null` = whole page. */
 	window: Window | null;
 	pages: Page[];
+	/**
+	 * `PM` polygon buffer: closed rings, the last one still being defined (empty = none
+	 * started). Kept after `PM2` for repeated `FP`/`EP` until the next `PM0` (ADR-0007).
+	 */
+	polygon: Point[][];
+	/** Inside `PM0`…`PM2`: moves add vertices to `polygon` and draw nothing. */
+	polygonMode: boolean;
 	/** The polyline pen-down moves are currently extending, if any. */
 	stroke: Polyline | null;
 	warnings: Warning[];
@@ -46,6 +53,8 @@ export function createState(): State {
 		rotation: 0,
 		window: null,
 		pages: [{ primitives: [] }],
+		polygon: [],
+		polygonMode: false,
 		stroke: null,
 		warnings: [],
 	};
@@ -115,7 +124,12 @@ export function breakStroke(state: State): void {
 
 /** Moves the pen to `to`, drawing a segment when the pen is down. */
 export function moveTo(state: State, to: Point): void {
-	if (state.penDown && state.pen !== 0) {
+	if (state.polygonMode) {
+		const ring = state.polygon.at(-1);
+		if (!state.penDown) closeRing(state);
+		else if (ring && !ring.length) ring.push(state.at, to);
+		else ring?.push(to);
+	} else if (state.penDown && state.pen !== 0) {
 		if (!state.stroke) {
 			state.stroke = {
 				type: "polyline",
@@ -127,4 +141,9 @@ export function moveTo(state: State, to: Point): void {
 		state.stroke.points.push(to);
 	}
 	state.at = to;
+}
+
+/** Ends the ring being defined in `PM`; the next pen-down vertex starts another. */
+export function closeRing(state: State): void {
+	if (state.polygon.at(-1)?.length) state.polygon.push([]);
 }
