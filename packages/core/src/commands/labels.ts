@@ -53,14 +53,18 @@ const add = (p: Point, v: Point, k = 1): Point => [
 ];
 
 /**
- * Offset of a line of `n` characters from the pen for label origin `lo`,
- * given the advance `a` and line feed `b` vectors.
+ * Offset of a line of `n` characters from the pen for label origin `lo`, given
+ * the character advance `a` and the character's width `w` and height `h` vectors.
  */
-function originOffset(lo: number, n: number, a: Point, b: Point): Point {
+function originOffset(
+	lo: number,
+	n: number,
+	a: Point,
+	w: Point,
+	h: Point,
+): Point {
 	const col = Math.floor(((lo % 10) - 1) / 3); // 0 left, 1 centre, 2 right
 	const row = ((lo % 10) - 1) % 3; // 0 below, 1 middle, 2 above
-	const w: Point = [a[0] / 1.5, a[1] / 1.5];
-	const h: Point = [-b[0] / 2, -b[1] / 2];
 	const out = lo > 10 ? 0.5 : 0;
 	// ponytail: the line spans (n − 1) advances plus one character, no trailing gap (notes §8 gap 9).
 	const length = add(w, a, Math.max(n - 1, 0));
@@ -86,15 +90,22 @@ function draw(state: State, label: string, lo = state.origin): void {
 	const direction = (Math.atan2(dy, dx) * 180) / Math.PI;
 	const len = Math.hypot(dx, dy) || 1;
 	const [ux, uy] = [dx / len, dy / len];
-	// Character advance and line feed vectors (notes §Labels: cell = 1.5w × 2h).
-	const a: Point = [1.5 * width * ux, 1.5 * width * uy];
-	const b: Point = [2 * height * uy, -2 * height * ux];
+	const w: Point = [width * ux, width * uy];
+	const h: Point = [-height * uy, height * ux];
+	// Character advance and line feed vectors: cell = 1.5w × 2h, widened by ES.
+	const [gap, lineGap] = state.extraSpace;
+	let a: Point = [1.5 * (1 + gap) * w[0], 1.5 * (1 + gap) * w[1]];
+	let b: Point = [-2 * (1 + lineGap) * h[0], -2 * (1 + lineGap) * h[1]];
+	// ponytail: DV columns run right to left and ignore LO (notes §8 gap 9).
+	if (state.vertical) [a, b, lo] = [b, [-a[0], -a[1]], 1];
+	// Renderers space a run's characters 1.5w apart; any other pitch is placed per character.
+	const single = state.vertical || gap !== 0;
 	const chars = [...label];
 	const start = state.at;
 	let at = start;
 	let run = "";
 	let runAt = at;
-	let offset = originOffset(lo, lineLength(chars, 0), a, b);
+	let offset = originOffset(lo, lineLength(chars, 0), a, w, h);
 	const flush = () => {
 		if (run && state.pen !== 0)
 			emit(state, {
@@ -114,6 +125,7 @@ function draw(state: State, label: string, lo = state.origin): void {
 			if (!run) runAt = add(at, offset);
 			run += c;
 			at = add(at, a);
+			if (single) flush();
 			continue;
 		}
 		if (!"\b\t\n\v\r".includes(c)) continue; // other control characters are ignored
@@ -124,7 +136,7 @@ function draw(state: State, label: string, lo = state.origin): void {
 		else if (c === "\v") at = add(at, b, -1);
 		else at = carriageReturn(at, start, a);
 		if (c === "\r" || c === "\n")
-			offset = originOffset(lo, lineLength(chars, i + 1), a, b);
+			offset = originOffset(lo, lineLength(chars, i + 1), a, w, h);
 	}
 	flush();
 	// Left origins leave the pen at the next character; the others put it back.
@@ -185,6 +197,12 @@ export const labels: Record<string, Handler> = {
 	DI: directing("DI"),
 	DR: directing("DR"),
 	DU: directing("DU"),
+	DV(state, [n = 0]) {
+		state.vertical = n === 1;
+	},
+	ES(state, [gap = 0, line = 0]) {
+		state.extraSpace = [gap, line];
+	},
 	LO(state, [n = 1]) {
 		if ((n >= 1 && n <= 9) || (n >= 11 && n <= 19 && n !== 15))
 			state.origin = Math.trunc(n);

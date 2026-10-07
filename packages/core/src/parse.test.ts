@@ -453,6 +453,31 @@ describe("parseHpgl", () => {
 		const [, line] = parseHpgl("LO2;LBAB\x03PD0,0;").pages[0]?.primitives ?? [];
 		expect(line?.type === "polyline" && line.points[0]).toEqual([342, 0]);
 	});
+	test("ES widens the character and line pitch by fractions of the cell; spaced characters are placed one by one", () => {
+		const placed = (hpgl: string) =>
+			parseHpgl(hpgl).pages[0]?.primitives.map(
+				(p) => p.type === "label" && [p.text, p.at],
+			);
+		expect(placed("ES0.5,1;LBAB\nC\x03")).toEqual([
+			["A", [0, 0]],
+			["B", [256.5, 0]],
+			["C", [513, -600]],
+		]);
+		expect(placed("ES0.5;ES;LBAB\x03")).toEqual([["AB", [0, 0]]]);
+	});
+
+	test("DV1 stacks upright characters downwards; a line feed starts the next column to the left", () => {
+		const placed = (hpgl: string) =>
+			parseHpgl(hpgl).pages[0]?.primitives.map(
+				(p) => p.type === "label" && [p.text, p.at, p.direction],
+			);
+		expect(placed("DV1;LBAB\r\nC\x03DV;LBD\x03")).toEqual([
+			["A", [0, 0], 0],
+			["B", [0, -300], 0],
+			["C", [-171, 0], 0],
+			["D", [-171, -300], 0],
+		]);
+	});
 });
 
 describe.each([

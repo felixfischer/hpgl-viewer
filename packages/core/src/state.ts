@@ -41,6 +41,10 @@ export interface State {
 	slant: number;
 	/** `LO` label origin: 1–9 (3×3 grid), 11–19 the same pushed out by half a character. */
 	origin: number;
+	/** `ES` extra space between characters and lines, as fractions of the character cell. */
+	extraSpace: Point;
+	/** `DV1`: characters stack downwards. */
+	vertical: boolean;
 }
 
 export function createState(): State {
@@ -69,6 +73,8 @@ export const defaultLabelState = () => ({
 	direction: { unit: "DI" as const, run: [1, 0] as Point },
 	slant: 0,
 	origin: 1,
+	extraSpace: [0, 0] as Point,
+	vertical: false,
 });
 
 /** A3 landscape P1/P2 (HP 7475A); the viewer's default page. */
