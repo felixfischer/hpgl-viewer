@@ -12,6 +12,11 @@ const HPGL2_ONLY = new Set(
 	),
 );
 
+// Classic device-control: ESC . letter, optional numeric params up to ':'.
+const DEVICE_CONTROL = /\x1b\.[@-~](?:[\d;]*:)?/y;
+// PCL/PJL/RTL: ESC, then anything up to the first terminating capital, e.g. ESC%-1B.
+const PCL_ESCAPE = /\x1b[^@-^\x1b]{0,32}[@-^]/y;
+
 /** Records, once per file, that the input looks like HP-GL/2. */
 function flagHpgl2(state: State, mnemonic: string, offset: number): void {
 	if (state.warnings.some((w) => w.kind === "dialect")) return;
@@ -23,10 +28,28 @@ function flagHpgl2(state: State, mnemonic: string, offset: number): void {
 	});
 }
 
+/** Consumes the escape sequence at `i`, returning the index after it. */
+function skipEscape(state: State, text: string, i: number): number {
+	DEVICE_CONTROL.lastIndex = i;
+	if (DEVICE_CONTROL.test(text)) return DEVICE_CONTROL.lastIndex;
+	flagHpgl2(state, "ESC", i);
+	PCL_ESCAPE.lastIndex = i;
+	const pcl = PCL_ESCAPE.exec(text);
+	if (!pcl) return i + 1;
+	// RTL raster data (ESC*b<n>W) carries n bytes of binary payload; skip it.
+	// ponytail: counts UTF-16 chars, not bytes; decode files as latin1 if raster ever matters.
+	const payload = /(\d+)W$/.exec(pcl[0]);
+	return PCL_ESCAPE.lastIndex + Number(payload?.[1] ?? 0);
+}
+
 export function parseHpgl(text: string): ParseResult {
 	const state = createState();
 	let i = 0;
 	while (i < text.length) {
+		if (text[i] === "\x1b") {
+			i = skipEscape(state, text, i);
+			continue;
+		}
 		if (!isLetter(text.charAt(i))) {
 			i++; // separators, terminators, whitespace, stray bytes
 			continue;

@@ -108,6 +108,26 @@ describe("parseHpgl", () => {
 		expect(result.pages[0]?.primitives).toHaveLength(1);
 	});
 
+	test("PCL/RTL escape sequences flag HP-GL/2 and are consumed whole", () => {
+		const result = parseHpgl("\x1b%-12345X\x1bE\x1b%1BIN;PD10,0;\x1b%0A");
+		expect(result.warnings).toEqual([
+			{
+				kind: "dialect",
+				mnemonic: "ESC",
+				offset: 0,
+				message:
+					"HP-GL/2 is not supported; only classic HP-GL commands are drawn",
+			},
+		]);
+		expect(result.pages[0]?.primitives).toHaveLength(1);
+	});
+
+	test("classic ESC. device-control sequences are ignored silently", () => {
+		const result = parseHpgl("\x1b.N;19:\x1b.B\x1b.@4000;0:IN;PD10,0;");
+		expect(result.warnings).toEqual([]);
+		expect(result.pages[0]?.primitives).toHaveLength(1);
+	});
+
 	test("terminators may be omitted and whitespace separates parameters", () => {
 		const [page] = parseHpgl("pu 0 0 pd 10 -5\r\nPD20,0").pages;
 		expect(
