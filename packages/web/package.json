@@ -6,6 +6,7 @@
 		"dev": "vite",
 		"typecheck": "tsc --noEmit",
 		"build": "vite build",
+		"build:preview": "vite build --config vite.preview.config.ts",
 		"preview": "vite preview",
 		"test:e2e": "playwright test"
 	},
