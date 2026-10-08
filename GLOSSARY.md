@@ -1,6 +1,6 @@
 # hpgl-viewer
 
-An open-source viewer for HP-GL plotter files, rendered in the browser and as a macOS QuickLook preview.
+An open-source viewer for HP-GL plotter files, rendered in the browser and as a macOS Quick Look preview.
 
 ## Language
 
@@ -85,3 +85,13 @@ Where a label sits relative to the pen, set by `LO`: a 3×3 grid (1–9), or 11�
 
 **Character set**:
 The glyph table a label is drawn in: the standard set (`CS`, selected by `SS` or SI) or the alternate set (`CA`, selected by `SA` or SO). Sets 8 (katakana) and 101 (JIS kanji) are drawn as such; other non-ASCII sets fall back to ASCII with a warning.
+
+### Surfaces
+
+**Viewer**:
+The browser surface: the static site that renders a file to a canvas, with the pen legend, page selector, pan/zoom and SVG/PNG export.
+_Avoid_: web app, frontend, site
+
+**Preview**:
+The macOS surface: the Quick Look preview shown in Finder, drawn by a web view inside a Quick Look Preview Extension that reuses the core renderer.
+_Avoid_: plugin, generator, thumbnail
