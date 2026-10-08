@@ -1,8 +1,6 @@
 import { readFileSync } from "node:fs";
 import { expect, test } from "@playwright/test";
-
-const fixture = new URL("../../../hpgl/space-shuttle.hpgl", import.meta.url)
-	.pathname;
+import { fixture, inkedIn } from "./canvas.ts";
 
 test("the bundled sample plot opens by default instead of a blank page", async ({
 	page,
@@ -18,7 +16,11 @@ test("a picked fixture is parsed and painted onto the canvas", async ({
 	page,
 }) => {
 	await page.goto("/");
-	await page.locator("#file").setInputFiles(fixture);
+	await page.locator("#file").setInputFiles({
+		name: "space-shuttle.hpgl",
+		mimeType: "text/plain",
+		buffer: Buffer.from(fixture("space-shuttle.hpgl")),
+	});
 	const canvas = page.locator("#plot");
 	await expect(canvas).toHaveAttribute("data-rendered", "space-shuttle.hpgl");
 
@@ -71,20 +73,6 @@ test("skipped commands show in a dismissable banner while the plot still renders
 	await banner.getByRole("button", { name: "Dismiss warnings" }).click();
 	await expect(banner).toBeHidden();
 });
-
-/** Counts canvas pixels painted in (roughly) the given `#rrggbb` colour. */
-function inkedIn(el: HTMLCanvasElement, hex: string) {
-	const want = [1, 3, 5].map((i) => Number.parseInt(hex.slice(i, i + 2), 16));
-	const ctx = el.getContext("2d");
-	if (!ctx) return 0;
-	const { data } = ctx.getImageData(0, 0, el.width, el.height);
-	let count = 0;
-	for (let i = 0; i < data.length; i += 4) {
-		const close = want.every((v, c) => Math.abs((data[i + c] ?? 0) - v) < 24);
-		if ((data[i + 3] ?? 0) > 0 && close) count++;
-	}
-	return count;
-}
 
 test("each used pen is listed with its colour, recolourable and resettable", async ({
 	page,
@@ -152,7 +140,11 @@ test("pan, zoom and the actual-page-size toggle change the view; reset fits agai
 	page,
 }) => {
 	await page.goto("/");
-	await page.locator("#file").setInputFiles(fixture);
+	await page.locator("#file").setInputFiles({
+		name: "space-shuttle.hpgl",
+		mimeType: "text/plain",
+		buffer: Buffer.from(fixture("space-shuttle.hpgl")),
+	});
 	const canvas = page.locator("#plot");
 	await expect(canvas).toHaveAttribute("data-rendered", "space-shuttle.hpgl");
 	const pixels = () =>
@@ -190,7 +182,11 @@ test("the plot downloads as SVG (vector, from the geometry) and PNG (from the ca
 	page,
 }) => {
 	await page.goto("/");
-	await page.locator("#file").setInputFiles(fixture);
+	await page.locator("#file").setInputFiles({
+		name: "space-shuttle.hpgl",
+		mimeType: "text/plain",
+		buffer: Buffer.from(fixture("space-shuttle.hpgl")),
+	});
 	await expect(page.locator("#plot")).toHaveAttribute(
 		"data-rendered",
 		"space-shuttle.hpgl",

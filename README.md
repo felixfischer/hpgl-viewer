@@ -27,6 +27,8 @@ vectors, line types, circles, arcs, wedges, rectangles, polygons, fills and labe
 - **Tolerate** unsupported commands: they're skipped to the next terminator, parsing
   continues, and a dismissable banner lists them. HP-GL/2 input renders what it can with a
   specific notice.
+- **Preview** on macOS: pressing Space on an HP-GL file in Finder shows the plot in a Quick
+  Look Preview extension, reusing the same core renderer as the Viewer (`packages/macos`).
 
 The same input always produces the same output, so the goldens stay stable.
 
@@ -48,14 +50,14 @@ v1 targets **classic HP-GL** only. Every command that affects output is implemen
 recorded as a warning.
 
 **Out of scope for v1:** HP-GL/2 and HP RTL (detected and warned, not rendered — ADR-0001),
-a command-line tool, PDF export, and anything server-side. The macOS QuickLook plugin is
-phase 2 (ADR-0003) and will reuse the same renderer.
+a command-line tool, PDF export, and anything server-side.
 
 ## Layout
 
 ```text
 packages/core   parser and geometry stream (no DOM)
 packages/web    static Vite site: worker → Canvas 2D, SVG/PNG export
+packages/macos  macOS carrier app + Quick Look Preview extension (XcodeGen-generated, reuses the web bundle)
 hpgl/           sample plots (fixtures); parse goldens in packages/core/goldens/
 docs/adr/       architecture decisions
 GLOSSARY.md     the domain language (dialects, units, pen, polygon buffer, …)
@@ -75,14 +77,18 @@ pnpm install
 pnpm dev          # local site
 pnpm check        # typecheck + lint + unit/golden tests — the one command
 pnpm build        # production site in packages/web/dist
-pnpm test:e2e     # headless-browser smoke test (once: pnpm --filter @hpgl-viewer/web exec playwright install chromium)
+pnpm test:e2e     # headless-browser tests (once: pnpm --filter @hpgl-viewer/web exec playwright install chromium)
 ```
 
 TypeScript (strict), Vite, Vitest, Biome, Playwright, on pnpm.
 
+The macOS **Preview** surface (`packages/macos`) is built separately with
+`pnpm package:macos` (XcodeGen + `xcodebuild`) and is deliberately excluded from
+`pnpm build`; see `packages/macos/README.md`.
+
 ## Testing
 
-Tests live at two seams, plus a browser smoke test:
+Tests live at two seams, plus browser tests:
 
 - **Parse boundary** (`packages/core/src/parse.test.ts`): every fixture in `hpgl/` is parsed
   and compared against a committed golden in `packages/core/goldens/`. This covers the whole
@@ -92,6 +98,9 @@ Tests live at two seams, plus a browser smoke test:
 - **Smoke test** (`packages/web/e2e/smoke.spec.ts`): loads fixtures in a headless browser
   and asserts the canvas painted, that warnings/legend/page-selector/view controls wire up,
   and that SVG and PNG downloads are produced.
+- **Preview test** (`packages/web/e2e/preview.spec.ts`): loads the built Preview page and
+  drives its `renderPreview` entry with the same fixtures, asserting the canvas paints, the
+  page selector appears for a multi-page file, and a message shows for a non-HP-GL file.
 
 When a parser or exporter change intentionally alters output, refresh the affected goldens
 with `pnpm test -u` and review the diff before committing.
