@@ -1,8 +1,9 @@
 # hpgl-viewer
 
-View classic HP-GL plotter files (`.hpgl`, `.plt`) in the browser. Drag a file onto the
-page — or pick one — and its vectors are drawn fitted to the window. Everything runs
-client-side: parsing happens in a Web Worker and nothing is uploaded.
+View classic HP-GL plotter files (`.hpgl`, `.plt`) in the browser. The viewer opens with
+the bundled sample plot, so there's something to see right away — drag another file onto
+the page, or pick one, to replace it and draw its vectors fitted to the window. Everything
+runs client-side: parsing happens in a Web Worker and nothing is uploaded.
 
 Live site: https://felixfischer.github.io/hpgl-viewer/ (deployed from `main` by GitHub
 Actions).

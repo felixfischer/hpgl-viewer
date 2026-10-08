@@ -4,6 +4,16 @@ import { expect, test } from "@playwright/test";
 const fixture = new URL("../../../hpgl/space-shuttle.hpgl", import.meta.url)
 	.pathname;
 
+test("the bundled sample plot opens by default instead of a blank page", async ({
+	page,
+}) => {
+	await page.goto("/");
+	const canvas = page.locator("#plot");
+	await expect(canvas).toHaveAttribute("data-rendered", "plotter.hpgl");
+	await expect(page.locator("#status")).toContainText("plotter.hpgl");
+	expect(await canvas.evaluate(inkedIn, "#1a1a1a")).toBeGreaterThan(1000);
+});
+
 test("a picked fixture is parsed and painted onto the canvas", async ({
 	page,
 }) => {

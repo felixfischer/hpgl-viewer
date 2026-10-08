@@ -5,6 +5,7 @@ import {
 	usedPens,
 	type Warning,
 } from "@hpgl-viewer/core";
+import sample from "../../../hpgl/plotter.hpgl?raw";
 import { fittedView, renderPage } from "./render.ts";
 import { toSvg } from "./svg.ts";
 
@@ -169,12 +170,17 @@ worker.onerror = (event) => {
 
 pageSelect.addEventListener("change", () => show(Number(pageSelect.value)));
 
-async function open(file: File) {
-	fileName = file.name;
-	status.value = `Parsing ${file.name}…`;
+/** Loads HP-GL text under a display name; the picker, drop and default sample all funnel here. */
+function openText(name: string, text: string) {
+	fileName = name;
+	status.value = `Parsing ${name}…`;
 	delete canvas.dataset.rendered;
 	banner.hidden = true;
-	worker.postMessage(await file.text());
+	worker.postMessage(text);
+}
+
+async function open(file: File) {
+	openText(file.name, await file.text());
 }
 
 picker.addEventListener("change", () => {
@@ -261,3 +267,6 @@ canvas.addEventListener("pointerdown", (event) => {
 		{ once: true },
 	);
 });
+
+// Open with the bundled sample plot so the viewer is never a blank page.
+openText("plotter.hpgl", sample);
