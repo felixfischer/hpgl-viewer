@@ -41,6 +41,20 @@ test("a multi-page file offers a page selector and renders the chosen page", asy
 	expect(await canvas.evaluate(inkedIn, "#1a1a1a")).toBe(0);
 });
 
+test("a single-page file hides the page selector", async ({ page }) => {
+	await page.goto("/preview/");
+	await page.evaluate(
+		(text) => window.renderPreview(text),
+		fixture("plotter.hpgl"),
+	);
+	// The plot paints, but with one page there is nothing to step through, so
+	// the selector stays hidden (spec story 9).
+	const canvas = page.locator("#preview");
+	await expect(canvas).toBeVisible();
+	expect(await canvas.evaluate(inkedIn, "#1a1a1a")).toBeGreaterThan(1000);
+	await expect(page.locator("#page")).toBeHidden();
+});
+
 test("a file with no HP-GL commands shows a message instead of a blank canvas", async ({
 	page,
 }) => {
