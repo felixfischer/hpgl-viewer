@@ -1,13 +1,5 @@
-import { readFileSync } from "node:fs";
 import { expect, test } from "@playwright/test";
-import { inkedIn } from "./canvas.ts";
-
-/** The text of a repository fixture, as the native layer would hand it over. */
-const fixture = (name: string) =>
-	readFileSync(
-		new URL(`../../../hpgl/${name}`, import.meta.url).pathname,
-		"utf8",
-	);
+import { fixture, inkedIn } from "./canvas.ts";
 
 test("calling the preview's render function paints the plot", async ({
 	page,

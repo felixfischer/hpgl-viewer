@@ -118,7 +118,8 @@ need, and specifically **no network entitlement**. In practice a sandboxed
 `WKWebView` will not launch its web content process inside an app extension
 without `com.apple.security.network.client`, so the extension carries it. This is
 the **one** deviation from the spec's "no network entitlement". The carrier app
-does **not** carry it.
+does **not** carry it. Recorded as ADR-0011
+(`docs/adr/0011-preview-appex-carries-network-client.md`).
 
 This was resolved empirically on the build machine (macOS 26.7.1 / Xcode 27.0),
 not guessed. With only `app-sandbox` + `files.user-selected.read-only`:

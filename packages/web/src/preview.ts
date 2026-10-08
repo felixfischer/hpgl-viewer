@@ -40,13 +40,13 @@ const render = () => {
 	if (page) renderPage(canvas, page, penColour, scalingPoints, fittedView());
 };
 
-function show(i: number) {
+function showPage(i: number) {
 	index = i;
 	pageSelect.value = String(i);
 	render();
 }
 
-pageSelect.addEventListener("change", () => show(Number(pageSelect.value)));
+pageSelect.addEventListener("change", () => showPage(Number(pageSelect.value)));
 addEventListener("resize", render);
 new ResizeObserver(render).observe(canvas);
 
@@ -68,5 +68,5 @@ window.renderPreview = (text: string) => {
 	}
 	canvas.style.display = "block";
 	message.hidden = true;
-	show(0);
+	showPage(0);
 };

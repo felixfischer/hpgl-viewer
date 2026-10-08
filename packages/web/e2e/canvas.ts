@@ -1,3 +1,13 @@
+import { readFileSync } from "node:fs";
+
+/** The text of a repository fixture, as the native layer would hand it over. */
+export function fixture(name: string) {
+	return readFileSync(
+		new URL(`../../../hpgl/${name}`, import.meta.url).pathname,
+		"utf8",
+	);
+}
+
 /** Counts canvas pixels painted in (roughly) the given `#rrggbb` colour. */
 export function inkedIn(el: HTMLCanvasElement, hex: string) {
 	const want = [1, 3, 5].map((i) => Number.parseInt(hex.slice(i, i + 2), 16));
